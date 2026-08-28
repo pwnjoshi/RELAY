@@ -3,7 +3,8 @@
   "rules": {
     "prefer-const": "warn",
     "no-unused-vars": "off",
-    "@next/next/no-html-link-for-pages": "off"
+    "@next/next/no-html-link-for-pages": "off",
+    "no-console": "error"
   },
   "ignorePatterns": [
     ".next/",

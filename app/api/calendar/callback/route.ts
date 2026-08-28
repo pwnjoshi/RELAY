@@ -42,9 +42,10 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.redirect(new URL(`/integrations?calendar=connected&branchId=${branchId}`, req.url));
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
     return NextResponse.redirect(
-      new URL(`/integrations?error=${encodeURIComponent(err.message || "Callback error")}`, req.url)
+      new URL(`/integrations?error=${encodeURIComponent(errorMsg || "Callback error")}`, req.url)
     );
   }
 }

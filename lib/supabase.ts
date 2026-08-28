@@ -4,6 +4,7 @@
  */
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import type { CallRecord } from "./types";
+import { logger } from "./logger";
 
 export { createClient as createServerSupabaseClient } from "@/utils/supabase/server";
 export { createClient as createBrowserSupabaseClient } from "@/utils/supabase/client";
@@ -62,10 +63,10 @@ export async function syncCallToSupabase(call: CallRecord): Promise<void> {
     });
 
     if (error) {
-      console.warn("[Supabase Sync] Error syncing call:", error.message);
+      logger.warn("[Supabase Sync] Error syncing call:", error.message);
     }
-  } catch (err) {
-    console.warn("[Supabase Sync] Exception while syncing call to Supabase:", err);
+  } catch (err: unknown) {
+    logger.warn("[Supabase Sync] Exception while syncing call to Supabase:", err);
   }
 }
 
@@ -187,12 +188,12 @@ export async function saveDbCalendarConnection(record: Partial<DbCalendarConnect
     );
 
     if (error) {
-      console.warn("[Supabase] Error saving calendar connection:", error.message);
+      logger.warn("[Supabase] Error saving calendar connection:", error.message);
       return false;
     }
     return true;
-  } catch (err) {
-    console.warn("[Supabase] Exception saving calendar connection:", err);
+  } catch (err: unknown) {
+    logger.warn("[Supabase] Exception saving calendar connection:", err);
     return false;
   }
 }
@@ -210,7 +211,7 @@ export async function deleteDbCalendarConnection(branchId: string): Promise<bool
       .eq("branch_id", branchId);
 
     if (error) {
-      console.warn("[Supabase] Error deleting calendar connection:", error.message);
+      logger.warn("[Supabase] Error deleting calendar connection:", error.message);
       return false;
     }
     return true;
@@ -255,7 +256,7 @@ export async function saveDbIdempotencyKey(key: string, responseJson: Record<str
     });
 
     if (error) {
-      console.warn("[Supabase] Error saving idempotency key:", error.message);
+      logger.warn("[Supabase] Error saving idempotency key:", error.message);
       return false;
     }
     return true;
@@ -299,7 +300,7 @@ export async function saveDbRateLimit(key: string, timestamps: number[]): Promis
     });
 
     if (error) {
-      console.warn("[Supabase] Error saving rate limit:", error.message);
+      logger.warn("[Supabase] Error saving rate limit:", error.message);
       return false;
     }
     return true;

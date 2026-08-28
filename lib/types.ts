@@ -128,7 +128,7 @@ export interface CallRecord {
   structuredOutcome?: StructuredCallOutcome;
   summary?: string;
   aiIntelligence?: PostCallAiIntelligence;
-  rawCalleData?: any;
+  rawCalleData?: Record<string, unknown>;
   recoveredRevenue: number;
   language?: LanguageCode;
   customGoal?: string;

@@ -8,9 +8,9 @@
 
 import { createDirectCall, getDirectCall, parseRestCallOutcome } from "./calle-client";
 import { runPostCallActionPipeline, activeConnectors } from "./connectors";
-import type { StructuredCallOutcome } from "./types";
+import type { StructuredCallOutcome, ClinicLocation, LanguageCode } from "./types";
 
-export interface BridgeCallResult<T = any> {
+export interface BridgeCallResult<T = unknown> {
   ok: boolean;
   result?: T;
   error?: string;
@@ -22,9 +22,9 @@ export interface BridgeCallResult<T = any> {
 export async function dispatchTelephonyBridge(params: {
   phoneNumber: string;
   patientName: string;
-  location: any;
+  location: ClinicLocation;
   callType?: "inbound_overflow" | "outbound_recall" | "batch_followup";
-  language?: any;
+  language?: LanguageCode;
 }): Promise<BridgeCallResult> {
   const res = await createDirectCall({
     phoneNumber: params.phoneNumber,

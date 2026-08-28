@@ -8,6 +8,7 @@ import {
   LanguageCode
 } from "./types";
 import { syncCallToSupabase } from "./supabase";
+import { logger } from "./logger";
 import fs from "fs";
 import path from "path";
 
@@ -18,8 +19,8 @@ function loadSeedCalls(): CallRecord[] {
       const raw = fs.readFileSync(filePath, "utf-8");
       return JSON.parse(raw);
     }
-  } catch (err) {
-    console.warn("Could not load sample-calls.json, starting with clean array", err);
+  } catch (err: unknown) {
+    logger.warn("Could not load sample-calls.json, starting with clean array", err);
   }
   return [];
 }
@@ -307,8 +308,8 @@ export class RelayStore {
       const filePath = path.resolve(process.cwd(), "data/sample-calls.json");
       const callsArray = Array.from(this.calls.values());
       fs.writeFileSync(filePath, JSON.stringify(callsArray, null, 2), "utf-8");
-    } catch (err) {
-      console.error("Failed to persist calls to disk:", err);
+    } catch (err: unknown) {
+      logger.error("Failed to persist calls to disk:", err);
     }
   }
 
@@ -407,7 +408,6 @@ export class RelayStore {
 }
 
 // Global Singleton
-export { RelayStore as SwitchboardStore };
 const globalForStore = globalThis as unknown as { relayStore: RelayStore };
 export const store = globalForStore.relayStore || new RelayStore();
 if (process.env.NODE_ENV !== "production") globalForStore.relayStore = store;

@@ -119,18 +119,20 @@ export default function SolutionsPage() {
         {/* Industry Tabs */}
         <div className="pt-6 flex items-center justify-center">
           <div className="inline-flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#F4F6F5]/90 dark:bg-[#0E1E36]/90 border border-[#E2E8E7] dark:border-[#1E324F] shadow-inner backdrop-blur-md flex-wrap justify-center">
-            {[
-              { id: "healthcare", label: "Healthcare & Clinics", icon: Icons.Shield },
-              { id: "automotive", label: "Auto Dealerships", icon: Icons.Building },
-              { id: "legal", label: "Legal & Advisory", icon: Icons.Layers },
-              { id: "homeservices", label: "Field & Home Services", icon: Icons.PhoneIncoming }
-            ].map((tab) => {
+            {(
+              [
+                { id: "healthcare", label: "Healthcare & Dental", icon: Icons.Activity },
+                { id: "automotive", label: "Automotive & Dealerships", icon: Icons.Cpu },
+                { id: "legal", label: "Legal & Advisory", icon: Icons.Layers },
+                { id: "homeservices", label: "Field & Home Services", icon: Icons.PhoneIncoming }
+              ] as const
+            ).map((tab) => {
               const Icon = tab.icon;
               const isSel = selectedIndustry === tab.id;
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setSelectedIndustry(tab.id as any)}
+                  onClick={() => setSelectedIndustry(tab.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isSel
                       ? "bg-white dark:bg-[#162A48] text-[#0B1930] dark:text-[#F8FAFC] shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_14px_rgba(0,0,0,0.35)] border border-[#E2E8E7]/90 dark:border-[#2A4368]"

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Icons } from "./Icons";
+import { ClinicLocation } from "@/lib/types";
 
 export interface IntegrationItem {
   id: string;
@@ -14,13 +15,13 @@ export interface IntegrationItem {
   endpointUrl?: string;
   isAutoSync?: boolean;
   email?: string;
-  config?: Record<string, any>;
+  config?: Record<string, unknown>;
 }
 
 interface IntegrationConfigModalProps {
   isOpen: boolean;
   integration: IntegrationItem | null;
-  locations?: any[];
+  locations?: ClinicLocation[];
   onClose: () => void;
   onSave: (updated: IntegrationItem) => void;
 }
@@ -83,14 +84,14 @@ export function IntegrationConfigModal({
 
       // Restore saved configs from integration state
       if (integration.config) {
-        if (integration.config.sfDomain) setSfDomain(integration.config.sfDomain);
-        if (integration.config.sfClientId) setSfClientId(integration.config.sfClientId);
-        if (integration.config.hubspotToken) setHubspotToken(integration.config.hubspotToken);
-        if (integration.config.fhirEndpoint) setFhirEndpoint(integration.config.fhirEndpoint);
-        if (integration.config.twilioSid) setTwilioSid(integration.config.twilioSid);
-        if (integration.config.twilioToken) setTwilioToken(integration.config.twilioToken);
-        if (integration.config.outboundDid) setOutboundDid(integration.config.outboundDid);
-        if (integration.config.slackWebhook) setSlackWebhook(integration.config.slackWebhook);
+        if (typeof integration.config.sfDomain === "string") setSfDomain(integration.config.sfDomain);
+        if (typeof integration.config.sfClientId === "string") setSfClientId(integration.config.sfClientId);
+        if (typeof integration.config.hubspotToken === "string") setHubspotToken(integration.config.hubspotToken);
+        if (typeof integration.config.fhirEndpoint === "string") setFhirEndpoint(integration.config.fhirEndpoint);
+        if (typeof integration.config.twilioSid === "string") setTwilioSid(integration.config.twilioSid);
+        if (typeof integration.config.twilioToken === "string") setTwilioToken(integration.config.twilioToken);
+        if (typeof integration.config.outboundDid === "string") setOutboundDid(integration.config.outboundDid);
+        if (typeof integration.config.slackWebhook === "string") setSlackWebhook(integration.config.slackWebhook);
       }
     }
   }, [integration, selectedBranchId]);
@@ -110,10 +111,11 @@ export function IntegrationConfigModal({
           message: data.error || "Failed to generate Google OAuth URL. Please verify server environment credentials."
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
       setTestResult({
         ok: false,
-        message: `Failed to initiate Google OAuth: ${err.message}`
+        message: `Failed to initiate Google OAuth: ${errorMsg}`
       });
     }
   };
@@ -136,8 +138,9 @@ export function IntegrationConfigModal({
           message: `Google Calendar disconnected for branch '${selectedBranchId}'.`
         });
       }
-    } catch (err: any) {
-      setTestResult({ ok: false, message: `Disconnect failed: ${err.message}` });
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setTestResult({ ok: false, message: `Disconnect failed: ${errorMsg}` });
     }
   };
 
@@ -146,7 +149,7 @@ export function IntegrationConfigModal({
     setIsTesting(true);
     setTestResult(null);
 
-    const configPayload: Record<string, any> = {
+    const configPayload: Record<string, unknown> = {
       sfDomain,
       sfClientId,
       hubspotToken,
@@ -180,10 +183,11 @@ export function IntegrationConfigModal({
           message: data.error || "Connection test failed."
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
       setTestResult({
         ok: false,
-        message: `Connection verification failed: ${err.message}`
+        message: `Connection verification failed: ${errorMsg}`
       });
     } finally {
       setIsTesting(false);

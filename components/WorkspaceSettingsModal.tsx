@@ -182,15 +182,17 @@ export function WorkspaceSettingsModal({
 
         {/* Tab Navigation */}
         <div className="flex items-center gap-1 border-b border-[#E4E8E7] dark:border-[#20324A] pb-2">
-          {[
-            { id: "general", label: "General & AI Prompt" },
-            { id: "team", label: `Team Members (${workspace.teamMembers?.length || 0})` },
-            { id: "departments", label: `Departments (${workspace.departments?.length || 0})` },
-            { id: "danger", label: "Danger Zone" }
-          ].map((tab) => (
+          {(
+            [
+              { id: "general", label: "General & AI Prompt" },
+              { id: "team", label: `Team Members (${workspace.teamMembers?.length || 0})` },
+              { id: "departments", label: `Departments (${workspace.departments?.length || 0})` },
+              { id: "danger", label: "Danger Zone" }
+            ] as const
+          ).map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                 activeTab === tab.id
                   ? "bg-[#0B1930] text-white shadow-sm"
@@ -292,8 +294,8 @@ export function WorkspaceSettingsModal({
                 />
                 <select
                   value={memberRole}
-                  onChange={(e) => setMemberRole(e.target.value as any)}
-                  className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-lg px-3 py-1.5 text-xs text-[#0B1930] dark:text-white outline-none font-bold"
+                  onChange={(e) => setMemberRole(e.target.value as "owner" | "dept_admin" | "operator")}
+                  className="w-full bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl px-3 py-2 text-xs text-[#0B1930] dark:text-[#F8FAFC] focus:outline-none"
                 >
                   <option value="owner">Owner / Admin</option>
                   <option value="dept_admin">Department Lead</option>

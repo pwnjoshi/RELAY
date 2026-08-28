@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
+import { logger } from "@/lib/logger";
 import { TriggerModal } from "@/components/TriggerModal";
 import { DashboardStats, ClinicLocation } from "@/lib/types";
 import { CALL_RESULT_SCHEMA } from "@/lib/calle-client";
@@ -31,7 +32,7 @@ export default function DiagnosticsPage() {
         setLocations(d.locations || []);
       }
     } catch (err) {
-      console.error("Error loading diagnostics:", err);
+      logger.error("Error loading diagnostics:", err);
     }
   }, []);
 

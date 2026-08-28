@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
+import { logger } from "@/lib/logger";
 import { TriggerModal } from "@/components/TriggerModal";
 import { ClinicLocation, DashboardStats, RecallPatient } from "@/lib/types";
 import { Icons } from "@/components/Icons";
@@ -37,7 +38,7 @@ export default function CampaignsPage() {
         setRecallList(d.recallList || []);
       }
     } catch (err) {
-      console.error("Error fetching campaigns:", err);
+      logger.error("Error fetching campaigns:", err);
     }
   }, []);
 
@@ -68,7 +69,7 @@ export default function CampaignsPage() {
         setDispatchedSuccessIds((prev) => new Set(prev).add(patient.id));
       }
     } catch (err) {
-      console.error("Error dispatching recall call:", err);
+      logger.error("Error dispatching recall call:", err);
     } finally {
       setDispatchingId(null);
     }

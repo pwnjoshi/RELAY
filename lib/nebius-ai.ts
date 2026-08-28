@@ -4,6 +4,8 @@
  * Deep Intent Classification, and Post-Call CRM Intelligence.
  */
 
+import { logger } from "./logger";
+
 function getNebiusApiKey(): string {
   const key = process.env.NEBIUS_API_KEY;
   if (!key) {
@@ -42,7 +44,7 @@ export async function callNebiusDeepSeek(options: NebiusChatOptions): Promise<st
     { role: "user", content: userPrompt }
   ];
 
-  const body: any = {
+  const body: Record<string, unknown> = {
     model: NEBIUS_MODEL,
     messages,
     temperature,
@@ -122,8 +124,9 @@ Output strictly valid JSON with this exact schema:
       pricingOrFaqs: Array.isArray(parsed.pricingOrFaqs) ? parsed.pricingOrFaqs : [],
       knowledgeBase: parsed.knowledgeBase || `Company URL: ${url}\nServices: ${(parsed.keyServices || []).join(", ")}`
     };
-  } catch (err: any) {
-    console.warn("[Nebius DeepSeek] Fallback on parsing error:", err.message);
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    logger.warn(`[Nebius DeepSeek] Fallback on parsing error: ${errMsg}`);
     return {
       brandName: "Verified Organization",
       industry: "Business Services",
@@ -184,8 +187,9 @@ Output strictly valid JSON with this exact schema:
       recommendedFollowUpSms: parsed.recommendedFollowUpSms || `Thank you for contacting ${businessName}! We have recorded your request.`,
       coachingInsight: parsed.coachingInsight || "Call handled successfully within operational guidelines."
     };
-  } catch (err: any) {
-    console.warn("[Nebius DeepSeek] Post-call analysis fallback:", err.message);
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    logger.warn(`[Nebius DeepSeek] Post-call analysis fallback: ${errMsg}`);
     return {
       sentimentScore: "neutral",
       callerIntent: "Inquiry",

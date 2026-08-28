@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { TeamMember, Department, ClinicLocation, DashboardStats, LanguageCode } from "./types";
+import { logger } from "./logger";
 import { DomainConfig, WorkspaceMember, getSavedWorkspaces, addTeamMemberToWorkspace, addDepartmentToWorkspace } from "./domains";
 
 interface ConsoleContextType {
@@ -143,8 +144,8 @@ export function ConsoleProvider({ children }: { children: ReactNode }) {
       }
 
       hasInitialized = true;
-    } catch (err) {
-      console.warn("Console data load warning:", err);
+    } catch (err: unknown) {
+      logger.warn("Console data load warning:", err);
     } finally {
       setIsLoading(false);
     }

@@ -24,7 +24,18 @@ export function CallDrawer({ isOpen = true, call, locations, onClose }: CallDraw
 
   const location = locations.find((l) => l.id === call.locationId);
   const outcome = call.structuredOutcome;
-  const raw = call.rawCalleData;
+  const raw = call.rawCalleData as {
+    recipients?: Array<{
+      recording_url?: string;
+      attempts?: Array<{
+        recording_url?: string;
+        transcript_turns?: Array<{ role?: string; speaker?: string; content?: string; text?: string; timestamp?: string }>;
+      }>;
+    }>;
+    transcript_turns?: Array<{ role?: string; speaker?: string; content?: string; text?: string; timestamp?: string }>;
+    recording_url?: string;
+    audio_url?: string;
+  } | undefined;
 
   const transcriptTurns =
     raw?.recipients?.[0]?.attempts?.[0]?.transcript_turns ||
@@ -325,7 +336,7 @@ export function CallDrawer({ isOpen = true, call, locations, onClose }: CallDraw
         {activeTab === "transcript" && (
           <div className="py-4 space-y-3">
             {transcriptTurns.length > 0 ? (
-              transcriptTurns.map((turn: any, i: number) => {
+              transcriptTurns.map((turn: { role?: string; speaker?: string; content?: string; text?: string; timestamp?: string }, i: number) => {
                 const isAgent = turn.role === "agent" || turn.speaker === "agent" || turn.role === "assistant";
                 const turnContent = turn.content || turn.text || "";
                 const isThisPlaying = playingTurn === i;

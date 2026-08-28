@@ -19,8 +19,9 @@ import {
   cancelCalendarAppointment
 } from "./calendar";
 import { getDbIdempotencyKey, saveDbIdempotencyKey } from "./supabase";
+import { logger } from "./logger";
 
-export interface ConnectorResult<T = any> {
+export interface ConnectorResult<T = unknown> {
   success: boolean;
   connectorName: string;
   action: string;
@@ -34,7 +35,7 @@ export interface Connector {
   name: string;
   type: "calendar" | "slack" | "crm" | "sms" | "webhook";
   isEnabled(): boolean;
-  execute(action: string, params: Record<string, any>, idempotencyKey?: string): Promise<ConnectorResult>;
+  execute(action: string, params: Record<string, unknown>, idempotencyKey?: string): Promise<ConnectorResult>;
 }
 
 /**
@@ -54,9 +55,9 @@ export async function isActionIdempotent(key: string): Promise<boolean> {
   return false;
 }
 
-export async function recordActionIdempotent(key: string, responseJson: Record<string, any>): Promise<void> {
+export async function recordActionIdempotent(key: string, responseJson: Record<string, unknown>): Promise<void> {
   executedActionKeys.add(key);
-  await saveDbIdempotencyKey(key, responseJson);
+  await saveDbIdempotencyKey(key, responseJson, 200);
 }
 
 /**
@@ -72,11 +73,11 @@ export class GoogleCalendarConnector implements Connector {
 
   public async execute(
     action: string,
-    params: Record<string, any>,
+    params: Record<string, unknown>,
     idempotencyKey?: string
   ): Promise<ConnectorResult> {
-    const key = idempotencyKey ? `calendar_${action}_${idempotencyKey}` : undefined;
-    if (key && executedActionKeys.has(key)) {
+    const key = idempotencyKey ? `gcal_${action}_${idempotencyKey}` : undefined;
+    if (key && (await isActionIdempotent(key))) {
       return {
         success: true,
         connectorName: this.name,
@@ -87,94 +88,98 @@ export class GoogleCalendarConnector implements Connector {
       };
     }
 
-    try {
-      if (action === "book_appointment") {
-        const res = await bookCalendarAppointment({
-          customerName: params.customerName,
-          customerPhone: params.customerPhone,
-          serviceType: params.serviceType || "Consultation",
-          startIso: params.startIso,
-          durationMinutes: params.durationMinutes || 30,
-          notes: params.notes,
-          sourceCallId: params.sourceCallId
-        });
+    if (action === "book") {
+      const res = await bookCalendarAppointment({
+        customerName: (params.customerName as string) || "Valued Customer",
+        customerPhone: (params.customerPhone as string) || "+1-555-0100",
+        serviceType: (params.serviceType as string) || "Consultation Follow-up",
+        startIso: (params.startIso as string) || new Date(Date.now() + 86400000).toISOString(),
+        durationMinutes: (params.durationMinutes as number) || 30,
+        sourceCallId: params.sourceCallId as string | undefined,
+        notes: params.notes as string | undefined,
+        branchId: (params.branchId as string) || "loc_downtown"
+      });
 
-        if (key) executedActionKeys.add(key);
-        return {
-          success: res.success,
-          connectorName: this.name,
-          action,
-          data: res.event,
-          error: res.error,
-          idempotencyKey,
-          timestamp: new Date().toISOString()
-        };
-      }
-
-      if (action === "query_availability") {
-        const slots = await getAvailableSlots(params.dateIso, params.durationMinutes);
-        return {
-          success: true,
-          connectorName: this.name,
-          action,
-          data: slots,
-          idempotencyKey,
-          timestamp: new Date().toISOString()
-        };
-      }
-
-      if (action === "cancel_appointment") {
-        const res = await cancelCalendarAppointment(params.eventId, params.verificationPhone);
-        if (key) executedActionKeys.add(key);
-        return {
-          success: res.success,
-          connectorName: this.name,
-          action,
-          error: res.error,
-          idempotencyKey,
-          timestamp: new Date().toISOString()
-        };
+      if (key && res.success) {
+        await recordActionIdempotent(key, { ...res });
       }
 
       return {
-        success: false,
+        success: res.success,
         connectorName: this.name,
         action,
-        error: `Unsupported calendar action: ${action}`,
-        timestamp: new Date().toISOString()
-      };
-    } catch (err: any) {
-      return {
-        success: false,
-        connectorName: this.name,
-        action,
-        error: err.message || String(err),
+        data: res.event,
+        error: res.error,
+        idempotencyKey,
         timestamp: new Date().toISOString()
       };
     }
+
+    if (action === "available_slots") {
+      const slots = await getAvailableSlots(
+        (params.dateIso as string) || new Date().toISOString(),
+        (params.durationMinutes as number) || 30,
+        (params.branchId as string) || "loc_downtown"
+      );
+
+      return {
+        success: true,
+        connectorName: this.name,
+        action,
+        data: { slots },
+        idempotencyKey,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    if (action === "cancel" || action === "delete") {
+      const res = await deleteCalendarAppointment(
+        (params.eventId as string) || "",
+        (params.branchId as string) || "loc_downtown"
+      );
+
+      if (key && res.success) {
+        await recordActionIdempotent(key, { ...res });
+      }
+
+      return {
+        success: res.success,
+        connectorName: this.name,
+        action,
+        error: res.error,
+        idempotencyKey,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    return {
+      success: false,
+      connectorName: this.name,
+      action,
+      error: `Unknown action '${action}' for Google Calendar connector`,
+      timestamp: new Date().toISOString()
+    };
   }
 }
 
 /**
- * 2. Slack Webhook Notification Connector
+ * 2. Slack Team Alert Connector
  */
-export class SlackWebhookConnector implements Connector {
-  public name = "Slack Notifications";
+export class SlackAlertConnector implements Connector {
+  public name = "Slack Ops Alerts";
   public type = "slack" as const;
 
   public isEnabled(): boolean {
-    return Boolean(process.env.SLACK_WEBHOOK_URL);
+    return Boolean(process.env.SLACK_WEBHOOK_URL || process.env.DEMO_MODE === "true");
   }
 
   public async execute(
     action: string,
-    params: Record<string, any>,
+    params: Record<string, unknown>,
     idempotencyKey?: string
   ): Promise<ConnectorResult> {
-    const webhookUrl = process.env.SLACK_WEBHOOK_URL;
     const key = idempotencyKey ? `slack_${action}_${idempotencyKey}` : undefined;
-
-    if (key && executedActionKeys.has(key)) {
+    if (key && (await isActionIdempotent(key))) {
       return {
         success: true,
         connectorName: this.name,
@@ -185,14 +190,15 @@ export class SlackWebhookConnector implements Connector {
       };
     }
 
+    const webhookUrl = process.env.SLACK_WEBHOOK_URL;
     const payload = {
-      text: `📞 *[RELAY Telephony Alert]*: ${params.title || "New Voice Interaction"}`,
+      text: (params.text as string) || `[RELAY Event] New voice triage action completed: ${params.title || "Inbound Call"}`,
       blocks: [
         {
           type: "section",
           text: {
             type: "mrkdwn",
-            text: `*${params.title || "Voice Interaction Update"}*\n*Caller*: ${params.callerName || "Unknown"} (${params.callerPhone || "—"})\n*Branch*: ${params.branchName || "Main Node"}\n*Outcome*: \`${params.outcome || "Completed"}\`\n*Summary*: ${params.summary || "No notes provided."}`
+            text: `*${(params.title as string) || "Voice Interaction Update"}*\n*Caller*: ${(params.callerName as string) || "Unknown"} (${(params.callerPhone as string) || "—"})\n*Branch*: ${(params.branchName as string) || "Main Node"}\n*Outcome*: \`${(params.outcome as string) || "Completed"}\`\n*Summary*: ${(params.summary as string) || "No notes provided."}`
           }
         }
       ]
@@ -200,7 +206,7 @@ export class SlackWebhookConnector implements Connector {
 
     if (!webhookUrl) {
       // Local simulation log when SLACK_WEBHOOK_URL is not set
-      console.log("[Slack Connector] (Simulation - Webhook URL not set):", JSON.stringify(payload));
+      logger.info("[Slack Connector] (Simulation - Webhook URL not set)", payload);
       if (key) executedActionKeys.add(key);
       return {
         success: true,
@@ -238,12 +244,13 @@ export class SlackWebhookConnector implements Connector {
         idempotencyKey,
         timestamp: new Date().toISOString()
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
       return {
         success: false,
         connectorName: this.name,
         action,
-        error: err.message || String(err),
+        error: errMsg,
         timestamp: new Date().toISOString()
       };
     }
@@ -263,7 +270,7 @@ export class CrmLeadConnector implements Connector {
 
   public async execute(
     action: string,
-    params: Record<string, any>,
+    params: Record<string, unknown>,
     idempotencyKey?: string
   ): Promise<ConnectorResult> {
     const key = idempotencyKey ? `crm_${action}_${idempotencyKey}` : undefined;
@@ -290,7 +297,7 @@ export class CrmLeadConnector implements Connector {
       created_at: new Date().toISOString()
     };
 
-    console.log("[CRM Connector] Ingested Lead Record:", leadRecord);
+    logger.info("[CRM Connector] Ingested Lead Record", leadRecord);
     if (key) executedActionKeys.add(key);
 
     return {
@@ -304,89 +311,119 @@ export class CrmLeadConnector implements Connector {
   }
 }
 
-// Connector Registry Singleton
+// ─── Connector Registry & Pipeline Dispatcher ────────────────────────────────
+
 export const activeConnectors: Connector[] = [
   new GoogleCalendarConnector(),
-  new SlackWebhookConnector(),
+  new SlackAlertConnector(),
   new CrmLeadConnector()
 ];
 
 /**
- * 4. Post-Call Action Pipeline
- * Runs all configured connectors independently upon call completion.
+ * Runs the post-call action pipeline asynchronously.
+ * Guaranteed not to throw or fail the primary call record sync.
  */
 export async function runPostCallActionPipeline(
-  call: Partial<CallRecord>,
+  callRecord: CallRecord,
   outcome: StructuredCallOutcome,
-  locationName = "Main Branch"
+  branchName = "Main Node"
 ): Promise<ConnectorResult[]> {
   const results: ConnectorResult[] = [];
-  const idempotencyKey = call.id || `call_${Date.now()}`;
-  const callerName = call.patientName || "Valued Customer";
-  const callerPhone = call.phoneNumber || "+15550000000";
+  const idempotencyBase = `${callRecord.id}_pipeline`;
 
-  // 1. Google Calendar Connector (if booked)
+  // 1. Google Calendar Slot Reservation (if booked)
   if (outcome.appointment?.booked && outcome.appointment.datetime) {
-    const calConn = activeConnectors.find((c) => c.type === "calendar");
-    if (calConn && calConn.isEnabled()) {
-      const res = await calConn.execute(
-        "book_appointment",
-        {
-          customerName: callerName,
-          customerPhone: callerPhone,
-          serviceType: outcome.appointment.service_type || "Consultation",
-          startIso: outcome.appointment.datetime,
-          sourceCallId: call.id,
-          notes: outcome.notes
-        },
-        idempotencyKey
-      );
-      results.push(res);
+    const calConnector = activeConnectors.find((c) => c.type === "calendar");
+    if (calConnector && calConnector.isEnabled()) {
+      try {
+        const res = await calConnector.execute(
+          "book",
+          {
+            customerName: callRecord.patientName,
+            customerPhone: callRecord.phoneNumber,
+            serviceType: outcome.appointment.service_type || "Triage Consultation",
+            startIso: outcome.appointment.datetime,
+            sourceCallId: callRecord.id,
+            notes: outcome.notes,
+            branchId: callRecord.locationId
+          },
+          `${idempotencyBase}_cal`
+        );
+        results.push(res);
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        results.push({
+          success: false,
+          connectorName: "Google Calendar",
+          action: "book",
+          error: errMsg,
+          timestamp: new Date().toISOString()
+        });
+      }
     }
   }
 
-  // 2. Slack Notification Connector
-  const slackConn = activeConnectors.find((c) => c.type === "slack");
-  if (slackConn && slackConn.isEnabled()) {
-    const isUrgent = outcome.outcome === "escalated_urgent";
-    const isBooked = outcome.appointment?.booked;
-    const title = isUrgent
-      ? `🚨 URGENT ESCALATION: ${callerName}`
-      : isBooked
-      ? `📅 Confirmed Booking: ${callerName}`
-      : `📞 Call Resolved: ${callerName}`;
-
-    const res = await slackConn.execute(
-      "notify_channel",
-      {
-        title,
-        callerName,
-        callerPhone,
-        branchName: locationName,
-        outcome: outcome.outcome,
-        summary: outcome.notes
-      },
-      idempotencyKey
-    );
-    results.push(res);
+  // 2. CRM Lead Recording
+  const crmConnector = activeConnectors.find((c) => c.type === "crm");
+  if (crmConnector && crmConnector.isEnabled()) {
+    try {
+      const res = await crmConnector.execute(
+        "ingest",
+        {
+          callerName: callRecord.patientName,
+          callerPhone: callRecord.phoneNumber,
+          sentiment: outcome.sentiment,
+          appointmentBooked: outcome.appointment?.booked,
+          serviceType: outcome.appointment?.service_type,
+          notes: outcome.notes
+        },
+        `${idempotencyBase}_crm`
+      );
+      results.push(res);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      results.push({
+        success: false,
+        connectorName: "CRM Lead Bridge",
+        action: "ingest",
+        error: errMsg,
+        timestamp: new Date().toISOString()
+      });
+    }
   }
 
-  // 3. CRM Lead Connector
-  const crmConn = activeConnectors.find((c) => c.type === "crm");
-  if (crmConn && crmConn.isEnabled()) {
-    const res = await crmConn.execute(
-      "create_or_update_lead",
-      {
-        callerName,
-        callerPhone,
-        sentiment: outcome.sentiment,
-        appointmentBooked: outcome.appointment?.booked,
-        serviceType: outcome.appointment?.service_type,
-        notes: outcome.notes
-      },
-      idempotencyKey
-    );
-    results.push(res);
+  // 3. Slack Ops Notification (For urgent triage or successful bookings)
+  const slackConnector = activeConnectors.find((c) => c.type === "slack");
+  if (slackConnector && slackConnector.isEnabled()) {
+    const isUrgent = outcome.sentiment === "frustrated" || outcome.sentiment === "distressed" || outcome.callback?.requested;
+    const isBooked = Boolean(outcome.appointment?.booked);
+
+    if (isUrgent || isBooked) {
+      try {
+        const res = await slackConnector.execute(
+          "post_alert",
+          {
+            title: isUrgent ? "🚨 Urgent Telephony Callback Alert" : "📅 Confirmed Appointment Booked",
+            callerName: callRecord.patientName,
+            callerPhone: callRecord.phoneNumber,
+            branchName,
+            outcome: isUrgent ? "Callback Required" : "Booked",
+            summary: outcome.notes || callRecord.summary
+          },
+          `${idempotencyBase}_slack`
+        );
+        results.push(res);
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        results.push({
+          success: false,
+          connectorName: "Slack Ops Alerts",
+          action: "post_alert",
+          error: errMsg,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
   }
 
   return results;

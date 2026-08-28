@@ -1,4 +1,5 @@
 import { Department, LanguageCode } from "./types";
+import { logger } from "./logger";
 
 export type IndustryDomain = string;
 
@@ -154,8 +155,8 @@ export function getSavedWorkspaces(): Record<string, DomainConfig> {
       const customMap = JSON.parse(raw);
       return { ...DOMAINS, ...customMap };
     }
-  } catch (e) {
-    console.warn("Failed to load custom workspaces", e);
+  } catch (e: unknown) {
+    logger.warn("Failed to load custom workspaces", e);
   }
   return DOMAINS;
 }
@@ -171,8 +172,8 @@ export function saveCustomWorkspace(config: DomainConfig): void {
       const existing = raw ? JSON.parse(raw) : {};
       existing[config.id] = config;
       localStorage.setItem("relay_custom_workspaces", JSON.stringify(existing));
-    } catch (e) {
-      console.warn("Failed to save custom workspace", e);
+    } catch (e: unknown) {
+      logger.warn("Failed to save custom workspace", e);
     }
   }
 }
@@ -230,8 +231,8 @@ export function deleteWorkspace(workspaceId: string): void {
         delete existing[workspaceId];
         localStorage.setItem("relay_custom_workspaces", JSON.stringify(existing));
       }
-    } catch (e) {
-      console.warn("Failed to delete custom workspace", e);
+    } catch (e: unknown) {
+      logger.warn("Failed to delete custom workspace", e);
     }
   }
 }

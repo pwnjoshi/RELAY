@@ -12,6 +12,7 @@ import { ClinicFleetCard } from "@/components/ClinicFleetCard";
 import { WebRAGKnowledgeCard } from "@/components/WebRAGKnowledgeCard";
 import { AuthGuard } from "@/components/AuthGuard";
 import { ConsoleSkeleton } from "@/components/ConsoleSkeleton";
+import { logger } from "@/lib/logger";
 import { CallRecord, ClinicLocation, DashboardStats, RecallPatient, Department } from "@/lib/types";
 import { Icons } from "@/components/Icons";
 import { useConsole } from "@/lib/console-context";
@@ -72,7 +73,7 @@ export default function DashboardPage() {
         if (d.user) setCurrentUser(d.user);
       }
     } catch (err) {
-      console.error("Error fetching dashboard data:", err);
+      logger.error("Error fetching dashboard data:", err);
     }
   }, []);
 

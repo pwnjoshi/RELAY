@@ -104,9 +104,10 @@ export async function POST(req: Request) {
               item.notes = res.error || "Failed to dispatch";
               campaign.completedCount += 1;
             }
-          } catch (e: any) {
+          } catch (e: unknown) {
+            const errorMsg = e instanceof Error ? e.message : String(e);
             item.status = "failed";
-            item.notes = e.message;
+            item.notes = errorMsg;
             campaign.completedCount += 1;
           }
 
@@ -135,7 +136,8 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(responsePayload);
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: errorMsg }, { status: 500 });
   }
 }

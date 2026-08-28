@@ -9,6 +9,7 @@ import { Icons } from "@/components/Icons";
 import { useCurrency } from "@/lib/currency";
 import { ConsoleSkeleton } from "@/components/ConsoleSkeleton";
 import { AuthGuard } from "@/components/AuthGuard";
+import { logger } from "@/lib/logger";
 
 export default function BillingPage() {
   const { formatPrice, currencyConfig } = useCurrency();
@@ -35,7 +36,7 @@ export default function BillingPage() {
         setLocations(d.locations || []);
       }
     } catch (err) {
-      console.error("Error loading billing data:", err);
+      logger.error("Error loading billing data:", err);
     }
   }, []);
 

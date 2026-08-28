@@ -3,11 +3,12 @@ import { store } from "@/lib/store";
 import { parseRestCallOutcome } from "@/lib/calle-client";
 import { analyzeCallTranscript } from "@/lib/ai-analyzer";
 import { runPostCallActionPipeline } from "@/lib/connectors";
-import type { CallRecord } from "@/lib/types";
+import type { CallRecord, ClinicLocation } from "@/lib/types";
+import { logger } from "@/lib/logger";
 import fs from "fs";
 import path from "path";
 
-function getLocations() {
+function getLocations(): ClinicLocation[] {
   const locPath = path.resolve(process.cwd(), "data/locations.json");
   return JSON.parse(fs.readFileSync(locPath, "utf-8"));
 }
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
     const eventId = req.headers.get("CALL-E-Event-Id") || req.headers.get("call-e-event-id");
     const payload = await req.json();
 
-    console.log(`[CALL-E Webhook] Received event ${eventId || payload.id} (type: ${payload.type})`);
+    logger.info(`[CALL-E Webhook] Received event ${eventId || payload.id} (type: ${payload.type})`);
 
     const callTask = payload.data || payload;
     const callId = callTask.metadata?.call_id || callTask.id;
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
     const callType = (callTask.metadata?.call_type || "inbound_overflow") as "inbound_overflow" | "outbound_recall";
 
     const locations = getLocations();
-    const location = locations.find((l: any) => l.id === locationId) || locations[0];
+    const location = locations.find((l: ClinicLocation) => l.id === locationId) || locations[0];
 
     const structuredOutcome = parseRestCallOutcome(callTask, {
       callId,
@@ -51,8 +52,9 @@ export async function POST(req: Request) {
       if (transcriptText) {
         aiIntelligence = await analyzeCallTranscript(transcriptText, callerName, location.name);
       }
-    } catch (aiErr: any) {
-      console.warn("[CALL-E Webhook] AI intelligence skipped on error:", aiErr.message);
+    } catch (aiErr: unknown) {
+      const errMsg = aiErr instanceof Error ? aiErr.message : String(aiErr);
+      logger.warn(`[CALL-E Webhook] AI intelligence skipped on error: ${errMsg}`);
     }
 
     const recordingUrl =
@@ -96,14 +98,15 @@ export async function POST(req: Request) {
 
     // Run Post-Call Action Pipeline (Google Calendar, Slack, CRM)
     try {
-      await runPostCallActionPipeline(updatedRecord as any, structuredOutcome, location.name);
-    } catch (pipelineErr) {
-      console.warn("[CALL-E Webhook] Connector pipeline warning:", pipelineErr);
+      await runPostCallActionPipeline(updatedRecord, structuredOutcome, location.name);
+    } catch (pipelineErr: unknown) {
+      logger.warn("[CALL-E Webhook] Connector pipeline warning:", pipelineErr);
     }
 
     return NextResponse.json({ ok: true, received: true, callId });
-  } catch (err: any) {
-    console.error("[CALL-E Webhook] Processing error:", err);
-    return NextResponse.json({ ok: false, error: err.message || "Failed to process webhook" }, { status: 400 });
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    logger.error("[CALL-E Webhook] Processing error:", err);
+    return NextResponse.json({ ok: false, error: errMsg || "Failed to process webhook" }, { status: 400 });
   }
 }

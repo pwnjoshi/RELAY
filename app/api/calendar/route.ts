@@ -42,8 +42,9 @@ export async function GET(req: NextRequest) {
       events: getAllCalendarEvents(branchId),
       auditTrail: getCalendarAuditTrail(branchId)
     });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: errorMsg }, { status: 500 });
   }
 }
 
@@ -103,7 +104,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ ok: false, error: "Invalid action." }, { status: 400 });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: errorMsg }, { status: 500 });
   }
 }

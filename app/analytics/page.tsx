@@ -9,6 +9,8 @@ import { Icons } from "@/components/Icons";
 import { AuthGuard } from "@/components/AuthGuard";
 import { ConsoleSkeleton } from "@/components/ConsoleSkeleton";
 
+import { logger } from "@/lib/logger";
+
 export default function AnalyticsPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [locations, setLocations] = useState<ClinicLocation[]>([]);
@@ -30,7 +32,7 @@ export default function AnalyticsPage() {
         setLocations(d.locations || []);
       }
     } catch (err) {
-      console.error("Error loading analytics:", err);
+      logger.error("Error loading analytics:", err);
     }
   }, []);
 

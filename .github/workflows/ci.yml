@@ -38,3 +38,6 @@ jobs:
         run: npm test
         env:
           JWT_SECRET: relay-ci-pipeline-secure-test-secret-key-32-chars-minimum
+          CALLE_API_KEY: ci_mock_calle_key
+          AWS_REGION: us-east-1
+          DEMO_MODE: "true"

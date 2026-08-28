@@ -19,6 +19,7 @@ import {
   deleteDbCalendarConnection,
   DbCalendarConnection
 } from "./supabase";
+import { logger } from "./logger";
 
 export interface CalendarEvent {
   id: string;
@@ -130,8 +131,8 @@ export function decryptSecret(encryptedPayload: string): string | null {
     let decrypted = decipher.update(encrypted, "hex", "utf8");
     decrypted += decipher.final("utf8");
     return decrypted;
-  } catch (err) {
-    console.error("[Crypto Error] Failed to decrypt token payload:", err);
+  } catch (err: unknown) {
+    logger.error("[Crypto Error] Failed to decrypt token payload:", err);
     return null;
   }
 }
@@ -194,17 +195,17 @@ export async function getCalendarConfig(branchId = "loc_downtown"): Promise<Cale
     };
   }
 
-  const configJson = (conn.config_json as any) || {};
+  const configJson = (conn.config_json as Record<string, unknown>) || {};
 
   return {
     connected: true,
     branchId,
     calendarEmail: conn.google_email || "connected@relay.ai",
-    syncIntervalSeconds: configJson.syncIntervalSeconds || 30,
+    syncIntervalSeconds: (configJson.syncIntervalSeconds as number) || 30,
     strictFreeBusyMasking: configJson.strictFreeBusyMasking !== false,
-    bufferMinutes: configJson.bufferMinutes || 15,
-    workingHoursStart: configJson.workingHoursStart || "09:00",
-    workingHoursEnd: configJson.workingHoursEnd || "18:00",
+    bufferMinutes: (configJson.bufferMinutes as number) || 15,
+    workingHoursStart: (configJson.workingHoursStart as string) || "09:00",
+    workingHoursEnd: (configJson.workingHoursEnd as string) || "18:00",
     allowReschedule: configJson.allowReschedule !== false,
     googleCalendarId: conn.calendar_id || "primary",
     encryptedRefreshToken: conn.encrypted_refresh_token,
@@ -332,8 +333,9 @@ export async function exchangeGoogleOAuthCode(params: {
     });
 
     return { success: true, email: userEmail, branchId };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Failed to exchange Google OAuth code" };
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    return { success: false, error: errMsg || "Failed to exchange Google OAuth code" };
   }
 }
 
@@ -386,8 +388,8 @@ export async function getValidGoogleAccessToken(branchId = "loc_downtown"): Prom
       });
       return data.access_token;
     }
-  } catch (err) {
-    console.error(`[Google Calendar] Token refresh failed for branch ${branchId}:`, err);
+  } catch (err: unknown) {
+    logger.error(`[Google Calendar] Token refresh failed for branch ${branchId}:`, err);
   }
 
   return conn.access_token || null;
@@ -428,14 +430,14 @@ export async function getAvailableSlots(
         const fbData = await fbRes.json();
         const calData = fbData.calendars?.[config.googleCalendarId || "primary"];
         if (calData?.busy) {
-          busyIntervals = calData.busy.map((b: any) => ({
+          busyIntervals = calData.busy.map((b: { start: string; end: string }) => ({
             start: new Date(b.start).getTime(),
             end: new Date(b.end).getTime()
           }));
         }
       }
-    } catch (err) {
-      console.warn(`[Google Calendar] FreeBusy API error for ${branchId}:`, err);
+    } catch (err: unknown) {
+      logger.warn(`[Google Calendar] FreeBusy API error for ${branchId}:`, err);
     }
   }
 
@@ -535,8 +537,8 @@ export async function bookCalendarAppointment(params: {
         const gData = await gRes.json();
         googleEventId = gData.id;
       }
-    } catch (err) {
-      console.warn(`[Google Calendar] Live insert failed for branch ${branchId}:`, err);
+    } catch (err: unknown) {
+      logger.warn(`[Google Calendar] Live insert failed for branch ${branchId}:`, err);
     }
   }
 
@@ -595,8 +597,8 @@ export async function deleteCalendarAppointment(
           headers: { Authorization: `Bearer ${accessToken}` }
         }
       );
-    } catch (err) {
-      console.warn(`[Google Calendar] Live delete failed for branch ${branchId}:`, err);
+    } catch (err: unknown) {
+      logger.warn(`[Google Calendar] Live delete failed for branch ${branchId}:`, err);
     }
   }
 
@@ -634,8 +636,8 @@ export async function processPostCallScheduling(
 
   if (outcome.appointment?.booked && outcome.appointment.datetime) {
     const res = await bookCalendarAppointment({
-      customerName: (outcome as any).patient_name || outcome.notes || "Valued Caller",
-      customerPhone: (outcome as any).phone_number || "+1-555-0100",
+      customerName: outcome.notes?.split(".")[0] || "Valued Caller",
+      customerPhone: "+1-555-0100",
       serviceType: outcome.appointment.service_type || "Follow-up Consultation",
       startIso: outcome.appointment.datetime,
       sourceCallId: outcome.call_id,

@@ -6,6 +6,8 @@
  * Governed by LOG_LEVEL environment variable (default: 'info').
  */
 
+/* eslint-disable no-console */
+
 type LogLevel = "debug" | "info" | "warn" | "error" | "silent";
 
 const LOG_LEVELS: Record<LogLevel, number> = {
@@ -17,7 +19,9 @@ const LOG_LEVELS: Record<LogLevel, number> = {
 };
 
 function getActiveLogLevel(): number {
-  const envLevel = (process.env.LOG_LEVEL || "info").toLowerCase() as LogLevel;
+  const envLevel = (typeof process !== "undefined" && process.env?.LOG_LEVEL
+    ? process.env.LOG_LEVEL.toLowerCase()
+    : "info") as LogLevel;
   return LOG_LEVELS[envLevel] || LOG_LEVELS.info;
 }
 
@@ -73,7 +77,8 @@ export function sanitizeLogData<T = unknown>(data: T): T {
       lowerKey.includes("secret") ||
       lowerKey.includes("token") ||
       lowerKey.includes("jwt") ||
-      lowerKey.includes("refreshtoken")
+      lowerKey.includes("refreshtoken") ||
+      lowerKey.includes("authorization")
     ) {
       sanitized[k] = "[REDACTED_SECRET]";
     } else if (lowerKey.includes("phone") || lowerKey === "phonenumber" || lowerKey === "to") {
@@ -99,22 +104,38 @@ function formatMessage(prefix: string, message: string, meta?: unknown): string 
   return `[${timestamp}] [${prefix}] ${message}`;
 }
 
+function writeOutput(level: "debug" | "info" | "warn" | "error", formatted: string): void {
+  if (typeof process !== "undefined" && process.stdout?.write && process.stderr?.write) {
+    if (level === "error" || level === "warn") {
+      process.stderr.write(formatted + "\n");
+    } else {
+      process.stdout.write(formatted + "\n");
+    }
+  } else {
+    // Browser fallback
+    if (level === "error") console.error(formatted);
+    else if (level === "warn") console.warn(formatted);
+    else if (level === "info") console.info(formatted);
+    else console.debug(formatted);
+  }
+}
+
 export const logger = {
   debug(message: string, meta?: unknown): void {
     if (getActiveLogLevel() <= LOG_LEVELS.debug) {
-      process.stdout.write(formatMessage("DEBUG", message, meta) + "\n");
+      writeOutput("debug", formatMessage("DEBUG", message, meta));
     }
   },
 
   info(message: string, meta?: unknown): void {
     if (getActiveLogLevel() <= LOG_LEVELS.info) {
-      process.stdout.write(formatMessage("INFO", message, meta) + "\n");
+      writeOutput("info", formatMessage("INFO", message, meta));
     }
   },
 
   warn(message: string, meta?: unknown): void {
     if (getActiveLogLevel() <= LOG_LEVELS.warn) {
-      process.stderr.write(formatMessage("WARN", message, meta) + "\n");
+      writeOutput("warn", formatMessage("WARN", message, meta));
     }
   },
 
@@ -124,7 +145,7 @@ export const logger = {
       if (error instanceof Error) {
         errMeta = { name: error.name, message: error.message, stack: error.stack };
       }
-      process.stderr.write(formatMessage("ERROR", message, errMeta) + "\n");
+      writeOutput("error", formatMessage("ERROR", message, errMeta));
     }
   }
 };

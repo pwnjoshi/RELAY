@@ -45,7 +45,7 @@ const TOUR_STEPS: TourStep[] = [
     actionCallback: "open_trigger",
     highlights: [
       "Sub-140ms voice generation turn-around",
-      "Dynamic rate limiter: 3 calls/day demo & 8 calls/day auth",
+      "Durable rate limiter: 2 calls/day with Supabase sync & unlimited dev testing",
       "Natural conversational cadence (<20 words/turn)"
     ],
     metrics: [

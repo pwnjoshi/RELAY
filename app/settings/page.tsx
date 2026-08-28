@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/lib/logger";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { TriggerModal } from "@/components/TriggerModal";
@@ -48,7 +49,7 @@ export default function SettingsPage() {
         setGcalEvents(d.events || []);
       }
     } catch (err) {
-      console.error("Error loading branch calendar:", err);
+      logger.error("Error loading branch calendar:", err);
     }
   }, []);
 
@@ -74,7 +75,7 @@ export default function SettingsPage() {
       }
       await fetchCalendarForBranch(selectedBranchId);
     } catch (err) {
-      console.error("Error loading settings:", err);
+      logger.error("Error loading settings:", err);
     }
   }, [fetchCalendarForBranch, selectedBranchId]);
 
@@ -111,7 +112,7 @@ export default function SettingsPage() {
         setGcalConfig(d.config);
       }
     } catch (err) {
-      console.error("Failed to toggle masking:", err);
+      logger.error("Failed to toggle masking:", err);
     }
   };
 
@@ -129,7 +130,7 @@ export default function SettingsPage() {
         fetchCalendarForBranch(selectedBranchId);
       }
     } catch (err) {
-      console.error("Failed to disconnect calendar:", err);
+      logger.error("Failed to disconnect calendar:", err);
     }
   };
 
@@ -165,7 +166,7 @@ export default function SettingsPage() {
         setTimeout(() => setBookingSuccessMsg(""), 4000);
       }
     } catch (err) {
-      console.error("Simulated booking failed:", err);
+      logger.error("Simulated booking failed:", err);
     }
   };
 

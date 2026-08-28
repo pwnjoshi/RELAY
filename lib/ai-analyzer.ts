@@ -6,6 +6,7 @@
 
 import { analyzeCallTranscriptWithBedrock, PostCallIntelligence } from "./bedrock-ai";
 import { analyzeCallTranscriptWithDeepSeek } from "./nebius-ai";
+import { logger } from "./logger";
 
 export async function analyzeCallTranscript(
   transcript: string,
@@ -19,8 +20,9 @@ export async function analyzeCallTranscript(
   if (provider === "bedrock" && (process.env.AWS_ACCESS_KEY_ID || process.env.AWS_REGION)) {
     try {
       return await analyzeCallTranscriptWithBedrock(transcript, callerName, businessName);
-    } catch (err: any) {
-      console.warn("[Bedrock AI] Bedrock analysis failed, evaluating fallback:", err.message);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logger.warn(`[Bedrock AI] Bedrock analysis failed, evaluating fallback: ${errMsg}`);
     }
   }
 
@@ -29,8 +31,9 @@ export async function analyzeCallTranscript(
     try {
       const res = await analyzeCallTranscriptWithDeepSeek(transcript, callerName, businessName);
       return { ...res, provider: "nebius_deepseek" };
-    } catch (err: any) {
-      console.warn("[Nebius DeepSeek] Nebius analysis failed:", err.message);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      logger.warn(`[Nebius DeepSeek] Nebius analysis failed: ${errMsg}`);
     }
   }
 

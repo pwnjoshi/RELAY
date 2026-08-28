@@ -78,8 +78,9 @@ function LoginForm() {
 
       const targetPath = mode === "register" ? "/onboarding" : redirectUrl;
       window.location.href = targetPath;
-    } catch (err: any) {
-      setErrorMessage(err.message || "Invalid credentials.");
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setErrorMessage(errorMsg || "Invalid credentials.");
       setIsLoading(false);
     }
   };
@@ -107,8 +108,9 @@ function LoginForm() {
       }
 
       window.location.href = redirectUrl;
-    } catch (err: any) {
-      setErrorMessage(err.message || "Authentication failed.");
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      setErrorMessage(errorMsg || "Authentication failed.");
       setIsLoading(false);
     }
   };

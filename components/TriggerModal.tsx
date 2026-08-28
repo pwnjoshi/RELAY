@@ -399,7 +399,9 @@ export function TriggerModal({
                 Initiate Voice Call
               </h3>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#1B9A9C]/10 border border-[#1B9A9C]/20 text-[#1B9A9C]">
-                {isUserLoggedIn ? "⚡ Account: 8 calls/day" : "🛡️ Demo: 3 calls/day"}
+                {typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && isUserLoggedIn
+                  ? "⚡ Localhost Admin: Unlimited calls"
+                  : "🛡️ 2 calls/day"}
               </span>
             </div>
             <p className="text-[11px] text-[#667085] dark:text-[#9BA8B8]">

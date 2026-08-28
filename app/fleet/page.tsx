@@ -7,6 +7,7 @@ import { TriggerModal } from "@/components/TriggerModal";
 import { ClinicLocation, DashboardStats } from "@/lib/types";
 import { Icons } from "@/components/Icons";
 import { AuthGuard } from "@/components/AuthGuard";
+import { logger } from "@/lib/logger";
 
 import { BranchKnowledgeModal } from "@/components/BranchKnowledgeModal";
 
@@ -32,7 +33,7 @@ export default function FleetPage() {
         setLocations(d.locations || []);
       }
     } catch (err) {
-      console.error("Error loading fleet data:", err);
+      logger.error("Error loading fleet data:", err);
     }
   }, []);
 

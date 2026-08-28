@@ -77,10 +77,11 @@ export async function POST(req: NextRequest) {
           connectedEmail: gcalConfig.calendarEmail,
           slotsCount: slots.length
         });
-      } catch (gErr: any) {
+      } catch (gErr: unknown) {
+        const errorMsg = gErr instanceof Error ? gErr.message : String(gErr);
         return NextResponse.json({
           ok: false,
-          error: `Failed to contact Google Calendar API: ${gErr.message}`,
+          error: `Failed to contact Google Calendar API: ${errorMsg}`,
           status: 502
         }, { status: 400 });
       }
@@ -118,10 +119,11 @@ export async function POST(req: NextRequest) {
           ok: true,
           message: `HubSpot CRM verified successfully. Connected to HubSpot API with contact read/write permissions. Total contacts accessible: ${hsData.total || "OK"}.`
         });
-      } catch (hsErr: any) {
+      } catch (hsErr: unknown) {
+        const errorMsg = hsErr instanceof Error ? hsErr.message : String(hsErr);
         return NextResponse.json({
           ok: false,
-          error: `Network error connecting to HubSpot API: ${hsErr.message}`,
+          error: `Network error connecting to HubSpot API: ${errorMsg}`,
           status: 502
         }, { status: 400 });
       }
@@ -160,10 +162,11 @@ export async function POST(req: NextRequest) {
           ok: true,
           message: "Slack Webhook handshake verified 200 OK! A test alert message has been delivered to your Slack channel."
         });
-      } catch (sErr: any) {
+      } catch (sErr: unknown) {
+        const errorMsg = sErr instanceof Error ? sErr.message : String(sErr);
         return NextResponse.json({
           ok: false,
-          error: `Failed to dispatch test message to Slack: ${sErr.message}`,
+          error: `Failed to dispatch test message to Slack: ${errorMsg}`,
           status: 502
         }, { status: 400 });
       }
@@ -209,10 +212,11 @@ export async function POST(req: NextRequest) {
           ok: true,
           message: `Twilio Account verified successfully: '${twData.friendly_name}' (Status: ${twData.status?.toUpperCase()}). PSTN voice & SIP trunk interconnect active.`
         });
-      } catch (tErr: any) {
+      } catch (tErr: unknown) {
+        const errorMsg = tErr instanceof Error ? tErr.message : String(tErr);
         return NextResponse.json({
           ok: false,
-          error: `Failed to connect to Twilio API: ${tErr.message}`,
+          error: `Failed to connect to Twilio API: ${errorMsg}`,
           status: 502
         }, { status: 400 });
       }
@@ -246,10 +250,11 @@ export async function POST(req: NextRequest) {
           ok: true,
           message: `Salesforce domain '${sfDomain}' verified and reachable. OAuth 2.0 Service Cloud endpoint ready.`
         });
-      } catch (sfErr: any) {
+      } catch (sfErr: unknown) {
+        const errorMsg = sfErr instanceof Error ? sfErr.message : String(sfErr);
         return NextResponse.json({
           ok: false,
-          error: `Cannot reach Salesforce domain: ${sfErr.message}`,
+          error: `Cannot reach Salesforce domain: ${errorMsg}`,
           status: 502
         }, { status: 400 });
       }
@@ -283,17 +288,19 @@ export async function POST(req: NextRequest) {
           ok: true,
           message: `FHIR HL7 Conformance endpoint verified at '${fhirEndpoint}'. HL7 FHIR R4 resource definitions active.`
         });
-      } catch (fErr: any) {
+      } catch (fErr: unknown) {
+        const errorMsg = fErr instanceof Error ? fErr.message : String(fErr);
         return NextResponse.json({
           ok: false,
-          error: `Could not connect to FHIR server: ${fErr.message}`,
+          error: `Could not connect to FHIR server: ${errorMsg}`,
           status: 502
         }, { status: 400 });
       }
     }
 
     return NextResponse.json({ ok: false, error: "Unknown integration ID." }, { status: 400 });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err.message || "Internal verification error" }, { status: 500 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: errorMsg || "Internal verification error" }, { status: 500 });
   }
 }

@@ -9,7 +9,8 @@ export async function GET(req: Request) {
     const url = getGoogleOAuthUrl({ branchId, state });
 
     return NextResponse.json({ ok: true, url, branchId });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: errorMsg }, { status: 500 });
   }
 }

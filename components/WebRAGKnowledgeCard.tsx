@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Icons } from "@/components/Icons";
+import { logger } from "@/lib/logger";
 
 interface WebRAGKnowledgeCardProps {
   onGroundingUpdated?: (knowledge: string, brand: string) => void;
@@ -24,8 +25,8 @@ export function WebRAGKnowledgeCard({ onGroundingUpdated }: WebRAGKnowledgeCardP
           if (d.knowledge.url) setUrl(d.knowledge.url);
         }
       }
-    } catch (err) {
-      console.error("Error loading stored RAG knowledge:", err);
+    } catch (err: unknown) {
+      logger.error("Error loading stored RAG knowledge:", err);
     }
   };
 
@@ -63,10 +64,11 @@ export function WebRAGKnowledgeCard({ onGroundingUpdated }: WebRAGKnowledgeCardP
           text: data.error || "Could not index website context."
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
       setStatusMsg({
         ok: false,
-        text: `Ingestion failed: ${err.message}`
+        text: `Ingestion failed: ${errMsg}`
       });
     } finally {
       setIsCrawling(false);

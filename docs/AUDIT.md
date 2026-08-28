@@ -34,14 +34,14 @@
 | `app/api/auth/refresh/route.ts` | POST | Rotate access token via refresh token | No | **Real** | Verifies refresh JWT, issues new access token, and sets refreshed cookie. |
 | `app/api/auth/register/route.ts` | POST | Register new team user | No (Public) | **Real** | Hashes password with bcrypt and registers user into authentication registry. |
 | `app/api/auth/session/route.ts` | GET | Validate active JWT session | No | **Real** | Parses `relay_access_token` cookie and returns safe user profile or unauthenticated status. |
-| `app/api/batch/route.ts` | GET/POST | Query or upload batch campaigns | Yes (`getSessionUser`) | **In-Memory Store** | Reads/writes campaigns to in-memory `SwitchboardStore`. |
+| `app/api/batch/route.ts` | GET/POST | Query or upload batch campaigns | Yes (`getSessionUser`) | **In-Memory Store** | Reads/writes campaigns to in-memory `RelayStore`. |
 | `app/api/batch/execute/route.ts` | POST | Trigger parallel calls for batch list | Yes (`getSessionUser`) | **Real External API** | Iterates over batch items and calls `createDirectCall` on CALL-E REST API. |
 | `app/api/calendar/route.ts` | GET/POST/DELETE | Free/Busy query, booking, cancellation | Partial | **Mock / In-Memory** | Generates algorithmic free/busy slots and stores bookings in in-memory map. (Upgraded in Phase 4). |
-| `app/api/call-results/route.ts` | GET | List call logs | No | **In-Memory / JSON** | Returns calls from `SwitchboardStore` (seeded from `data/sample-calls.json`). |
-| `app/api/call-results/stats/route.ts` | GET | Compute aggregate dashboard stats | No | **In-Memory Computed** | Aggregates call counts, conversion rates, and recovered revenue from `SwitchboardStore`. |
+| `app/api/call-results/route.ts` | GET | List call logs | No | **In-Memory / JSON** | Returns calls from `RelayStore` (seeded from `data/sample-calls.json`). |
+| `app/api/call-results/stats/route.ts` | GET | Compute aggregate dashboard stats | No | **In-Memory Computed** | Aggregates call counts, conversion rates, and recovered revenue from `RelayStore`. |
 | `app/api/call-results/status/route.ts` | GET | Poll live call status from carrier | No | **Real External API** | Queries `GET https://api.heycall-e.com/v1/calls/{runId}` with `CALLE_API_KEY`. |
-| `app/api/export/route.ts` | GET | Export calls as CSV or JSON | Yes (`getSessionUser`) | **Real File Generator** | Streams CSV or JSON payload generated directly from `SwitchboardStore`. |
-| `app/api/iam/route.ts` | GET/POST | Read/update current user and depts | Partial | **In-Memory Store** | Modifies in-memory `SwitchboardStore` user and department state. |
+| `app/api/export/route.ts` | GET | Export calls as CSV or JSON | Yes (`getSessionUser`) | **Real File Generator** | Streams CSV or JSON payload generated directly from `RelayStore`. |
+| `app/api/iam/route.ts` | GET/POST | Read/update current user and depts | Partial | **In-Memory Store** | Modifies in-memory `RelayStore` user and department state. |
 | `app/api/knowledge/extract/route.ts` | POST | Ingest public URL into grounded RAG | Yes (`getSessionUser`) | **Real External AI** | Fetches HTML and uses Nebius Token Factory (`DeepSeek-V4-Flash-0731`) to extract structured FAQs. |
 | `app/api/locations/route.ts` | GET/POST | Query or update branch nodes | No | **Local JSON File** | Reads and persists branch locations directly to `data/locations.json`. |
 | `app/api/trigger-overflow/route.ts` | POST | Dispatch inbound overflow voice call | No (Rate limited) | **Real External API** | Dispatches live call to `POST https://api.heycall-e.com/v1/calls` with RAG prompt. |
@@ -58,11 +58,13 @@
 | [`lib/bedrock-ai.ts`](../lib/bedrock-ai.ts) | Amazon Bedrock Claude 3.5 Sonnet / Llama 3 engine | `@aws-sdk/client-bedrock-runtime` | **Real**: Enterprise foundation model reasoning with zero data retention. |
 | [`lib/nebius-ai.ts`](../lib/nebius-ai.ts) | Client for Nebius DeepSeek-V4 neural reasoning | `fetch` | **Real**: Connects to `https://api.tokenfactory.us-central1.nebius.com/v1/`. |
 | [`lib/ai-analyzer.ts`](../lib/ai-analyzer.ts) | Unified post-call intelligence dispatcher | Bedrock / Nebius / Demo | **Real**: Switches between AWS Bedrock, Nebius, and simulated demo mode. |
-| [`lib/calendar.ts`](../lib/calendar.ts) | Multi-branch Google Calendar OAuth2 & Supabase store | REST API v3, Supabase | **Real**: Multi-location OAuth persistence, AES-256 encryption, free/busy masking. |
-| [`lib/connectors.ts`](../lib/connectors.ts) | Generic connector framework with durable idempotency | Supabase, fetch | **Real**: Decoupled connector execution with multi-tier deduplication. |
-| [`lib/rate-limiter.ts`](../lib/rate-limiter.ts) | Sliding-window in-memory quota & anti-abuse engine | None | **Real**: Tracks 24h rolling quotas (3 calls demo vs 8 calls auth). |
-| [`lib/store.ts`](../lib/store.ts) | Singleton in-memory state store seeded from JSON | `fs`, `path` | **In-Memory Store**: Reads `data/sample-calls.json` on startup. State resets on process restart. |
-| [`lib/supabase.ts`](../lib/supabase.ts) | Supabase PostgreSQL async sync client | `@supabase/supabase-js` | **Real**: Persists calls, calendar tokens per branch, and idempotency keys. |
+| [`lib/store.ts`](../lib/store.ts) | In-memory singleton store for calls, departments, campaigns | TypeScript Class | **Real / In-Memory**: Seeded from `data/sample-calls.json`. |
+| [`lib/supabase.ts`](../lib/supabase.ts) | Supabase client and sync helpers | `@supabase/ssr`, `@supabase/supabase-js` | **Real**: Syncs call records and durable serverless rate limits to Supabase. |
+| [`lib/rate-limiter.ts`](../lib/rate-limiter.ts) | Sliding-window IP and User rate limiting with Supabase | In-Memory + Supabase | **Real**: 3 calls/day demo, 8 calls/day authenticated, 15s cooldown. |
+| [`lib/idempotency.ts`](../lib/idempotency.ts) | End-to-end multi-tier idempotency manager | In-Memory TTL + Supabase | **Real**: Deduplicates single calls and batch campaigns with 24h retention. |
+| [`lib/calendar.ts`](../lib/calendar.ts) | Google Calendar OAuth, AES-256 tokens, Free/Busy | `googleapis`, `crypto` | **Real**: AES-256 multi-branch OAuth sync and Free/Busy masking. |
+| [`lib/connectors.ts`](../lib/connectors.ts) | Generic CRM and webhook connector pipeline | TypeScript Interface | **Real**: Google Calendar, Slack webhooks, CRM JSON sync. |
+| [`lib/logger.ts`](../lib/logger.ts) | Structured JSON logger with PII masking | TypeScript Module | **Real**: Replaces raw console logging with masked structured logs. |
 | [`lib/types.ts`](../lib/types.ts) | TypeScript definitions & interfaces | None | **Real**: Strong type contracts across all layers. |
 | [`lib/utils.ts`](../lib/utils.ts) | Formatting helpers (dates, currency, classes) | `clsx`, `tailwind-merge` | **Real**: Utility functions. |
 | [`lib/console-context.tsx`](../lib/console-context.tsx) | React Context Provider for frontend console state | React | **Real**: Manages workspace switching and active language in browser memory. |
@@ -112,7 +114,7 @@ RELAY currently operates on a **dual-tier persistence architecture**:
 ```
 
 1. **In-Memory Store (`lib/store.ts`)**:
-   - Holds singleton `SwitchboardStore` with arrays of `calls`, `departments`, `teamMembers`, `campaigns`, and `budget`.
+   - Holds singleton `RelayStore` with arrays of `calls`, `departments`, `teamMembers`, `campaigns`, and `budget`.
    - **Limitation in Serverless Environments (AWS Amplify / Vercel)**: In serverless environments, each Lambda container instance maintains its own memory. When an instance is recycled or multiple containers handle traffic, memory state is not shared between instances.
 2. **Local Disk Storage (`data/*.json`)**:
    - `data/locations.json`: Persists business branch locations and Grounded RAG knowledge bases.

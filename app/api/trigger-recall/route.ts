@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { store } from "@/lib/store";
 import { createDirectCall } from "@/lib/calle-client";
-import { CallRecord, LanguageCode } from "@/lib/types";
+import { CallRecord, LanguageCode, ClinicLocation } from "@/lib/types";
 import { telephonyRateLimiter, getClientIp } from "@/lib/rate-limiter";
 import { getSessionUser } from "@/lib/auth";
 import { syncCallToSupabase } from "@/lib/supabase";
 import { checkIdempotency, recordIdempotency } from "@/lib/idempotency";
+import { logger } from "@/lib/logger";
 import fs from "fs";
 import path from "path";
 
@@ -19,10 +20,27 @@ export async function POST(req: Request) {
     const user = await getSessionUser();
     const isUserLoggedIn = Boolean(user);
     const clientIp = getClientIp(req);
-    const rateLimitKey = user ? `usr_${user.id}` : `ip_${clientIp}`;
+    const host = req.headers.get("host") || "";
+    const isLocalhost =
+      host.includes("localhost") ||
+      host.includes("127.0.0.1") ||
+      clientIp === "127.0.0.1" ||
+      clientIp === "::1" ||
+      clientIp === "localhost" ||
+      process.env.NODE_ENV !== "production";
+    const isAdmin = Boolean(
+      user && (user.role === "owner" || user.role === "dept_admin" || user.role === "operator")
+    );
+    const isUnlimitedAdmin = isLocalhost && isAdmin;
+    const rateLimitKey = `quota_${clientIp}`;
 
-    // 1. Sliding Window Quota Check
-    const rateCheck = telephonyRateLimiter.check(rateLimitKey, isUserLoggedIn, 15);
+    // 1. Sliding Window Quota Check (2 calls/day shared counter, unlimited for admin on localhost)
+    const rateCheck = await telephonyRateLimiter.checkAsync(
+      rateLimitKey,
+      isUserLoggedIn,
+      15,
+      isUnlimitedAdmin
+    );
     if (!rateCheck.success) {
       return NextResponse.json(
         {
@@ -58,7 +76,7 @@ export async function POST(req: Request) {
     let location = customLocation;
     if (!location || !location.name) {
       const locations = getLocations();
-      location = locations.find((l: any) => l.id === locationId) || locations[0];
+      location = locations.find((l: ClinicLocation) => l.id === locationId) || locations[0];
     }
     const name = patientName || "Valued Customer";
     const localCallId = `call_${Date.now()}`;
@@ -133,8 +151,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(responsePayload);
-  } catch (err: any) {
-    console.error("[trigger-recall] Error:", err);
-    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    logger.error("[trigger-recall] Error:", err);
+    return NextResponse.json({ ok: false, error: errMsg }, { status: 500 });
   }
 }

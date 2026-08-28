@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { logger } from "@/lib/logger";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { TriggerModal } from "@/components/TriggerModal";
@@ -56,7 +57,7 @@ export default function BatchPage() {
         }
       }
     } catch (err) {
-      console.error("Error loading batch data:", err);
+      logger.error("Error loading batch data:", err);
     }
   }, [activeCampaign]);
 
@@ -151,7 +152,7 @@ export default function BatchPage() {
           setCampaignTitle(file.name.replace(/\.[^/.]+$/, "") + " Campaign");
         }
       } catch (err) {
-        console.error("Excel parse error:", err);
+        logger.error("Excel parse error:", err);
         alert("Failed to parse file. Please check format.");
       } finally {
         setIsUploading(false);
@@ -249,8 +250,9 @@ export default function BatchPage() {
       // Reset on successful initiation so next campaign gets a fresh key
       batchIdempotencyKeyRef.current = null;
       fetchData();
-    } catch (err: any) {
-      alert(`Error launching batch campaign: ${err.message}`);
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err);
+      alert(`Error launching batch campaign: ${errMsg}`);
     } finally {
       setIsExecuting(false);
     }

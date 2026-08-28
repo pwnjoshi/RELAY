@@ -7,6 +7,7 @@
  */
 
 import { getDbIdempotencyKey, saveDbIdempotencyKey } from "./supabase";
+import { logger } from "./logger";
 
 interface InMemoryCacheEntry {
   responseJson: Record<string, unknown>;
@@ -91,8 +92,8 @@ export async function checkIdempotency(
         statusCode: dbRecord.status_code || 200
       };
     }
-  } catch (err) {
-    console.warn("[Idempotency] Supabase cache lookup exception:", err);
+  } catch (err: unknown) {
+    logger.warn("[Idempotency] Supabase cache lookup exception:", err);
   }
 
   return { isCached: false };
@@ -122,8 +123,8 @@ export async function recordIdempotency(
   // 2. Save to durable Supabase table
   try {
     await saveDbIdempotencyKey(cleanKey, responseJson, statusCode);
-  } catch (err) {
-    console.warn("[Idempotency] Supabase cache save exception:", err);
+  } catch (err: unknown) {
+    logger.warn("[Idempotency] Supabase cache save exception:", err);
   }
 }
 

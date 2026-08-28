@@ -7,6 +7,8 @@ import { TriggerModal } from "@/components/TriggerModal";
 import { Icons } from "@/components/Icons";
 import { ClinicLocation, DashboardStats, Department, TeamMember, UserRole } from "@/lib/types";
 import { AuthGuard } from "@/components/AuthGuard";
+import { ConsoleSkeleton } from "@/components/ConsoleSkeleton";
+import { logger } from "@/lib/logger";
 
 import { useConsole } from "@/lib/console-context";
 
@@ -67,7 +69,7 @@ export default function TeamPage() {
         setCurrentUser(d.currentUser || null);
       }
     } catch (err) {
-      console.error("Error loading team data:", err);
+      logger.error("Error loading team data:", err);
     }
   }, [teamMembers.length]);
 

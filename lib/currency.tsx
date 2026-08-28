@@ -1,11 +1,12 @@
-﻿/**
+/**
  * lib/currency.ts
  * Real-Time Geo-Currency & Multi-Country Pricing Engine
  * Detects user country & timezone, provides live exchange conversions and formatted localized pricing
  */
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from "react";
+import { logger } from "./logger";
 
 export interface CurrencyConfig {
   code: string;
@@ -207,8 +208,8 @@ export function detectUserCurrency(): { code: string; detectedCountry: string } 
     if (tz.includes("Tokyo") || navLang.includes("ja")) {
       return { code: "JPY", detectedCountry: "Japan" };
     }
-  } catch (err) {
-    console.warn("Geo-currency detection error:", err);
+  } catch (err: unknown) {
+    logger.warn("Geo-currency detection error:", err);
   }
 
   return { code: "USD", detectedCountry: "Global / United States" };

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { logger } from "@/lib/logger";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
 import { TriggerModal } from "@/components/TriggerModal";
@@ -119,7 +120,7 @@ export default function IntegrationsPage() {
         }
       }
     } catch (err) {
-      console.error("Error loading integrations:", err);
+      logger.error("Error loading integrations:", err);
     }
   }, []);
 

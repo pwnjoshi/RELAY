@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { store } from "@/lib/store";
 import { getDirectCall } from "@/lib/calle-client";
+import { CallRecord } from "@/lib/types";
 
 // Map status strings from vendor to normalized UI statuses
 function normalizeStatus(raw: string): string {
@@ -12,14 +13,22 @@ function normalizeStatus(raw: string): string {
   return "queued";
 }
 
-function extractSummary(data: any): string {
-  const r = data?.recipients?.[0];
+function extractSummary(data: Record<string, unknown> | null | undefined): string {
+  const dataRec = data as {
+    summary?: string;
+    recipients?: Array<{
+      summary?: string;
+      structured_result?: { summary?: string; notes?: string };
+    }>;
+    structured_result?: { summary?: string };
+  };
+  const r = dataRec?.recipients?.[0];
   return (
-    data?.summary ||
+    dataRec?.summary ||
     r?.summary ||
     r?.structured_result?.summary ||
     r?.structured_result?.notes ||
-    data?.structured_result?.summary ||
+    dataRec?.structured_result?.summary ||
     ""
   );
 }
@@ -63,7 +72,7 @@ export async function GET(req: Request) {
 
       if (localCall) {
         store.updateCall(localCall.id, {
-          status: normalizedStatus as any,
+          status: normalizedStatus as CallRecord["status"],
           summary: summary || localCall.summary,
           completedAt: callData.completed_at || localCall.completedAt,
           recordingUrl: recordingUrl || localCall.recordingUrl,
@@ -101,7 +110,7 @@ export async function GET(req: Request) {
           const liveSummary = extractSummary(callData);
 
           store.updateCall(localCall.id, {
-            status: normalizedStatus as any,
+            status: normalizedStatus as CallRecord["status"],
             summary: liveSummary || summary,
             completedAt: callData.completed_at || localCall.completedAt
           });
@@ -133,7 +142,8 @@ export async function GET(req: Request) {
       status: "queued",
       summary: "Routing to destination carrier..."
     });
-  } catch (err: any) {
-    return NextResponse.json({ ok: true, runId, status: "queued", summary: err.message }, { status: 200 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: true, runId, status: "queued", summary: errorMsg }, { status: 200 });
   }
 }

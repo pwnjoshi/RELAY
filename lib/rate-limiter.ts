@@ -3,8 +3,8 @@
  * Production In-Memory Sliding Window Rate Limiter & Telephony Quota Engine
  * 
  * Enforces:
- * 1. Public Demo Calls (Unauthenticated): Max 3 calls per 24 hours per IP address.
- * 2. Authenticated Calls (Logged In): Max 8 calls per 24 hours per User / Account.
+ * 1. Unified Telephony Quota: 2 calls per 24 hours per network IP / session (shared counter for logged and non-logged in users).
+ * 2. Localhost Admin Exemption: In localhost / development environments, administrators have unlimited calls.
  * 3. Short Cooldown (15 seconds) between consecutive call dispatches to prevent race conditions.
  */
 
@@ -98,6 +98,7 @@ export interface RateLimitResult {
   remainingDaily: number;
   resetTime: number;
   isLoggedIn: boolean;
+  isUnlimitedAdmin?: boolean;
   reason?: "cooldown" | "daily_limit";
   error?: string;
 }
@@ -121,20 +122,35 @@ export class TelephonyQuotaRateLimiter {
   public async checkAsync(
     key: string,
     isUserLoggedIn: boolean = false,
-    cooldownSeconds: number = 15
+    cooldownSeconds: number = 15,
+    isUnlimitedAdmin: boolean = false
   ): Promise<RateLimitResult> {
+    // Localhost admin exemption
+    if (isUnlimitedAdmin) {
+      return {
+        success: true,
+        dailyLimit: 999999,
+        callsUsed: 0,
+        remainingDaily: 999999,
+        resetTime: 0,
+        isLoggedIn: true,
+        isUnlimitedAdmin: true
+      };
+    }
+
     const now = Date.now();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
     const windowStart = now - ONE_DAY_MS;
-    const dailyLimit = isUserLoggedIn ? 8 : 3;
+    const dailyLimit = 2; // Unified 2 calls per day for both logged in and non-logged in users
 
-    // Load from memory or fallback to Supabase
+    // Merge timestamps from in-memory cache and Supabase to guarantee serverless instance durability
+    const dbTimestamps = await getDbRateLimit(key);
     let record = this.store.get(key);
-    if (!record) {
-      const dbTimestamps = await getDbRateLimit(key);
-      record = { timestamps: dbTimestamps || [] };
-      this.store.set(key, record);
-    }
+    const combined = Array.from(
+      new Set([...(record?.timestamps || []), ...(dbTimestamps || [])])
+    ).sort((a, b) => a - b);
+    record = { timestamps: combined };
+    this.store.set(key, record);
 
     // Filter to calls within the last 24 hours
     record.timestamps = record.timestamps.filter((ts) => ts > windowStart);
@@ -158,14 +174,12 @@ export class TelephonyQuotaRateLimiter {
       }
     }
 
-    // 2. Check 24-hour daily quota
+    // 2. Check 24-hour daily quota (2 calls/day)
     if (record.timestamps.length >= dailyLimit) {
       const oldestCall = record.timestamps[0];
       const resetHours = Math.max(1, Math.ceil((oldestCall + ONE_DAY_MS - now) / (60 * 60 * 1000)));
 
-      const errorMessage = isUserLoggedIn
-        ? `Daily Account Quota Reached: You have reached the maximum of 8 calls per day for your account. Quota resets in ~${resetHours}h.`
-        : `Daily Demo Quota Reached: Maximum 3 test calls per day reached for your IP. Sign in to your account to unlock up to 8 calls per day.`;
+      const errorMessage = `Daily Telephony Quota Reached: Maximum 2 calls per day limit reached for this network session. Quota resets in ~${resetHours}h.`;
 
       return {
         success: false,
@@ -181,7 +195,9 @@ export class TelephonyQuotaRateLimiter {
 
     // Record this successful call in-memory and in Supabase
     record.timestamps.push(now);
-    saveDbRateLimit(key, record.timestamps).catch(() => {});
+    try {
+      await saveDbRateLimit(key, record.timestamps);
+    } catch {}
 
     return {
       success: true,
@@ -199,12 +215,25 @@ export class TelephonyQuotaRateLimiter {
   public check(
     key: string,
     isUserLoggedIn: boolean = false,
-    cooldownSeconds: number = 15
+    cooldownSeconds: number = 15,
+    isUnlimitedAdmin: boolean = false
   ): RateLimitResult {
+    if (isUnlimitedAdmin) {
+      return {
+        success: true,
+        dailyLimit: 999999,
+        callsUsed: 0,
+        remainingDaily: 999999,
+        resetTime: 0,
+        isLoggedIn: true,
+        isUnlimitedAdmin: true
+      };
+    }
+
     const now = Date.now();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
     const windowStart = now - ONE_DAY_MS;
-    const dailyLimit = isUserLoggedIn ? 8 : 3;
+    const dailyLimit = 2;
 
     let record = this.store.get(key);
     if (!record) {
@@ -235,9 +264,7 @@ export class TelephonyQuotaRateLimiter {
     if (record.timestamps.length >= dailyLimit) {
       const oldestCall = record.timestamps[0];
       const resetHours = Math.max(1, Math.ceil((oldestCall + ONE_DAY_MS - now) / (60 * 60 * 1000)));
-      const errorMessage = isUserLoggedIn
-        ? `Daily Account Quota Reached: You have reached the maximum of 8 calls per day for your account. Quota resets in ~${resetHours}h.`
-        : `Daily Demo Quota Reached: Maximum 3 test calls per day reached for your IP. Sign in to your account to unlock up to 8 calls per day.`;
+      const errorMessage = `Daily Telephony Quota Reached: Maximum 2 calls per day limit reached for this network session. Quota resets in ~${resetHours}h.`;
 
       return {
         success: false,
@@ -267,16 +294,31 @@ export class TelephonyQuotaRateLimiter {
   /**
    * Peek current quota usage without incrementing
    */
-  public getQuota(key: string, isUserLoggedIn: boolean = false): {
+  public getQuota(
+    key: string,
+    isUserLoggedIn: boolean = false,
+    isUnlimitedAdmin: boolean = false
+  ): {
     dailyLimit: number;
     callsUsed: number;
     remainingDaily: number;
     isLoggedIn: boolean;
+    isUnlimitedAdmin?: boolean;
   } {
+    if (isUnlimitedAdmin) {
+      return {
+        dailyLimit: 999999,
+        callsUsed: 0,
+        remainingDaily: 999999,
+        isLoggedIn: true,
+        isUnlimitedAdmin: true
+      };
+    }
+
     const now = Date.now();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
     const windowStart = now - ONE_DAY_MS;
-    const dailyLimit = isUserLoggedIn ? 8 : 3;
+    const dailyLimit = 2;
 
     const record = this.store.get(key);
     const activeTimestamps = (record?.timestamps || []).filter((ts) => ts > windowStart);
@@ -288,6 +330,17 @@ export class TelephonyQuotaRateLimiter {
       remainingDaily: Math.max(0, dailyLimit - callsUsed),
       isLoggedIn: isUserLoggedIn
     };
+  }
+
+  public reset(key: string): void {
+    this.store.delete(key);
+  }
+
+  public async resetAsync(key: string): Promise<void> {
+    this.store.delete(key);
+    try {
+      await saveDbRateLimit(key, []);
+    } catch {}
   }
 
   private cleanup(): void {
@@ -320,16 +373,26 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 /**
- * Extract client IP from Next.js Request headers
+ * Extract Client IP from Standard Proxy Headers
  */
 export function getClientIp(req: Request): string {
-  const forwarded = req.headers.get("x-forwarded-for");
-  if (forwarded) {
-    return forwarded.split(",")[0].trim();
+  const xForwardedFor = req.headers.get("x-forwarded-for");
+  if (xForwardedFor) {
+    const ips = xForwardedFor.split(",").map((ip) => ip.trim());
+    if (ips.length > 0 && ips[0]) {
+      return ips[0];
+    }
   }
-  const realIp = req.headers.get("x-real-ip");
-  if (realIp) {
-    return realIp.trim();
+
+  const xRealIp = req.headers.get("x-real-ip");
+  if (xRealIp) {
+    return xRealIp.trim();
   }
+
+  const cfConnectingIp = req.headers.get("cf-connecting-ip");
+  if (cfConnectingIp) {
+    return cfConnectingIp.trim();
+  }
+
   return "127.0.0.1";
 }

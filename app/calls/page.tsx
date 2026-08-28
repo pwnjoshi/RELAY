@@ -9,6 +9,7 @@ import { TriggerModal } from "@/components/TriggerModal";
 import { CallRecord, ClinicLocation, DashboardStats, RecallPatient } from "@/lib/types";
 import { AuthGuard } from "@/components/AuthGuard";
 import { ConsoleSkeleton } from "@/components/ConsoleSkeleton";
+import { logger } from "@/lib/logger";
 import { Icons } from "@/components/Icons";
 
 export default function CallsPage() {
@@ -48,7 +49,7 @@ export default function CallsPage() {
         setRecallList(d.recallList || []);
       }
     } catch (err) {
-      console.error("Error fetching calls:", err);
+      logger.error("Error fetching calls:", err);
     }
   }, []);
 

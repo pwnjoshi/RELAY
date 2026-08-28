@@ -1,4 +1,4 @@
-﻿/**
+/**
  * POST /api/auth/refresh
  * Refresh Token Rotation & Access Token Re-issuance
  */
@@ -11,6 +11,7 @@ import {
   setAuthCookies,
   REFRESH_TOKEN_COOKIE
 } from "@/lib/auth";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   try {
@@ -65,8 +66,8 @@ export async function POST(req: Request) {
         expiresIn: 900 // 15 minutes
       }
     });
-  } catch (err: any) {
-    console.error("[Token Refresh Error]:", err);
+  } catch (err: unknown) {
+    logger.error("[Token Refresh Error]:", err);
     return NextResponse.json(
       { ok: false, error: "An error occurred while refreshing your session." },
       { status: 500 }

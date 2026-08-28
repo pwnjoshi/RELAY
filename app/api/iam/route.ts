@@ -59,7 +59,8 @@ export async function POST(req: Request) {
       departments: store.getDepartments(),
       teamMembers: store.getTeamMembers()
     });
-  } catch (err: any) {
-    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: errorMsg }, { status: 500 });
   }
 }

@@ -5,9 +5,16 @@ import Link from "next/link";
 import { ClinicLocation } from "@/lib/types";
 import { Icons } from "./Icons";
 
+interface LocationStatEntry {
+  locationId?: string;
+  callsHandled?: number;
+  appointmentsBooked?: number;
+  revenue?: number;
+}
+
 interface ClinicFleetCardProps {
   locations: ClinicLocation[];
-  locationStats?: Record<string, { total: number; booked: number; revenue: number; }> | any[];
+  locationStats?: Record<string, { total: number; booked: number; revenue: number; }> | LocationStatEntry[];
 }
 
 export function ClinicFleetCard({ locations, locationStats }: ClinicFleetCardProps) {
@@ -16,7 +23,7 @@ export function ClinicFleetCard({ locations, locationStats }: ClinicFleetCardPro
       return { total: 1, booked: 1, revenue: 320 };
     }
     if (Array.isArray(locationStats)) {
-      const found = locationStats.find((s: any) => s.locationId === locId);
+      const found = (locationStats as LocationStatEntry[]).find((s) => s.locationId === locId);
       return {
         total: found?.callsHandled || 1,
         booked: found?.appointmentsBooked || 1,
