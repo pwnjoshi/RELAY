@@ -4,7 +4,8 @@ import { createDirectCall } from "@/lib/calle-client";
 import { CallRecord, LanguageCode } from "@/lib/types";
 import { telephonyRateLimiter, getClientIp } from "@/lib/rate-limiter";
 import { getSessionUser } from "@/lib/auth";
-import { getDbIdempotencyKey, saveDbIdempotencyKey, syncCallToSupabase } from "@/lib/supabase";
+import { syncCallToSupabase } from "@/lib/supabase";
+import { checkIdempotency, recordIdempotency } from "@/lib/idempotency";
 import fs from "fs";
 import path from "path";
 
@@ -12,8 +13,6 @@ function getLocations() {
   const locPath = path.resolve(process.cwd(), "data/locations.json");
   return JSON.parse(fs.readFileSync(locPath, "utf-8"));
 }
-
-const recallIdempotencyKeys = new Map<string, any>();
 
 export async function POST(req: Request) {
   try {
@@ -40,17 +39,12 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Durable Idempotency Deduplication Check (Supabase + In-Memory Fast Tier)
+    // 2. Durable Idempotency Deduplication Check (In-Memory TTL + Supabase)
     const idempotencyKey = req.headers.get("idempotency-key") || req.headers.get("Idempotency-Key");
     if (idempotencyKey) {
-      if (recallIdempotencyKeys.has(idempotencyKey)) {
-        return NextResponse.json(recallIdempotencyKeys.get(idempotencyKey));
-      }
-
-      const dbCached = await getDbIdempotencyKey(idempotencyKey);
-      if (dbCached) {
-        recallIdempotencyKeys.set(idempotencyKey, dbCached.response_json);
-        return NextResponse.json(dbCached.response_json, { status: dbCached.status_code });
+      const cached = await checkIdempotency(idempotencyKey);
+      if (cached.isCached && cached.responseJson) {
+        return NextResponse.json(cached.responseJson, { status: cached.statusCode || 200 });
       }
     }
 
@@ -135,8 +129,7 @@ export async function POST(req: Request) {
     };
 
     if (idempotencyKey) {
-      recallIdempotencyKeys.set(idempotencyKey, responsePayload);
-      await saveDbIdempotencyKey(idempotencyKey, responsePayload, 200);
+      await recordIdempotency(idempotencyKey, responsePayload, 200);
     }
 
     return NextResponse.json(responsePayload);

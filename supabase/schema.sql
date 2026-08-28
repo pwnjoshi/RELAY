@@ -206,6 +206,14 @@ CREATE TABLE IF NOT EXISTS idempotency_keys (
 
 CREATE INDEX IF NOT EXISTS idx_idempotency_created ON idempotency_keys(created_at);
 
+-- 24-hour retention cleanup function for idempotency keys
+CREATE OR REPLACE FUNCTION purge_expired_idempotency_keys()
+RETURNS void AS $$
+BEGIN
+  DELETE FROM idempotency_keys WHERE created_at < NOW() - INTERVAL '24 hours';
+END;
+$$ LANGUAGE plpgsql;
+
 -- ────────────────────────────────────────────────────────────
 -- 12. REALTIME — subscribe to live call events on the dashboard
 -- ────────────────────────────────────────────────────────────

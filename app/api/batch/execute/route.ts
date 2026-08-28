@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { store } from "@/lib/store";
 import { createDirectCall } from "@/lib/calle-client";
 import { CallRecord } from "@/lib/types";
+import { getSessionUser } from "@/lib/auth";
+import { checkIdempotency, recordIdempotency } from "@/lib/idempotency";
 import fs from "fs";
 import path from "path";
 
@@ -10,13 +12,23 @@ function getLocations() {
   return JSON.parse(fs.readFileSync(locPath, "utf-8"));
 }
 
-import { getSessionUser } from "@/lib/auth";
-
 export async function POST(req: Request) {
   try {
     const user = await getSessionUser();
     if (!user) {
-      return NextResponse.json({ ok: false, error: "Unauthorized. Session required to launch batch campaigns." }, { status: 401 });
+      return NextResponse.json(
+        { ok: false, error: "Unauthorized. Session required to launch batch campaigns." },
+        { status: 401 }
+      );
+    }
+
+    // 1. Idempotency Check (Batch Scope: 1 key = 1 entire campaign execution run)
+    const idempotencyKey = req.headers.get("idempotency-key") || req.headers.get("Idempotency-Key");
+    if (idempotencyKey) {
+      const cached = await checkIdempotency(idempotencyKey);
+      if (cached.isCached && cached.responseJson) {
+        return NextResponse.json(cached.responseJson, { status: cached.statusCode || 200 });
+      }
     }
 
     const body = await req.json();
@@ -25,6 +37,20 @@ export async function POST(req: Request) {
     const campaign = store.getBatchCampaign(campaignId);
     if (!campaign) {
       return NextResponse.json({ ok: false, error: "Campaign not found" }, { status: 404 });
+    }
+
+    // If already processing or completed, short-circuit
+    if (campaign.status === "processing" || campaign.status === "completed") {
+      const responsePayload = {
+        ok: true,
+        message: `Batch campaign already in status '${campaign.status}'.`,
+        campaign,
+        idempotentReplay: true
+      };
+      if (idempotencyKey) {
+        await recordIdempotency(idempotencyKey, responsePayload, 200);
+      }
+      return NextResponse.json(responsePayload);
     }
 
     store.updateBatchCampaign(campaignId, { status: "processing" });
@@ -98,11 +124,17 @@ export async function POST(req: Request) {
       store.updateBatchCampaign(campaignId, { status: "completed" });
     })();
 
-    return NextResponse.json({
+    const responsePayload = {
       ok: true,
       message: "Batch campaign execution started",
       campaign
-    });
+    };
+
+    if (idempotencyKey) {
+      await recordIdempotency(idempotencyKey, responsePayload, 200);
+    }
+
+    return NextResponse.json(responsePayload);
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
   }

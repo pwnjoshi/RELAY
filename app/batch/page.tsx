@@ -203,14 +203,27 @@ export default function BatchPage() {
     XLSX.writeFile(wb, "switchboard_patient_followup_template.xlsx");
   };
 
+  const batchIdempotencyKeyRef = React.useRef<string | null>(null);
+
   const handleCreateAndExecuteCampaign = async () => {
     if (parsedRows.length === 0) return;
     setIsExecuting(true);
 
+    if (!batchIdempotencyKeyRef.current) {
+      batchIdempotencyKeyRef.current =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `idemp_batch_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    }
+    const currentIdempotencyKey = batchIdempotencyKeyRef.current;
+
     try {
       const createRes = await fetch("/api/batch", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": currentIdempotencyKey
+        },
         body: JSON.stringify({
           title: campaignTitle,
           departmentId: selectedDept,
@@ -226,10 +239,15 @@ export default function BatchPage() {
 
       await fetch("/api/batch/execute", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": currentIdempotencyKey
+        },
         body: JSON.stringify({ campaignId: campaign.id })
       });
 
+      // Reset on successful initiation so next campaign gets a fresh key
+      batchIdempotencyKeyRef.current = null;
       fetchData();
     } catch (err: any) {
       alert(`Error launching batch campaign: ${err.message}`);
