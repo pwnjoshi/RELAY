@@ -106,15 +106,15 @@ export default function HowItWorksPage() {
               <button
                 key={st.num}
                 onClick={() => setActiveStage(i)}
-                className={`w-full p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 cursor-pointer ${
+                className={`w-full p-4 rounded-2xl border text-left transition-all duration-200 flex items-start gap-3.5 cursor-pointer ${
                   activeStage === i
-                    ? "bg-white dark:bg-[#10223A] border-[#1B9A9C] shadow-elevated"
-                    : "bg-[#FAFAF8] dark:bg-[#081426] border-[#E4E8E7] dark:border-[#20324A] hover:border-[#0B1930]"
+                    ? "bg-white dark:bg-[#162A48] border-[#1B9A9C]/80 shadow-[0_4px_20px_rgba(27,154,156,0.12)] dark:shadow-[0_4px_25px_rgba(0,0,0,0.4)]"
+                    : "bg-[#FAFAF8] dark:bg-[#0E1E36] border-[#E4E8E7] dark:border-[#1E324F] hover:border-[#1B9A9C]/50 hover:bg-white/60 dark:hover:bg-[#162A48]/50"
                 }`}
               >
-                <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-mono font-bold text-xs flex-shrink-0 ${
+                <span className={`w-8 h-8 rounded-xl flex items-center justify-center font-mono font-bold text-xs flex-shrink-0 transition-colors ${
                   activeStage === i
-                    ? "bg-[#0B1930] text-white"
+                    ? "bg-[#0B1930] dark:bg-[#1B9A9C] text-white"
                     : "bg-[#F3F5F4] dark:bg-[#10223A] text-[#667085] dark:text-[#9BA8B8]"
                 }`}>
                   {st.num}
@@ -126,7 +126,7 @@ export default function HowItWorksPage() {
                       {st.name}
                     </span>
                     {activeStage === i && (
-                      <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
+                      <span className="w-2 h-2 rounded-full bg-[#1B9A9C] shadow-[0_0_6px_#1B9A9C] animate-pulse" />
                     )}
                   </div>
                   <div className="font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC] truncate mt-0.5">

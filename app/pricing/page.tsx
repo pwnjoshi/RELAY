@@ -139,30 +139,32 @@ export default function PublicPricingPage() {
         </p>
 
         {/* Monthly / Annual Billing Toggle */}
-        <div className="pt-4 flex items-center justify-center gap-3">
-          <button
-            onClick={() => setBillingCycle("monthly")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              billingCycle === "monthly"
-                ? "bg-[#0B1930] text-white shadow-card"
-                : "bg-white dark:bg-[#10223A] text-[#667085] dark:text-[#9BA8B8] border border-[#E4E8E7] dark:border-[#20324A]"
-            }`}
-          >
-            Monthly Billing
-          </button>
-          <button
-            onClick={() => setBillingCycle("annual")}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
-              billingCycle === "annual"
-                ? "bg-[#0B1930] text-white shadow-card"
-                : "bg-white dark:bg-[#10223A] text-[#667085] dark:text-[#9BA8B8] border border-[#E4E8E7] dark:border-[#20324A]"
-            }`}
-          >
-            <span>Annual Billing</span>
-            <span className="px-2 py-0.5 rounded-full bg-[#16A34A] text-white text-[10px] font-mono font-bold">
-              SAVE 20%
-            </span>
-          </button>
+        <div className="pt-4 flex items-center justify-center">
+          <div className="inline-flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#F4F6F5]/90 dark:bg-[#0E1E36]/90 border border-[#E2E8E7] dark:border-[#1E324F] shadow-inner backdrop-blur-md">
+            <button
+              onClick={() => setBillingCycle("monthly")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
+                billingCycle === "monthly"
+                  ? "bg-white dark:bg-[#162A48] text-[#0B1930] dark:text-[#F8FAFC] shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_14px_rgba(0,0,0,0.35)] border border-[#E2E8E7]/90 dark:border-[#2A4368]"
+                  : "text-[#667085] dark:text-[#9BA8B8] hover:text-[#0B1930] dark:hover:text-white hover:bg-white/40 dark:hover:bg-[#162A48]/40"
+              }`}
+            >
+              Monthly Billing
+            </button>
+            <button
+              onClick={() => setBillingCycle("annual")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+                billingCycle === "annual"
+                  ? "bg-white dark:bg-[#162A48] text-[#0B1930] dark:text-[#F8FAFC] shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_14px_rgba(0,0,0,0.35)] border border-[#E2E8E7]/90 dark:border-[#2A4368]"
+                  : "text-[#667085] dark:text-[#9BA8B8] hover:text-[#0B1930] dark:hover:text-white hover:bg-white/40 dark:hover:bg-[#162A48]/40"
+              }`}
+            >
+              <span>Annual Billing</span>
+              <span className="px-2 py-0.5 rounded-full bg-[#16A34A] text-white text-[10px] font-mono font-bold shadow-sm">
+                SAVE 20%
+              </span>
+            </button>
+          </div>
         </div>
       </section>
 
