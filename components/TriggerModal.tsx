@@ -135,6 +135,9 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
 
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>("hi");
   const [extraContext, setExtraContext] = useState("Caller is requesting next available appointment for consultation.");
+  const [goalCarouselIndex, setGoalCarouselIndex] = useState(0);
+  const extraContextRef = React.useRef<HTMLTextAreaElement>(null);
+
   const [isCalling, setIsCalling] = useState(false);
   const [dispatchStep, setDispatchStep] = useState<number>(0);
   const [progressPercent, setProgressPercent] = useState<number>(0);
@@ -145,6 +148,25 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
   const idempotencyKeyRef = React.useRef<string>("");
 
   const currentGoal: AutonomousGoal | undefined = getGoalById(selectedGoalId);
+
+  const handlePrevGoal = () => {
+    setGoalCarouselIndex((prev) => (prev - 1 + AUTONOMOUS_GOALS.length) % AUTONOMOUS_GOALS.length);
+  };
+
+  const handleNextGoal = () => {
+    setGoalCarouselIndex((prev) => (prev + 1) % AUTONOMOUS_GOALS.length);
+  };
+
+  const adjustTextareaHeight = () => {
+    if (extraContextRef.current) {
+      extraContextRef.current.style.height = "auto";
+      extraContextRef.current.style.height = `${Math.max(90, extraContextRef.current.scrollHeight)}px`;
+    }
+  };
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [extraContext, isOpen]);
 
   useEffect(() => {
     if (isOpen && !idempotencyKeyRef.current) {
@@ -371,37 +393,75 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
           </button>
         </div>
 
-        {/* Goal Selection Carousel / Cards */}
+        {/* Goal Selection Carousel / Cards (Exactly 2 Visible at a Time with Arrow Navigation) */}
         {executionMode === "goal" && (
-          <div className="space-y-2">
-            <label className="block text-[11px] font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-              Select Autonomous Task Goal
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {AUTONOMOUS_GOALS.map((goal) => {
+          <div className="space-y-3 p-3.5 rounded-2xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <label className="block text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC]">
+                  Select Autonomous Task Goal
+                </label>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#1B9A9C]/10 text-[#1B9A9C] border border-[#1B9A9C]/20">
+                  {goalCarouselIndex + 1}-{Math.min(goalCarouselIndex + 2, AUTONOMOUS_GOALS.length)} of {AUTONOMOUS_GOALS.length}
+                </span>
+              </div>
+
+              {/* Navigation Arrow Controls */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handlePrevGoal}
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] hover:bg-[#1B9A9C] hover:text-white dark:hover:bg-[#1B9A9C] transition-all shadow-sm cursor-pointer"
+                  title="Previous Goals"
+                >
+                  <Icons.ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextGoal}
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] hover:bg-[#1B9A9C] hover:text-white dark:hover:bg-[#1B9A9C] transition-all shadow-sm cursor-pointer"
+                  title="Next Goals"
+                >
+                  <Icons.ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Exactly 2 Goal Cards Visible */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {[
+                AUTONOMOUS_GOALS[goalCarouselIndex],
+                AUTONOMOUS_GOALS[(goalCarouselIndex + 1) % AUTONOMOUS_GOALS.length]
+              ].map((goal) => {
                 const isSelected = selectedGoalId === goal.id;
                 return (
                   <div
                     key={goal.id}
                     onClick={() => setSelectedGoalId(goal.id)}
-                    className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all space-y-1 ${
+                    className={`p-3 rounded-xl border text-left cursor-pointer transition-all space-y-1.5 relative overflow-hidden group ${
                       isSelected
-                        ? "bg-[#1B9A9C]/10 border-[#1B9A9C] shadow-sm"
-                        : "bg-[#FAFAF8] dark:bg-[#081426] border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C]/50"
+                        ? "bg-[#1B9A9C]/10 dark:bg-[#1B9A9C]/20 border-[#1B9A9C] shadow-md ring-1 ring-[#1B9A9C]"
+                        : "bg-white dark:bg-[#10223A] border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C]/60 hover:shadow-sm"
                     }`}
                   >
+                    {isSelected && (
+                      <div className="absolute top-0 right-0 w-3.5 h-3.5 bg-[#1B9A9C] rounded-bl-lg flex items-center justify-center">
+                        <Icons.Check className="w-2.5 h-2.5 text-white" />
+                      </div>
+                    )}
                     <div className="flex items-center justify-between">
-                      <span className="text-[9px] font-bold font-mono uppercase px-1.5 py-0.5 rounded bg-[#1B9A9C]/20 text-[#1B9A9C]">
+                      <span className="text-[9px] font-bold font-mono uppercase px-2 py-0.5 rounded bg-[#1B9A9C]/20 text-[#1B9A9C]">
                         {goal.badge}
                       </span>
-                      <span className="text-[10px] text-[#667085] dark:text-[#9BA8B8] font-mono">
+                      <span className="text-[10px] text-[#667085] dark:text-[#9BA8B8] font-mono flex items-center gap-1">
+                        <Icons.Clock className="w-3 h-3 text-[#1B9A9C]" />
                         {goal.estimatedDuration}
                       </span>
                     </div>
                     <h4 className="text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC] leading-snug">
                       {goal.title}
                     </h4>
-                    <p className="text-[10px] text-[#667085] dark:text-[#9BA8B8] line-clamp-2">
+                    <p className="text-[10px] text-[#667085] dark:text-[#9BA8B8] line-clamp-2 leading-relaxed">
                       {goal.description}
                     </p>
                   </div>
@@ -409,22 +469,39 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
               })}
             </div>
 
-            {/* Selected Goal Milestone Preview */}
+            {/* Premium Enhanced Autonomous Milestone Preview UI */}
             {currentGoal && (
-              <div className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] space-y-2">
-                <div className="flex items-center justify-between text-[11px] font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-                  <span className="text-[#1B9A9C] font-mono uppercase text-[10px]">
-                    Autonomous Milestones ({currentGoal.milestones.length} steps)
-                  </span>
-                  <span className="text-[10px] text-[#667085] dark:text-[#9BA8B8]">
-                    Target: {currentGoal.targetOutcome}
-                  </span>
+              <div className="p-3.5 rounded-xl bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] space-y-2.5 shadow-sm">
+                <div className="flex items-center justify-between flex-wrap gap-1">
+                  <div className="flex items-center gap-1.5">
+                    <Icons.Activity className="w-3.5 h-3.5 text-[#1B9A9C] animate-pulse" />
+                    <span className="text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC]">
+                      Autonomous Milestones Sequence
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#1B9A9C]/10 text-[#1B9A9C] font-bold">
+                      {currentGoal.milestones.length} Steps
+                    </span>
+                  </div>
+                  <div className="text-[10px] font-medium text-[#667085] dark:text-[#9BA8B8] font-mono flex items-center gap-1">
+                    <span className="text-[#1B9A9C] font-bold">Target:</span> {currentGoal.targetOutcome}
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {currentGoal.milestones.map((m, idx) => (
-                    <div key={m.id} className="p-1.5 rounded-lg bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[10px]">
-                      <div className="font-bold text-[#1B9A9C] font-mono mb-0.5">0{idx + 1}. Step</div>
-                      <div className="text-[#0B1930] dark:text-[#F8FAFC] font-medium leading-tight">{m.title}</div>
+                    <div
+                      key={m.id}
+                      className="p-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] text-[10px] space-y-1 hover:border-[#1B9A9C]/40 transition-colors shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-[#1B9A9C] font-mono text-[9px] px-1.5 py-0.5 rounded bg-[#1B9A9C]/10 border border-[#1B9A9C]/20">
+                          Step 0{idx + 1}
+                        </span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C]" />
+                      </div>
+                      <div className="text-[#0B1930] dark:text-[#F8FAFC] font-semibold leading-tight line-clamp-2 pt-0.5">
+                        {m.title}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -675,16 +752,25 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
           </div>
 
           {/* Conversation Context / Prompt Goals */}
-          <div className="space-y-1">
-            <label className="block font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-              Task Instructions & Grounded Context
-            </label>
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="block font-bold text-[#0B1930] dark:text-[#F8FAFC]">
+                Task Instructions & Grounded Context
+              </label>
+              <span className="text-[10px] font-mono text-[#1B9A9C] font-semibold">
+                Auto-Expanding Editor
+              </span>
+            </div>
             <textarea
-              rows={2}
+              ref={extraContextRef}
               value={extraContext}
-              onChange={(e) => setExtraContext(e.target.value)}
-              placeholder="e.g. Confirm follow-up appointment or inquire about project consultation."
-              className="w-full bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl p-2.5 text-xs text-[#0B1930] dark:text-white focus:border-[#1B9A9C] outline-none resize-none leading-relaxed font-mono"
+              onChange={(e) => {
+                setExtraContext(e.target.value);
+                adjustTextareaHeight();
+              }}
+              onInput={adjustTextareaHeight}
+              placeholder="Enter detailed task instructions, specific patient context, constraints, or on-call instructions..."
+              className="w-full bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl p-3 text-xs text-[#0B1930] dark:text-white focus:border-[#1B9A9C] focus:ring-1 focus:ring-[#1B9A9C] outline-none min-h-[90px] overflow-hidden leading-relaxed font-mono transition-all"
             />
           </div>
 

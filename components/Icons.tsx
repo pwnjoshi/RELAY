@@ -266,6 +266,9 @@ export const Icons = {
       <line x1="6" y1="6" x2="18" y2="18" />
     </>
   )),
+  ChevronLeft: createHugeicon(() => (
+    <polyline points="15 18 9 12 15 6" />
+  )),
   ChevronRight: createHugeicon(() => (
     <polyline points="9 18 15 12 9 6" />
   )),
