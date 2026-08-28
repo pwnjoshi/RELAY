@@ -3,9 +3,19 @@ import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
+function getCalleApiKey(): string {
+  const key = process.env.CALLE_API_KEY;
+  if (!key) {
+    throw new Error(
+      "[MCP Bridge] Missing required environment variable: CALLE_API_KEY. Please configure CALLE_API_KEY in your environment or .env.local file."
+    );
+  }
+  return key;
+}
+
 const DEFAULT_ENV = {
   ...process.env,
-  CALLE_API_KEY: process.env.CALLE_API_KEY || "iams_live_NScWu1JCvtum6yiMl1mP_2c358c66f0f1a5556abd7159ebdec05309808c639c36d39298833d89798237d4",
+  CALLE_API_KEY: process.env.CALLE_API_KEY || "",
   CALLE_SOURCE: "skills_sh",
   CALLE_INTEGRATION: "skills_sh_skill",
   CALLE_INTEGRATION_VERSION: "0.1.0"

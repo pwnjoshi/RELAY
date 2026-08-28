@@ -4,9 +4,15 @@
  * Deep Intent Classification, and Post-Call CRM Intelligence.
  */
 
-const NEBIUS_API_KEY =
-  process.env.NEBIUS_API_KEY ||
-  "v1.CmIKHHN0YXRpY2tleS1lMDB6d3IwODY0bXpnajg5anQSIXNlcnZpY2VhY2NvdW50LWUwMGIwNjIxZ2Q1MXc2bjFuNTILCK69u9QGEJG19CY6CwitwNOfBxCAvYMUQAJaA2UwMA.AAAAAAAAAAGM54CUw6I1bxRb7AhAjLeEXdSIXt2kgQhfxv5bSQFALXoc9zDLgr0HhoolyEg1aClgvljxczHBdK-qyrP4tH8L";
+function getNebiusApiKey(): string {
+  const key = process.env.NEBIUS_API_KEY;
+  if (!key) {
+    throw new Error(
+      "[Nebius AI Client] Missing required environment variable: NEBIUS_API_KEY. Please configure NEBIUS_API_KEY in your environment or .env.local file."
+    );
+  }
+  return key;
+}
 
 const NEBIUS_BASE_URL =
   process.env.NEBIUS_BASE_URL ||
@@ -51,7 +57,7 @@ export async function callNebiusDeepSeek(options: NebiusChatOptions): Promise<st
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${NEBIUS_API_KEY}`
+      Authorization: `Bearer ${getNebiusApiKey()}`
     },
     body: JSON.stringify(body)
   });

@@ -8,9 +8,16 @@
 import { LanguageCode, SUPPORTED_LANGUAGES, StructuredCallOutcome } from "./types";
 
 const CALLE_API_BASE = "https://api.heycall-e.com/v1";
-const CALLE_API_KEY =
-  process.env.CALLE_API_KEY ||
-  "iams_live_NScWu1JCvtum6yiMl1mP_2c358c66f0f1a5556abd7159ebdec05309808c639c36d39298833d89798237d4";
+
+function getCalleApiKey(): string {
+  const key = process.env.CALLE_API_KEY;
+  if (!key) {
+    throw new Error(
+      "[CALL-E Client] Missing required environment variable: CALLE_API_KEY. Please configure CALLE_API_KEY in your environment or .env.local file."
+    );
+  }
+  return key;
+}
 
 export interface CreateCallParams {
   phoneNumber: string;
@@ -304,7 +311,7 @@ export async function createDirectCall(params: CreateCallParams) {
     const res = await fetch(`${CALLE_API_BASE}/calls`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${CALLE_API_KEY}`,
+        Authorization: `Bearer ${getCalleApiKey()}`,
         "Content-Type": "application/json",
         "Idempotency-Key": idempotencyKey
       },
@@ -360,7 +367,7 @@ export async function getDirectCall(callId: string) {
   try {
     const res = await fetch(`${CALLE_API_BASE}/calls/${callId}`, {
       headers: {
-        Authorization: `Bearer ${CALLE_API_KEY}`
+        Authorization: `Bearer ${getCalleApiKey()}`
       }
     });
 
