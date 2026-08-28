@@ -125,18 +125,18 @@ export function CallTable({
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-[#E4E8E7] dark:border-[#20324A] bg-[#FAFAF8] dark:bg-[#081426] text-[10px] uppercase tracking-wider text-[#667085] dark:text-[#9BA8B8] font-bold font-mono">
-              <th className="py-3.5 px-4">Caller / Contact</th>
-              <th className="py-3.5 px-4">Stream</th>
-              <th className="py-3.5 px-4">Branch Node</th>
-              <th className="py-3.5 px-4">Outcome & Structured Notes</th>
-              <th className="py-3.5 px-4">Status</th>
-              <th className="py-3.5 px-4 text-right">Value</th>
+              <th className="py-4 px-5">Caller / Contact</th>
+              <th className="py-4 px-5">Stream</th>
+              <th className="py-4 px-5">Branch Node</th>
+              <th className="py-4 px-5">Outcome & Notes</th>
+              <th className="py-4 px-5">Status</th>
+              <th className="py-4 px-5 text-right">Value</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E4E8E7] dark:divide-[#20324A]">
             {calls.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-10 text-center text-[#667085] dark:text-[#9BA8B8]">
+                <td colSpan={6} className="py-14 text-center text-[#667085] dark:text-[#9BA8B8]">
                   No call records found matching active filter.
                 </td>
               </tr>
@@ -147,43 +147,43 @@ export function CallTable({
                   onClick={() => onSelectCall(call)}
                   className="hover:bg-[#FAFAF8] dark:hover:bg-[#081426]/70 transition-colors cursor-pointer group"
                 >
-                  {/* Caller info with NO unwrapped phone number */}
-                  <td className="py-3.5 px-4">
+                  {/* Caller info */}
+                  <td className="py-4 px-5">
                     <div className="font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC] group-hover:text-[#1B9A9C] transition-colors">
                       {call.patientName}
                     </div>
-                    <div className="text-[11px] font-mono text-[#667085] dark:text-[#9BA8B8] whitespace-nowrap">
+                    <div className="text-[11px] font-mono text-[#667085] dark:text-[#9BA8B8] whitespace-nowrap mt-0.5">
                       {call.phoneNumber}
                     </div>
                   </td>
 
-                  <td className="py-3.5 px-4 whitespace-nowrap">
+                  <td className="py-4 px-5 whitespace-nowrap">
                     {getTypeBadge(call.callType)}
                   </td>
 
-                  <td className="py-3.5 px-4 whitespace-nowrap font-medium text-[#0B1930] dark:text-[#F8FAFC]">
+                  <td className="py-4 px-5 whitespace-nowrap font-medium text-[#0B1930] dark:text-[#F8FAFC]">
                     {getLocationName(call.locationId)}
                   </td>
 
                   {/* Outcome & Notes */}
-                  <td className="py-3.5 px-4 max-w-xs">
+                  <td className="py-4 px-5 max-w-xs">
                     <div className="text-xs text-[#0B1930] dark:text-[#F8FAFC] truncate">
                       {call.structuredOutcome?.notes || "Interaction completed and synced."}
                     </div>
                     {call.structuredOutcome?.appointment?.booked && (
-                      <span className="text-[10px] text-[#1B9A9C] font-mono font-semibold block mt-0.5">
+                      <span className="text-[10px] text-[#1B9A9C] font-mono font-semibold block mt-1">
                         • Slot Booked: {call.structuredOutcome.appointment.datetime || "Confirmed"}
                       </span>
                     )}
                   </td>
 
                   {/* Status */}
-                  <td className="py-3.5 px-4 whitespace-nowrap">
+                  <td className="py-4 px-5 whitespace-nowrap">
                     {getStatusBadge(call.status)}
                   </td>
 
                   {/* Revenue */}
-                  <td className="py-3.5 px-4 text-right whitespace-nowrap font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC]">
+                  <td className="py-4 px-5 text-right whitespace-nowrap font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC]">
                     {call.recoveredRevenue
                       ? `$${call.recoveredRevenue.toLocaleString("en-US")}`
                       : "—"}

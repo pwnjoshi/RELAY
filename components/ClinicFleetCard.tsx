@@ -46,12 +46,12 @@ export function ClinicFleetCard({ locations, locationStats }: ClinicFleetCardPro
       </div>
 
       <div className="space-y-2.5">
-        {locations.map((loc) => {
+        {locations.slice(0, 4).map((loc) => {
           const st = getStats(loc.id);
           return (
             <div
               key={loc.id}
-              className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#0B1930] dark:hover:border-[#32C4BE] transition-all space-y-2"
+              className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C] transition-all space-y-1.5"
             >
               <div className="flex items-center justify-between">
                 <div className="font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC] truncate">
@@ -64,7 +64,7 @@ export function ClinicFleetCard({ locations, locationStats }: ClinicFleetCardPro
 
               <div className="flex items-center justify-between text-[11px] font-mono text-[#667085] dark:text-[#9BA8B8]">
                 <span>Recovered: <strong className="text-[#1B9A9C]">${st.revenue.toLocaleString("en-US")}</strong></span>
-                <span>Booking: <strong className="text-[#0B1930] dark:text-white">{st.booked}/{st.total}</strong></span>
+                <span>Conversion: <strong className="text-[#0B1930] dark:text-white">{st.booked}/{st.total}</strong></span>
               </div>
             </div>
           );

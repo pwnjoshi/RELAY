@@ -8,7 +8,6 @@ import { MetricsBar } from "@/components/MetricsBar";
 import { CallTable } from "@/components/CallTable";
 import { CallDrawer } from "@/components/CallDrawer";
 import { TriggerModal } from "@/components/TriggerModal";
-import { SafetyBanner } from "@/components/SafetyBanner";
 import { ClinicFleetCard } from "@/components/ClinicFleetCard";
 import { WebRAGKnowledgeCard } from "@/components/WebRAGKnowledgeCard";
 import { AuthGuard } from "@/components/AuthGuard";
@@ -32,6 +31,7 @@ export default function DashboardPage() {
   const [filterType, setFilterType] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeDeptId, setActiveDeptId] = useState<string>("all");
+  const [sideTab, setSideTab] = useState<"fleet" | "rag">("fleet");
 
   const effectiveDepartments = activeWorkspace?.departments?.length > 0 ? activeWorkspace.departments : (departments.length > 0 ? departments : contextDepts);
 
@@ -126,42 +126,54 @@ export default function DashboardPage() {
             onSearchChange={setSearchQuery}
           />
 
-          <main className="p-6 sm:p-8 space-y-8 flex-1 max-w-[1600px] w-full animate-fade-in">
+          <main className="p-6 sm:p-8 space-y-7 flex-1 max-w-[1600px] w-full animate-fade-in">
             {!stats && calls.length === 0 ? (
               <ConsoleSkeleton type="dashboard" />
             ) : (
               <>
-                {/* Top Operational Status Bar with Active Workspace Branding */}
-                <div className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-subtle">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 flex-wrap">
+                {/* Clean Hero Welcome & Quick Action Card */}
+                <div className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-subtle">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2.5 flex-wrap">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A] animate-pulse" />
-                      <span className="text-sm sm:text-base font-extrabold font-heading text-[#0B1930] dark:text-[#F8FAFC]">
-                        {activeWorkspace?.name || "Tech Sangi IT & AI Operations"}
-                      </span>
-                      <span className="text-[10px] font-mono font-bold bg-[#1B9A9C]/15 text-[#1B9A9C] px-2 py-0.5 rounded uppercase border border-[#1B9A9C]/20">
-                        ISOLATED WORKSPACE CONTEXT
+                      <h2 className="text-lg sm:text-xl font-extrabold font-heading text-[#0B1930] dark:text-[#F8FAFC]">
+                        {activeWorkspace?.name || "Enterprise Operations"}
+                      </h2>
+                      <span className="text-[10px] font-mono font-bold bg-[#1B9A9C]/10 text-[#1B9A9C] px-2.5 py-0.5 rounded-full border border-[#1B9A9C]/20">
+                        {activeWorkspace?.badge || "ACTIVE TRUNKS"}
                       </span>
                     </div>
-                    <p className="text-xs text-[#667085] dark:text-[#9BA8B8]">
-                      {activeWorkspace?.description || "Software development agency & AI consulting firm handling incoming client discovery calls."} &bull; ({effectiveDepartments.length} Departments Configured)
+                    <p className="text-xs text-[#667085] dark:text-[#9BA8B8] max-w-2xl leading-relaxed">
+                      {activeWorkspace?.description || "Autonomous multilingual telephony platform answering missed calls and scheduling appointments 24/7."}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2.5 flex-shrink-0">
-                    <span className="text-xs font-mono font-bold text-[#1B9A9C] bg-[#1B9A9C]/10 px-3 py-1.5 rounded-xl border border-[#1B9A9C]/20">
-                      {activeWorkspace?.badge || "ENTERPRISE OPS"}
-                    </span>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setIsTriggerModalOpen(true)}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card hover:shadow-elevated transition-all active:scale-95 cursor-pointer"
+                    >
+                      <Icons.PhoneCall className="w-3.5 h-3.5" />
+                      <span>Initiate Live Call &rarr;</span>
+                    </button>
+                    <Link
+                      href="/calls"
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C] text-[#0B1930] dark:text-[#F8FAFC] font-bold text-xs transition-all cursor-pointer"
+                    >
+                      <Icons.FileText className="w-3.5 h-3.5 text-[#1B9A9C]" />
+                      <span>Audit Logs</span>
+                    </Link>
                   </div>
                 </div>
 
                 {/* KPI Metrics Bar */}
                 <MetricsBar stats={stats} />
 
-                {/* Main Operational Split */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Left 2 Cols: Live Telephony Call Table */}
-                  <div className="lg:col-span-2 space-y-6">
+                {/* Main Content: Clean 2-Column Split */}
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-7 items-start">
+                  {/* Left Column (8 cols): Primary Telephony Stream */}
+                  <div className="xl:col-span-8 space-y-6">
                     <CallTable
                       calls={filteredCalls}
                       locations={locations}
@@ -171,14 +183,48 @@ export default function DashboardPage() {
                     />
                   </div>
 
-                  {/* Right Col: Fleet Telephony Nodes, RAG Knowledge & Safety Guardrails */}
-                  <div className="space-y-6">
-                    <WebRAGKnowledgeCard />
-                    <ClinicFleetCard
-                      locations={locations}
-                      locationStats={stats?.locationStats}
-                    />
-                    <SafetyBanner />
+                  {/* Right Column (4 cols): Tabbed Side Panel (Clean & Spacious) */}
+                  <div className="xl:col-span-4 space-y-6">
+                    <div className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl overflow-hidden shadow-subtle">
+                      {/* Clean Tab Switcher */}
+                      <div className="p-3 border-b border-[#E4E8E7] dark:border-[#20324A] flex items-center gap-2 bg-[#FAFAF8] dark:bg-[#081426]">
+                        <button
+                          type="button"
+                          onClick={() => setSideTab("fleet")}
+                          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                            sideTab === "fleet"
+                              ? "bg-white dark:bg-[#10223A] text-[#0B1930] dark:text-[#F8FAFC] shadow-sm"
+                              : "text-[#667085] dark:text-[#9BA8B8] hover:text-[#0B1930] dark:hover:text-white"
+                          }`}
+                        >
+                          <Icons.Building className="w-3.5 h-3.5 text-[#1B9A9C]" />
+                          <span>Telephony Nodes</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSideTab("rag")}
+                          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                            sideTab === "rag"
+                              ? "bg-white dark:bg-[#10223A] text-[#0B1930] dark:text-[#F8FAFC] shadow-sm"
+                              : "text-[#667085] dark:text-[#9BA8B8] hover:text-[#0B1930] dark:hover:text-white"
+                          }`}
+                        >
+                          <Icons.BookOpen className="w-3.5 h-3.5 text-[#1B9A9C]" />
+                          <span>Grounded RAG</span>
+                        </button>
+                      </div>
+
+                      <div className="p-5">
+                        {sideTab === "fleet" ? (
+                          <ClinicFleetCard
+                            locations={locations}
+                            locationStats={stats?.locationStats}
+                          />
+                        ) : (
+                          <WebRAGKnowledgeCard />
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </>
