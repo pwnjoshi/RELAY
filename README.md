@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <strong>Sub-15ms PSTN Interconnect • Multilingual AI Voice Agent • Grounded Web RAG Engine • Universal Enterprise CRM/EHR Sync</strong>
+  <strong>Sub-15ms Async API Dispatch • Sub-Second Real-Time Neural Voice • Grounded Web RAG Engine • Universal Enterprise CRM/EHR Sync</strong>
 </p>
 
 <p align="center">
@@ -22,7 +22,7 @@
 
 **RELAY** is an enterprise-grade autonomous voice operations platform engineered for **any business, enterprise, or service provider worldwide**. Whether operating real estate brokerages, software agencies, automotive service networks, law firms, hospitality groups, logistics operations, or healthcare facilities, RELAY eliminates missed customer calls, triages complex inquiries, and automates appointment scheduling 24/7 with zero human intervention.
 
-By interconnecting low-latency PSTN telephony trunks (`https://api.heycall-e.com/v1`) with grounded website RAG knowledge bases and **DeepSeek-V4** post-call CRM intelligence, RELAY places hyper-fast AI voice calls, triages customer intent, and enforces sweet, natural human voice personas across 7 global languages.
+By interconnecting low-latency PSTN telephony trunks (`https://api.heycall-e.com/v1`) with grounded website RAG knowledge bases and **DeepSeek-V4** post-call CRM intelligence, RELAY places AI voice calls with sub-15ms API dispatch, triages customer intent, and enforces sweet, natural human voice personas across 7 global languages.
 
 ---
 
@@ -45,8 +45,9 @@ RELAY includes out-of-the-box preset nodes and customizable RAG prompt templates
 
 ## Key Platform Features
 
-### 1. Sub-15ms Non-Blocking PSTN Call Dispatch
+### 1. Sub-15ms Non-Blocking API Dispatch & Real-Time Status Stream
 - **Instant Carrier Handshake**: HTTP POST requests dispatch call tasks in `<15ms`, running real-time status polling asynchronously in the background.
+- **Sub-Second Voice Turn-Taking**: Live conversational speech operates with low-latency streaming (~400–600ms) over 24kHz Opus audio codecs.
 - **Direct Carrier Status Stream**: Status transitions (`Queued` $\rightarrow$ `Ringing` $\rightarrow$ `In-Progress` $\rightarrow$ `Completed`) poll live PSTN handset state every 300ms.
 
 ### 2. Sweet, Respectful & Warm AI Voice Persona
