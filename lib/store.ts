@@ -405,6 +405,39 @@ export class RelayStore {
       budget: { ...this.budget }
     };
   }
+
+  private recentWebhooks: Array<{
+    id: string;
+    eventId: string;
+    eventType: string;
+    timestamp: string;
+    payload: Record<string, unknown>;
+    status: string;
+  }> = [];
+
+  public recordWebhookEvent(event: {
+    eventId: string;
+    eventType: string;
+    payload: Record<string, unknown>;
+    status?: string;
+  }): void {
+    const entry = {
+      id: `wh_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      eventId: event.eventId,
+      eventType: event.eventType,
+      timestamp: new Date().toISOString(),
+      payload: event.payload,
+      status: event.status || "processed_ok"
+    };
+    this.recentWebhooks.unshift(entry);
+    if (this.recentWebhooks.length > 20) {
+      this.recentWebhooks = this.recentWebhooks.slice(0, 20);
+    }
+  }
+
+  public getRecentWebhooks() {
+    return [...this.recentWebhooks];
+  }
 }
 
 // Global Singleton

@@ -134,6 +134,12 @@ export interface CallRecord {
   customGoal?: string;
   recordingUrl?: string;
   durationSeconds?: number;
+  goalId?: string;
+  goalTitle?: string;
+  goalMilestones?: Array<{ id: string; title: string; completed: boolean; timestamp?: string }>;
+  ivrDtmfSequence?: string;
+  ivrPromptGuidance?: string;
+  whatsappLink?: string;
 }
 
 export interface BatchFollowupItem {

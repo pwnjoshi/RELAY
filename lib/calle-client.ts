@@ -42,6 +42,9 @@ export interface CreateCallParams {
   language?: LanguageCode;
   customGoal?: string;
   extraContext?: string;
+  goalId?: string;
+  ivrDtmfSequence?: string;
+  ivrPromptGuidance?: string;
 }
 
 /**
@@ -319,6 +322,10 @@ export async function createDirectCall(params: CreateCallParams) {
     taskText += `\nADDITIONAL CONTEXT & CALLER GOAL: ${extraContext}`;
   }
 
+  if (params.ivrDtmfSequence || params.ivrPromptGuidance) {
+    taskText += `\n\n[KEYPAD IVR & AUTOMATED DTMF NAVIGATION DIRECTIVE]: When answering machines, switchboards, or IVR phone trees are encountered, automatically execute DTMF sequence "${params.ivrDtmfSequence || "1"}". Guidance: ${params.ivrPromptGuidance || "Select option 1 for Front Desk / Appointments"}. If speech recognition prompts are requested, state "Appointments".`;
+  }
+
   const idempotencyKey = `call_${callType}_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
   const region = getRegionFromPhone(phoneNumber);
@@ -349,7 +356,9 @@ export async function createDirectCall(params: CreateCallParams) {
           call_type: callType,
           patient_name: patientName,
           phone_number: phoneNumber,
-          language: language
+          language: language,
+          goal_id: params.goalId || undefined,
+          ivr_dtmf_sequence: params.ivrDtmfSequence || undefined
         }
       })
     });

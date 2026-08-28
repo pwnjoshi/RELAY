@@ -67,7 +67,18 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { phoneNumber, patientName, locationId, dueFor, language = "en", customLocation, extraContext } = body;
+    const {
+      phoneNumber,
+      patientName,
+      locationId,
+      dueFor,
+      language = "en",
+      customLocation,
+      extraContext,
+      goalId,
+      ivrDtmfSequence,
+      ivrPromptGuidance
+    } = body;
 
     if (!phoneNumber) {
       return NextResponse.json({ ok: false, error: "phoneNumber is required" }, { status: 400 });
@@ -89,7 +100,10 @@ export async function POST(req: Request) {
       callType: "outbound_recall",
       language: language as LanguageCode,
       customGoal: `Proactive Client Outreach: Follow up for ${dueFor || "scheduled review"}.`,
-      extraContext
+      extraContext,
+      goalId,
+      ivrDtmfSequence,
+      ivrPromptGuidance
     });
 
     if (!directRes.ok) {
@@ -115,7 +129,11 @@ export async function POST(req: Request) {
       callType: "outbound_recall",
       status: "queued",
       recoveredRevenue: 0,
+      language: language as LanguageCode,
       createdAt: new Date().toISOString(),
+      goalId,
+      ivrDtmfSequence,
+      ivrPromptGuidance,
       structuredOutcome: {
         call_id: localCallId,
         location_id: location.id,

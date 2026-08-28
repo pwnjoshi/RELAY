@@ -67,7 +67,17 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { phoneNumber, patientName, locationId, language = "en", customLocation, extraContext } = body;
+    const {
+      phoneNumber,
+      patientName,
+      locationId,
+      language = "en",
+      customLocation,
+      extraContext,
+      goalId,
+      ivrDtmfSequence,
+      ivrPromptGuidance
+    } = body;
 
     if (!phoneNumber) {
       return NextResponse.json({ ok: false, error: "phoneNumber is required" }, { status: 400 });
@@ -88,7 +98,10 @@ export async function POST(req: Request) {
       location,
       callType: "inbound_overflow",
       language: language as LanguageCode,
-      extraContext
+      extraContext,
+      goalId,
+      ivrDtmfSequence,
+      ivrPromptGuidance
     });
 
     if (!directRes.ok) {
@@ -115,7 +128,11 @@ export async function POST(req: Request) {
       callType: "inbound_overflow",
       status: "queued",
       recoveredRevenue: 0,
+      language: language as LanguageCode,
       createdAt: new Date().toISOString(),
+      goalId,
+      ivrDtmfSequence,
+      ivrPromptGuidance,
       structuredOutcome: {
         call_id: localCallId,
         location_id: location.id,

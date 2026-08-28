@@ -5,13 +5,13 @@
  * Implements decoupled, idempotent connectors for:
  * 1. Google Calendar Scheduling (Real OAuth2 & REST v3)
  * 2. Slack Real-Time Team Notifications (Incoming Webhooks)
- * 3. SMS/Email Transactional Confirmations
+ * 3. WhatsApp Omnichannel Instant Follow-up (Direct wa.me + Twilio Sandbox)
  * 4. CRM Lead Ingestion (Salesforce / HubSpot schema)
  *
  * Post-Call Action Pipeline runs independently and fault-tolerantly.
  */
 
-import { StructuredCallOutcome, CallRecord } from "./types";
+import { StructuredCallOutcome, CallRecord, LanguageCode } from "./types";
 import {
   bookCalendarAppointment,
   getAvailableSlots,
@@ -33,7 +33,7 @@ export interface ConnectorResult<T = unknown> {
 
 export interface Connector {
   name: string;
-  type: "calendar" | "slack" | "crm" | "sms" | "webhook";
+  type: "calendar" | "slack" | "crm" | "sms" | "whatsapp" | "webhook";
   isEnabled(): boolean;
   execute(action: string, params: Record<string, unknown>, idempotencyKey?: string): Promise<ConnectorResult>;
 }
@@ -59,6 +59,8 @@ export async function recordActionIdempotent(key: string, responseJson: Record<s
   executedActionKeys.add(key);
   await saveDbIdempotencyKey(key, responseJson, 200);
 }
+
+import { generateWhatsAppLink, generateLocalizedFollowUpMessage } from "./omnichannel";
 
 /**
  * 1. Google Calendar Connector
@@ -205,7 +207,6 @@ export class SlackAlertConnector implements Connector {
     };
 
     if (!webhookUrl) {
-      // Local simulation log when SLACK_WEBHOOK_URL is not set
       logger.info("[Slack Connector] (Simulation - Webhook URL not set)", payload);
       if (key) executedActionKeys.add(key);
       return {
@@ -258,7 +259,71 @@ export class SlackAlertConnector implements Connector {
 }
 
 /**
- * 3. CRM Lead Ingestion Connector
+ * 3. WhatsApp Omnichannel Instant Follow-up Connector
+ */
+export class WhatsAppConnector implements Connector {
+  public name = "WhatsApp Omnichannel Dispatch";
+  public type = "whatsapp" as const;
+
+  public isEnabled(): boolean {
+    return true;
+  }
+
+  public async execute(
+    action: string,
+    params: Record<string, unknown>,
+    idempotencyKey?: string
+  ): Promise<ConnectorResult> {
+    const key = idempotencyKey ? `wa_${action}_${idempotencyKey}` : undefined;
+    if (key && executedActionKeys.has(key)) {
+      return {
+        success: true,
+        connectorName: this.name,
+        action,
+        error: "Action already executed (idempotent skipped)",
+        idempotencyKey,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    const phone = (params.callerPhone as string) || "";
+    const name = (params.callerName as string) || "Valued Caller";
+    const branchName = (params.branchName as string) || "Apex Operations";
+    const serviceType = (params.serviceType as string) || "Consultation";
+    const datetime = (params.datetime as string) || "";
+    const language = (params.language as LanguageCode) || "en";
+
+    const followUpText = generateLocalizedFollowUpMessage({
+      callerName: name,
+      branchName,
+      serviceType,
+      datetime,
+      language
+    });
+
+    const deepLink = generateWhatsAppLink(phone, followUpText);
+
+    logger.info("[WhatsApp Connector] Generated Omnichannel Follow-Up link:", { phone, deepLink });
+    if (key) executedActionKeys.add(key);
+
+    return {
+      success: true,
+      connectorName: this.name,
+      action,
+      data: {
+        phone,
+        message: followUpText,
+        deepLink,
+        sent: true
+      },
+      idempotencyKey,
+      timestamp: new Date().toISOString()
+    };
+  }
+}
+
+/**
+ * 4. CRM Lead Ingestion Connector
  */
 export class CrmLeadConnector implements Connector {
   public name = "CRM Lead Bridge";
@@ -316,6 +381,7 @@ export class CrmLeadConnector implements Connector {
 export const activeConnectors: Connector[] = [
   new GoogleCalendarConnector(),
   new SlackAlertConnector(),
+  new WhatsAppConnector(),
   new CrmLeadConnector()
 ];
 
@@ -363,7 +429,38 @@ export async function runPostCallActionPipeline(
     }
   }
 
-  // 2. CRM Lead Recording
+  // 2. WhatsApp Instant Omnichannel Dispatch (if appointment booked or requested)
+  if (outcome.appointment?.booked) {
+    const waConnector = activeConnectors.find((c) => c.type === "whatsapp");
+    if (waConnector && waConnector.isEnabled()) {
+      try {
+        const res = await waConnector.execute(
+          "send_followup",
+          {
+            callerName: callRecord.patientName,
+            callerPhone: callRecord.phoneNumber,
+            branchName,
+            serviceType: outcome.appointment.service_type,
+            datetime: outcome.appointment.datetime,
+            language: callRecord.language
+          },
+          `${idempotencyBase}_wa`
+        );
+        results.push(res);
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        results.push({
+          success: false,
+          connectorName: "WhatsApp Omnichannel Dispatch",
+          action: "send_followup",
+          error: errMsg,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+  }
+
+  // 3. CRM Lead Recording
   const crmConnector = activeConnectors.find((c) => c.type === "crm");
   if (crmConnector && crmConnector.isEnabled()) {
     try {
@@ -392,7 +489,7 @@ export async function runPostCallActionPipeline(
     }
   }
 
-  // 3. Slack Ops Notification (For urgent triage or successful bookings)
+  // 4. Slack Ops Notification (For urgent triage or successful bookings)
   const slackConnector = activeConnectors.find((c) => c.type === "slack");
   if (slackConnector && slackConnector.isEnabled()) {
     const isUrgent = outcome.sentiment === "frustrated" || outcome.sentiment === "distressed" || outcome.callback?.requested;

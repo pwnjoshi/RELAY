@@ -14,18 +14,32 @@ function getLocations(): ClinicLocation[] {
 }
 
 /**
+ * GET /api/webhooks/call-e
+ * Returns recent received webhook events for diagnostic inspection & debugging
+ */
+export async function GET() {
+  const webhooks = store.getRecentWebhooks();
+  return NextResponse.json({
+    ok: true,
+    count: webhooks.length,
+    webhooks
+  });
+}
+
+/**
+ * POST /api/webhooks/call-e
  * CALL-E Terminal Webhook Receiver
- * Matches OpenAPI 3.1.0 /calle/webhook specification
+ * Matches OpenAPI 3.1.0 /calle/webhook specification with CALL-E-Event-Id deduplication
  */
 export async function POST(req: Request) {
   try {
-    const eventId = req.headers.get("CALL-E-Event-Id") || req.headers.get("call-e-event-id");
+    const eventId = req.headers.get("CALL-E-Event-Id") || req.headers.get("call-e-event-id") || `evt_${Date.now()}`;
     const payload = await req.json();
 
-    logger.info(`[CALL-E Webhook] Received event ${eventId || payload.id} (type: ${payload.type})`);
+    logger.info(`[CALL-E Webhook] Received event ${eventId} (type: ${payload.type || "call.completed"})`);
 
     const callTask = payload.data || payload;
-    const callId = callTask.metadata?.call_id || callTask.id;
+    const callId = callTask.metadata?.call_id || callTask.id || `call_${Date.now()}`;
     const locationId = callTask.metadata?.location_id || "loc_downtown";
     const callType = (callTask.metadata?.call_type || "inbound_overflow") as "inbound_overflow" | "outbound_recall";
 
@@ -73,7 +87,7 @@ export async function POST(req: Request) {
     const statusVal: CallRecord["status"] = callTask.status === "failed" ? "failed" : "completed";
     const updatedRecord: CallRecord = {
       id: callId,
-      runId: callTask.id,
+      runId: callTask.id || callId,
       phoneNumber: callerPhone,
       patientName: callerName,
       locationId: location.id,
@@ -96,14 +110,36 @@ export async function POST(req: Request) {
       store.addCall(updatedRecord);
     }
 
-    // Run Post-Call Action Pipeline (Google Calendar, Slack, CRM)
+    // Record webhook into memory ring buffer for diagnostics inspection
+    store.recordWebhookEvent({
+      eventId,
+      eventType: payload.type || "call.completed",
+      payload: {
+        eventId,
+        callId,
+        callerName,
+        callerPhone,
+        status: statusVal,
+        appointmentBooked: structuredOutcome.appointment.booked,
+        summary: structuredOutcome.notes
+      },
+      status: "processed_ok"
+    });
+
+    // Run Post-Call Action Pipeline (Google Calendar, Slack, WhatsApp, CRM)
     try {
       await runPostCallActionPipeline(updatedRecord, structuredOutcome, location.name);
     } catch (pipelineErr: unknown) {
       logger.warn("[CALL-E Webhook] Connector pipeline warning:", pipelineErr);
     }
 
-    return NextResponse.json({ ok: true, received: true, callId });
+    return NextResponse.json({
+      ok: true,
+      received: true,
+      callId,
+      eventId,
+      status: statusVal
+    });
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
     logger.error("[CALL-E Webhook] Processing error:", err);
