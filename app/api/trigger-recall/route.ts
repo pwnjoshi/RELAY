@@ -82,15 +82,26 @@ function pollCallRunUntilResolved(callId: string, runId: string, location: any) 
   }, 1000);
 }
 
+import { getSessionUser } from "@/lib/auth";
+
 export async function POST(req: Request) {
   try {
+    const user = await getSessionUser();
+    const isUserLoggedIn = Boolean(user);
     const clientIp = getClientIp(req);
-    const rateCheck = telephonyRateLimiter.check(clientIp, 2, 60);
+    const rateLimitKey = user ? `usr_${user.id}` : `ip_${clientIp}`;
+
+    const rateCheck = telephonyRateLimiter.check(rateLimitKey, isUserLoggedIn, 15);
     if (!rateCheck.success) {
       return NextResponse.json(
         {
           ok: false,
-          error: rateCheck.error || `Telephony Rate Limit: Max 2 calls/day with 60s cooldown.`,
+          error: rateCheck.error,
+          reason: rateCheck.reason,
+          dailyLimit: rateCheck.dailyLimit,
+          remainingDaily: rateCheck.remainingDaily,
+          resetTime: rateCheck.resetTime,
+          isLoggedIn: isUserLoggedIn,
           rateLimited: true
         },
         { status: 429 }

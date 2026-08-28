@@ -209,6 +209,28 @@ export function TriggerModal({
   const [resultMessage, setResultMessage] = useState<{ ok: boolean; text: string; runId?: string } | null>(null);
   const [liveCallStatus, setLiveCallStatus] = useState<string>("queued");
   const [liveCallSummary, setLiveCallSummary] = useState<string>("");
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem("relay_auth_user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.isLoggedIn) setIsUserLoggedIn(true);
+      }
+    } catch {}
+
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && d.authenticated) {
+          setIsUserLoggedIn(true);
+        } else {
+          setIsUserLoggedIn(false);
+        }
+      })
+      .catch(() => setIsUserLoggedIn(false));
+  }, []);
 
   // Live ultra-responsive polling for run status from carrier (800ms polling interval)
   useEffect(() => {
@@ -352,12 +374,19 @@ export function TriggerModal({
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[#E4E8E7] dark:border-[#20324A]">
-          <div className="space-y-0.5">
-            <h3 className="font-heading font-extrabold text-sm text-[#0B1930] dark:text-[#F8FAFC]">
-              Initiate Voice Call
-            </h3>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h3 className="font-heading font-extrabold text-sm text-[#0B1930] dark:text-[#F8FAFC]">
+                Initiate Voice Call
+              </h3>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#1B9A9C]/10 border border-[#1B9A9C]/20 text-[#1B9A9C]">
+                {isUserLoggedIn ? "⚡ Account: 8 calls/day" : "🛡️ Demo: 3 calls/day"}
+              </span>
+            </div>
             <p className="text-[11px] text-[#667085] dark:text-[#9BA8B8]">
-              Dispatch an AI voice call to any client or contact.
+              {isUserLoggedIn 
+                ? "Dispatch live voice calls to any client (Max 8 calls/day per account)." 
+                : "Dispatch a live test voice call (Max 3 demo calls/day per IP). Sign in for 8 calls/day."}
             </p>
           </div>
           <button

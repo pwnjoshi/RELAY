@@ -1,7 +1,11 @@
 /**
  * lib/rate-limiter.ts
- * Production In-Memory Sliding Window Rate Limiter
- * Protects Authentication & API routes from brute-force & denial of service
+ * Production In-Memory Sliding Window Rate Limiter & Telephony Quota Engine
+ * 
+ * Enforces:
+ * 1. Public Demo Calls (Unauthenticated): Max 3 calls per 24 hours per IP address.
+ * 2. Authenticated Calls (Logged In): Max 8 calls per 24 hours per User / Account.
+ * 3. Short Cooldown (15 seconds) between consecutive call dispatches to prevent race conditions.
  */
 
 interface RateLimitRecord {
@@ -13,7 +17,6 @@ class SlidingWindowRateLimiter {
   private cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor() {
-    // Periodic garbage collection every 5 minutes to prevent memory leak
     if (typeof setInterval !== "undefined") {
       this.cleanupInterval = setInterval(() => this.cleanup(), 5 * 60 * 1000);
       if (this.cleanupInterval.unref) {
@@ -23,10 +26,7 @@ class SlidingWindowRateLimiter {
   }
 
   /**
-   * Check if an IP/key is allowed
-   * @param key - IP address or unique client identifier
-   * @param limit - Maximum requests allowed in the window
-   * @param windowMs - Time window in milliseconds (default 60s)
+   * Check if an IP/key is allowed for authentication or generic API endpoints
    */
   public check(
     key: string,
@@ -47,7 +47,6 @@ class SlidingWindowRateLimiter {
       this.store.set(key, record);
     }
 
-    // Filter out timestamps outside the active window
     record.timestamps = record.timestamps.filter((ts) => ts > windowStart);
 
     if (record.timestamps.length >= limit) {
@@ -61,7 +60,6 @@ class SlidingWindowRateLimiter {
       };
     }
 
-    // Record this attempt
     record.timestamps.push(now);
     return {
       success: true,
@@ -71,9 +69,6 @@ class SlidingWindowRateLimiter {
     };
   }
 
-  /**
-   * Reset rate limit for a specific key (e.g. after successful login)
-   */
   public reset(key: string): void {
     this.store.delete(key);
   }
@@ -81,8 +76,7 @@ class SlidingWindowRateLimiter {
   private cleanup(): void {
     const now = Date.now();
     const oneHourAgo = now - 60 * 60 * 1000;
-    const entries = Array.from(this.store.entries());
-    for (const [key, record] of entries) {
+    for (const [key, record] of Array.from(this.store.entries())) {
       record.timestamps = record.timestamps.filter((ts: number) => ts > oneHourAgo);
       if (record.timestamps.length === 0) {
         this.store.delete(key);
@@ -110,24 +104,114 @@ export class TelephonyQuotaRateLimiter {
 
   /**
    * Enforces:
-   * 1. 60-second cooldown between calls
-   * 2. Max 2 calls per 24-hour day per IP
+   * - Unauthenticated Guest (Demo): 3 calls per 24 hours per IP.
+   * - Authenticated User (Logged In): 8 calls per 24 hours per User.
+   * - 15-second cooldown between consecutive calls.
    */
   public check(
     key: string,
-    dailyLimit: number = 9999,
-    cooldownSeconds: number = 0
+    isUserLoggedIn: boolean = false,
+    cooldownSeconds: number = 15
   ): {
     success: boolean;
+    dailyLimit: number;
+    callsUsed: number;
     remainingDaily: number;
     resetTime: number;
+    isLoggedIn: boolean;
     reason?: "cooldown" | "daily_limit";
     error?: string;
   } {
+    const now = Date.now();
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+    const windowStart = now - ONE_DAY_MS;
+    const dailyLimit = isUserLoggedIn ? 8 : 3;
+
+    let record = this.store.get(key);
+    if (!record) {
+      record = { timestamps: [] };
+      this.store.set(key, record);
+    }
+
+    // Filter to calls within the last 24 hours
+    record.timestamps = record.timestamps.filter((ts) => ts > windowStart);
+
+    // 1. Check cooldown between calls
+    if (cooldownSeconds > 0 && record.timestamps.length > 0) {
+      const lastCall = record.timestamps[record.timestamps.length - 1];
+      const timeSinceLast = (now - lastCall) / 1000;
+      if (timeSinceLast < cooldownSeconds) {
+        const waitSeconds = Math.ceil(cooldownSeconds - timeSinceLast);
+        return {
+          success: false,
+          dailyLimit,
+          callsUsed: record.timestamps.length,
+          remainingDaily: Math.max(0, dailyLimit - record.timestamps.length),
+          resetTime: waitSeconds,
+          isLoggedIn: isUserLoggedIn,
+          reason: "cooldown",
+          error: `Please wait ${waitSeconds}s before dispatching another call.`
+        };
+      }
+    }
+
+    // 2. Check 24-hour daily quota
+    if (record.timestamps.length >= dailyLimit) {
+      const oldestCall = record.timestamps[0];
+      const resetHours = Math.max(1, Math.ceil((oldestCall + ONE_DAY_MS - now) / (60 * 60 * 1000)));
+
+      const errorMessage = isUserLoggedIn
+        ? `Daily Account Quota Reached: You have reached the maximum of 8 calls per day for your account. Quota resets in ~${resetHours}h.`
+        : `Daily Demo Quota Reached: Maximum 3 test calls per day reached for your IP. Sign in to your account to unlock up to 8 calls per day.`;
+
+      return {
+        success: false,
+        dailyLimit,
+        callsUsed: record.timestamps.length,
+        remainingDaily: 0,
+        resetTime: resetHours * 3600,
+        isLoggedIn: isUserLoggedIn,
+        reason: "daily_limit",
+        error: errorMessage
+      };
+    }
+
+    // Record this successful call
+    record.timestamps.push(now);
+
     return {
       success: true,
-      remainingDaily: 9999,
-      resetTime: 0
+      dailyLimit,
+      callsUsed: record.timestamps.length,
+      remainingDaily: Math.max(0, dailyLimit - record.timestamps.length),
+      resetTime: Math.ceil(ONE_DAY_MS / 1000),
+      isLoggedIn: isUserLoggedIn
+    };
+  }
+
+  /**
+   * Peek current quota usage without incrementing
+   */
+  public getQuota(key: string, isUserLoggedIn: boolean = false): {
+    dailyLimit: number;
+    callsUsed: number;
+    remainingDaily: number;
+    isLoggedIn: boolean;
+  } {
+    const now = Date.now();
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+    const windowStart = now - ONE_DAY_MS;
+    const dailyLimit = isUserLoggedIn ? 8 : 3;
+
+    const record = this.store.get(key);
+    const activeTimestamps = (record?.timestamps || []).filter((ts) => ts > windowStart);
+    const callsUsed = activeTimestamps.length;
+
+    return {
+      dailyLimit,
+      callsUsed,
+      remainingDaily: Math.max(0, dailyLimit - callsUsed),
+      isLoggedIn: isUserLoggedIn
     };
   }
 
@@ -148,8 +232,10 @@ const globalForRateLimit = globalThis as unknown as {
   authRateLimiter: SlidingWindowRateLimiter;
   telephonyRateLimiter: TelephonyQuotaRateLimiter;
 };
+
 export const authRateLimiter =
   globalForRateLimit.authRateLimiter || new SlidingWindowRateLimiter();
+
 export const telephonyRateLimiter =
   globalForRateLimit.telephonyRateLimiter || new TelephonyQuotaRateLimiter();
 
