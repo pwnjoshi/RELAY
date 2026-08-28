@@ -235,7 +235,7 @@ func main() {
                     SYSTEM OVERVIEW
                   </span>
                   <span className="text-[10px] font-mono text-[#667085] dark:text-[#9BA8B8]">
-                    Sub-14s Latency Pipeline
+                    Sub-Second Voice Pipeline
                   </span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC]">

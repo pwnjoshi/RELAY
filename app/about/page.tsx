@@ -51,7 +51,7 @@ export default function AboutPage() {
                 Zero Hold Time
               </span>
               <p className="text-xs text-[#667085] dark:text-[#9BA8B8] leading-relaxed">
-                Sub-14s answering eliminates customer frustration and captures appointments in the moment.
+                Instant AI answering eliminates customer frustration and captures appointments in the moment.
               </p>
             </div>
 

@@ -41,7 +41,7 @@ export default function PublicPricingPage() {
       popular: false,
       cta: "Start 14-Day Free Trial",
       features: [
-        "Sub-14s Zero-Latency Answering",
+        "Instant Zero-Latency Answering",
         "Bilingual English & Spanish Voice",
         "Google Calendar Free/Busy Slot Booking",
         "Basic SMS Appointment Confirmations",
@@ -135,7 +135,7 @@ export default function PublicPricingPage() {
         </h1>
 
         <p className="text-sm sm:text-base text-[#667085] dark:text-[#9BA8B8] max-w-2xl mx-auto leading-relaxed">
-          Zero per-seat penalties. Pay for the voice capacity you actually use, with sub-14s answer guarantees and native multilingual speech.
+          Zero per-seat penalties. Pay for the voice capacity you actually use, with instant answer guarantees and native multilingual speech.
         </p>
 
         {/* Monthly / Annual Billing Toggle */}

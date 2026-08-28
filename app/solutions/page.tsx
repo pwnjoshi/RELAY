@@ -202,7 +202,7 @@ export default function SolutionsPage() {
               <span>SAMPLE VOICE TURN &bull; {curr.sampleTurn.speaker}</span>
               <span className="text-[#16A34A] flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" />
-                Live Sub-14s Audio
+                Live Neural Voice Audio
               </span>
             </div>
             <p className="text-[#F8FAFC] leading-relaxed font-sans text-sm">

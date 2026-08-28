@@ -18,14 +18,14 @@ export default function HowItWorksPage() {
       title: "Telephony Signal Detection",
       desc: "Relay listens on your existing business PBX or triggers an automated outbound follow-up campaign from an uploaded client spreadsheet.",
       detail: "Supports SIP trunk bridging with Twilio, Telnyx, Asterisk, and FreePBX. Inbound calls are intercepted when front-desk lines ring past threshold.",
-      badge: "SUB-14S DETECTION",
+      badge: "INSTANT DETECTION",
       code: `// Webhook Payload on Ring\n{\n  "event": "call.initiated",\n  "caller_id": "+91 98100 12345",\n  "branch_id": "loc_downtown",\n  "timestamp": "2026-08-26T14:40:00Z"\n}`
     },
     {
       num: "02",
       name: "ZERO-LATENCY INTERCEPT",
       title: "SIP Trunk Audio Bridge",
-      desc: "In under 14 seconds, Relay answers with full duplex 24kHz Opus audio stream, preventing callers from hanging up or leaving voicemail.",
+      desc: "Instantly, Relay answers with full duplex 24kHz Opus audio stream, preventing callers from hanging up or leaving voicemail.",
       detail: "Eliminates frustrating hold queues and robotic IVR phone trees ('Press 1 for Sales'). Callers speak naturally from the first second.",
       badge: "ZERO HOLD TIME",
       code: `// Audio Stream Connection\n{\n  "codec": "OPUS_24KHZ",\n  "latency_ms": 13.8,\n  "carrier": "Direct SIP Interconnect",\n  "jitter_buffer": "adaptive_low_delay"\n}`
@@ -93,7 +93,7 @@ export default function HowItWorksPage() {
         </h1>
 
         <p className="text-sm sm:text-base text-[#667085] dark:text-[#9BA8B8] max-w-2xl mx-auto leading-relaxed">
-          Every inbound missed call or outbound batch campaign passes through an intelligent, deterministic 7-stage pipeline that guarantees sub-14s answering, multilingual comprehension, and safe calendar booking.
+          Every inbound missed call or outbound batch campaign passes through an intelligent, deterministic 7-stage pipeline that guarantees instant answering, multilingual comprehension, and safe calendar booking.
         </p>
       </section>
 
