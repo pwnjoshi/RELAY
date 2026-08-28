@@ -54,7 +54,7 @@ function LoginForm() {
     const payload =
       mode === "login"
         ? { email: email.trim(), password }
-        : { name: name.trim(), email: email.trim(), password, role: "operator", title: "Team Member" };
+        : { name: name.trim(), email: email.trim(), password, role: "admin", title: "Workspace Administrator" };
 
     try {
       const res = await fetch(endpoint, {
@@ -68,9 +68,9 @@ function LoginForm() {
         throw new Error(data.error || "Authentication failed.");
       }
 
-      setSuccessMessage(mode === "login" ? "Authenticated! Redirecting..." : "Account registered successfully!");
+      setSuccessMessage(mode === "login" ? "Authenticated! Redirecting..." : "Workspace created! Setting up onboarding...");
       setTimeout(() => {
-        router.push(redirectUrl);
+        router.push(mode === "register" ? "/onboarding" : redirectUrl);
       }, 300);
     } catch (err: any) {
       setErrorMessage(err.message || "Invalid credentials.");
@@ -109,10 +109,12 @@ function LoginForm() {
           <RelayLogo size="lg" />
         </div>
         <h1 className="text-2xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC]">
-          {mode === "login" ? "Sign in to Relay" : "Create Staff Account"}
+          {mode === "login" ? "Sign in to Relay" : "Create Account"}
         </h1>
-        <p className="text-xs text-[#667085] dark:text-[#9BA8B8]">
-          Autonomous Voice Operations & Telephony Console
+        <p className="text-xs text-[#667085] dark:text-[#9BA8B8] max-w-sm mx-auto">
+          {mode === "login"
+            ? "Autonomous Voice Operations & Telephony Console"
+            : "Create your primary organization workspace. Staff accounts are provisioned by admins inside the IAM Console."}
         </p>
       </div>
 
@@ -146,7 +148,7 @@ function LoginForm() {
                 : "text-[#667085] dark:text-[#9BA8B8] hover:text-[#0B1930] dark:hover:text-white"
             }`}
           >
-            Register Account
+            Create Account
           </button>
         </div>
 
@@ -232,13 +234,25 @@ function LoginForm() {
             {isLoading ? (
               <>
                 <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>{mode === "login" ? "Authenticating..." : "Creating Account..."}</span>
+                <span>{mode === "login" ? "Authenticating..." : "Creating Workspace..."}</span>
               </>
             ) : (
-              <span>{mode === "login" ? "Sign In to Console →" : "Create Account & Sign In →"}</span>
+              <span>{mode === "login" ? "Sign In to Console →" : "Create Workspace Account →"}</span>
             )}
           </button>
         </form>
+
+        {mode === "register" && (
+          <div className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] text-[11px] text-[#667085] dark:text-[#9BA8B8] space-y-1">
+            <div className="font-bold text-[#0B1930] dark:text-[#F8FAFC] flex items-center gap-1.5">
+              <Icons.Shield className="w-3.5 h-3.5 text-[#1B9A9C]" />
+              <span>Looking for staff access?</span>
+            </div>
+            <p>
+              Staff and operator accounts are provisioned and invited by workspace administrators directly inside the IAM Console.
+            </p>
+          </div>
+        )}
 
         {/* 1-Click Role Presets (shown in login mode) */}
         {mode === "login" && (
