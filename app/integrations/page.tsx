@@ -300,6 +300,7 @@ export default function IntegrationsPage() {
       <IntegrationConfigModal
         isOpen={isConfigModalOpen}
         integration={activeConfigItem}
+        locations={locations}
         onClose={() => setIsConfigModalOpen(false)}
         onSave={handleSaveConfig}
       />

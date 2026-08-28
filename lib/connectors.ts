@@ -12,7 +12,13 @@
  */
 
 import { StructuredCallOutcome, CallRecord } from "./types";
-import { bookCalendarAppointment, getAvailableSlots, cancelCalendarAppointment } from "./calendar";
+import {
+  bookCalendarAppointment,
+  getAvailableSlots,
+  deleteCalendarAppointment,
+  cancelCalendarAppointment
+} from "./calendar";
+import { getDbIdempotencyKey, saveDbIdempotencyKey } from "./supabase";
 
 export interface ConnectorResult<T = any> {
   success: boolean;
@@ -31,8 +37,27 @@ export interface Connector {
   execute(action: string, params: Record<string, any>, idempotencyKey?: string): Promise<ConnectorResult>;
 }
 
-// In-Memory Idempotency Cache to prevent duplicate webhook/pipeline executions
+/**
+ * Multi-Tiered Idempotency Cache:
+ * 1. In-memory Set for sub-millisecond fast deduplication within the active execution runtime.
+ * 2. Supabase table `idempotency_keys` for cross-instance and cold-start serverless durability.
+ */
 const executedActionKeys = new Set<string>();
+
+export async function isActionIdempotent(key: string): Promise<boolean> {
+  if (executedActionKeys.has(key)) return true;
+  const dbRecord = await getDbIdempotencyKey(key);
+  if (dbRecord) {
+    executedActionKeys.add(key);
+    return true;
+  }
+  return false;
+}
+
+export async function recordActionIdempotent(key: string, responseJson: Record<string, any>): Promise<void> {
+  executedActionKeys.add(key);
+  await saveDbIdempotencyKey(key, responseJson);
+}
 
 /**
  * 1. Google Calendar Connector

@@ -4,6 +4,7 @@ import { createDirectCall } from "@/lib/calle-client";
 import { CallRecord, LanguageCode } from "@/lib/types";
 import { telephonyRateLimiter, getClientIp } from "@/lib/rate-limiter";
 import { getSessionUser } from "@/lib/auth";
+import { getDbIdempotencyKey, saveDbIdempotencyKey, syncCallToSupabase } from "@/lib/supabase";
 import fs from "fs";
 import path from "path";
 
@@ -12,7 +13,7 @@ function getLocations() {
   return JSON.parse(fs.readFileSync(locPath, "utf-8"));
 }
 
-// In-memory idempotency cache for deduplication
+// In-memory fast tier idempotency cache; backed by durable Supabase table idempotency_keys
 const dispatchedIdempotencyKeys = new Map<string, any>();
 
 export async function POST(req: Request) {
@@ -40,10 +41,20 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Idempotency Check
+    // 2. Durable Idempotency Deduplication Check (Supabase + In-Memory Fast Tier)
     const idempotencyKey = req.headers.get("idempotency-key") || req.headers.get("Idempotency-Key");
-    if (idempotencyKey && dispatchedIdempotencyKeys.has(idempotencyKey)) {
-      return NextResponse.json(dispatchedIdempotencyKeys.get(idempotencyKey));
+    if (idempotencyKey) {
+      // Check in-memory fast tier first
+      if (dispatchedIdempotencyKeys.has(idempotencyKey)) {
+        return NextResponse.json(dispatchedIdempotencyKeys.get(idempotencyKey));
+      }
+
+      // Check durable Supabase table
+      const dbCached = await getDbIdempotencyKey(idempotencyKey);
+      if (dbCached) {
+        dispatchedIdempotencyKeys.set(idempotencyKey, dbCached.response_json);
+        return NextResponse.json(dbCached.response_json, { status: dbCached.status_code });
+      }
     }
 
     const body = await req.json();
@@ -94,6 +105,7 @@ export async function POST(req: Request) {
       departmentId: "dept_general",
       callType: "inbound_overflow",
       status: "queued",
+      recoveredRevenue: 0,
       createdAt: new Date().toISOString(),
       structuredOutcome: {
         call_id: localCallId,
@@ -106,30 +118,34 @@ export async function POST(req: Request) {
         callback: { requested: false, priority: null, reason: null },
         opt_out: false,
         sentiment: "neutral",
-        language: language as LanguageCode,
-        notes: "Call queued in regional carrier PSTN gateway..."
-      },
-      recoveredRevenue: 0,
-      summary: "Call queued in regional carrier PSTN gateway..."
+        language,
+        notes: extraContext || "Inbound call overflow intercepted by Relay Voice Agent."
+      }
     };
 
     store.addCall(initialCall);
+    syncCallToSupabase(initialCall);
 
     const responsePayload = {
       ok: true,
-      message: "Call successfully dispatched to CALL-E telephony gateway",
       callId: localCallId,
       runId,
-      status: "queued"
+      status: "queued",
+      patientName: name,
+      phoneNumber,
+      message: `Call dispatched to ${phoneNumber} with ${language.toUpperCase()} voice model.`,
+      dispatched_at: new Date().toISOString()
     };
 
+    // 5. Store response in both durable Supabase table & in-memory cache for idempotency replay
     if (idempotencyKey) {
       dispatchedIdempotencyKeys.set(idempotencyKey, responsePayload);
+      await saveDbIdempotencyKey(idempotencyKey, responsePayload, 200);
     }
 
     return NextResponse.json(responsePayload);
   } catch (err: any) {
-    console.error("[trigger-overflow] Fatal dispatch error:", err);
-    return NextResponse.json({ ok: false, error: err.message || "Internal server error" }, { status: 500 });
+    console.error("[trigger-overflow] Error:", err);
+    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
   }
 }

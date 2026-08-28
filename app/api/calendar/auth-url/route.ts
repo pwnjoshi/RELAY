@@ -4,10 +4,11 @@ import { getGoogleOAuthUrl } from "@/lib/calendar";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
+    const branchId = searchParams.get("branchId") || searchParams.get("locationId") || "loc_downtown";
     const state = searchParams.get("state") || "relay_auth";
-    const url = getGoogleOAuthUrl(state);
+    const url = getGoogleOAuthUrl({ branchId, state });
 
-    return NextResponse.json({ ok: true, url });
+    return NextResponse.json({ ok: true, url, branchId });
   } catch (err: any) {
     return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
   }

@@ -141,9 +141,9 @@ export function CallTable({
                 </td>
               </tr>
             ) : (
-              calls.map((call) => (
+              calls.map((call, idx) => (
                 <tr
-                  key={call.id}
+                  key={call.id ? `call_${call.id}_${idx}` : `call_idx_${idx}`}
                   onClick={() => onSelectCall(call)}
                   className="hover:bg-[#FAFAF8] dark:hover:bg-[#081426]/70 transition-colors cursor-pointer group"
                 >

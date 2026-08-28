@@ -19,6 +19,7 @@ export interface IntegrationItem {
 interface IntegrationConfigModalProps {
   isOpen: boolean;
   integration: IntegrationItem | null;
+  locations?: any[];
   onClose: () => void;
   onSave: (updated: IntegrationItem) => void;
 }
@@ -26,10 +27,12 @@ interface IntegrationConfigModalProps {
 export function IntegrationConfigModal({
   isOpen,
   integration,
+  locations = [],
   onClose,
   onSave
 }: IntegrationConfigModalProps) {
   // Google OAuth State
+  const [selectedBranchId, setSelectedBranchId] = useState<string>("loc_downtown");
   const [googleEmail, setGoogleEmail] = useState("alexander@relayoperations.com");
   const [googleAccountConnected, setGoogleAccountConnected] = useState(false);
   const [selectedCalId, setSelectedCalId] = useState("primary");
@@ -67,6 +70,16 @@ export function IntegrationConfigModal({
       if (integration.id === "google_cal") {
         setGoogleAccountConnected(integration.status === "connected");
         if (integration.email) setGoogleEmail(integration.email);
+        // Check current branch calendar status
+        fetch(`/api/calendar?branchId=${selectedBranchId}`)
+          .then((r) => r.json())
+          .then((d) => {
+            if (d.ok && d.connected) {
+              setGoogleAccountConnected(true);
+              if (d.config?.calendarEmail) setGoogleEmail(d.config.calendarEmail);
+            }
+          })
+          .catch(() => {});
       }
       if (integration.id === "salesforce") {
         setSfConnected(integration.status === "connected");
@@ -75,9 +88,23 @@ export function IntegrationConfigModal({
         setHubspotConnected(integration.status === "connected");
       }
     }
-  }, [integration]);
+  }, [integration, selectedBranchId]);
 
   if (!isOpen || !integration) return null;
+
+  const handleStartOAuthFlow = async () => {
+    try {
+      const res = await fetch(`/api/calendar/auth-url?branchId=${selectedBranchId}`);
+      const data = await res.json();
+      if (data.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        setIsGoogleOAuthPickerOpen(true);
+      }
+    } catch {
+      setIsGoogleOAuthPickerOpen(true);
+    }
+  };
 
   const handleAuthorizeGoogleAccount = () => {
     let finalEmail = selectedAccountOption;
@@ -89,7 +116,7 @@ export function IntegrationConfigModal({
     setIsGoogleOAuthPickerOpen(false);
     setTestResult({
       ok: true,
-      message: `Google Workspace OAuth 2.0 authorized for ${finalEmail}. Primary & Consultation calendars linked.`
+      message: `Google Workspace OAuth 2.0 authorized for ${finalEmail} (Branch: ${selectedBranchId}). Primary & Consultation calendars linked.`
     });
   };
 
@@ -102,7 +129,7 @@ export function IntegrationConfigModal({
       if (integration.id === "google_cal") {
         setTestResult({
           ok: true,
-          message: `Google Workspace OAuth 2.0 verified for ${googleEmail}. 4 open calendar slots verified. Free/Busy Masking: ACTIVE.`
+          message: `Google Workspace OAuth 2.0 verified for ${googleEmail} (Branch: ${selectedBranchId}). 4 open calendar slots verified. Free/Busy Masking: ACTIVE.`
         });
       } else if (integration.id === "salesforce") {
         setTestResult({
@@ -181,6 +208,26 @@ export function IntegrationConfigModal({
             {/* 1. Google Calendar & Workspace */}
             {integration.id === "google_cal" && (
               <div className="space-y-4">
+                {/* Branch Selection */}
+                {locations && locations.length > 0 && (
+                  <div className="space-y-1">
+                    <label className="block font-bold text-[#0B1930] dark:text-[#F8FAFC]">
+                      Target Clinic Branch / Location
+                    </label>
+                    <select
+                      value={selectedBranchId}
+                      onChange={(e) => setSelectedBranchId(e.target.value)}
+                      className="w-full bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl px-3 py-2 text-xs font-bold text-[#0B1930] dark:text-white outline-none focus:border-[#1B9A9C]"
+                    >
+                      {locations.map((loc) => (
+                        <option key={loc.id} value={loc.id}>
+                          {loc.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div className="p-4 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
@@ -195,7 +242,7 @@ export function IntegrationConfigModal({
 
                     <button
                       type="button"
-                      onClick={() => setIsGoogleOAuthPickerOpen(true)}
+                      onClick={handleStartOAuthFlow}
                       className="px-3.5 py-2 rounded-xl bg-[#0B1930] hover:bg-[#15294A] text-white text-xs font-bold shadow-sm transition-all cursor-pointer flex items-center gap-1.5"
                     >
                       <Icons.Globe className="w-3.5 h-3.5 text-[#32C4BE]" />

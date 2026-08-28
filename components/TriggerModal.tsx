@@ -210,6 +210,16 @@ export function TriggerModal({
   const [liveCallStatus, setLiveCallStatus] = useState<string>("queued");
   const [liveCallSummary, setLiveCallSummary] = useState<string>("");
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
+  const idempotencyKeyRef = React.useRef<string>("");
+
+  useEffect(() => {
+    if (isOpen && !idempotencyKeyRef.current) {
+      idempotencyKeyRef.current = `idem_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    }
+    if (!isOpen) {
+      idempotencyKeyRef.current = "";
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     try {
@@ -293,6 +303,10 @@ export function TriggerModal({
     setDispatchStep(1);
     setProgressPercent(25);
 
+    if (!idempotencyKeyRef.current) {
+      idempotencyKeyRef.current = `idem_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    }
+
     const stepInterval = setInterval(() => {
       setDispatchStep((prev) => {
         if (prev === 1) {
@@ -333,7 +347,10 @@ export function TriggerModal({
     try {
       const res = await fetch("/api/trigger-overflow", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Idempotency-Key": idempotencyKeyRef.current 
+        },
         body: JSON.stringify(payload)
       });
       const data = await res.json();

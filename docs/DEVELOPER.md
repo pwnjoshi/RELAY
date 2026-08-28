@@ -143,4 +143,4 @@ frontend:
 
 ## 6. Known Implementation Gaps
 
-For a detailed breakdown of claimed capabilities versus current implementation status, see [**`docs/GAPS.md`**](file:///c:/Users/joshi/Desktop/Call-E/docs/GAPS.md).
+For a detailed breakdown of claimed capabilities versus current implementation status, see [**`docs/GAPS.md`**](./GAPS.md).

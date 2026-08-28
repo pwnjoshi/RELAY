@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- RELAY AUTONOMOUS VOICE OPERATIONS — Supabase Schema
 -- Run this in the Supabase SQL Editor to create all tables.
 -- ============================================================
@@ -174,8 +174,42 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 
 -- ────────────────────────────────────────────────────────────
--- 10. REALTIME — subscribe to live call events on the dashboard
+-- 10. CALENDAR CONNECTIONS (Google Calendar per Branch)
+-- Multi-location OAuth 2.0 token persistence with AES-256 encrypted refresh tokens
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS calendar_connections (
+  id                       TEXT PRIMARY KEY DEFAULT ('calconn_' || replace(gen_random_uuid()::text, '-', '')),
+  branch_id                TEXT UNIQUE NOT NULL,
+  user_id                  TEXT REFERENCES users(id) ON DELETE SET NULL,
+  google_email             TEXT,
+  encrypted_refresh_token  TEXT NOT NULL,
+  calendar_id              TEXT NOT NULL DEFAULT 'primary',
+  access_token             TEXT,
+  access_token_expires_at  BIGINT,
+  config_json              JSONB DEFAULT '{}',
+  created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at               TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_calconn_branch ON calendar_connections(branch_id);
+
+-- ────────────────────────────────────────────────────────────
+-- 11. IDEMPOTENCY KEYS (Durable Request Deduplication)
+-- Prevents double-submissions and duplicate telephony dispatches
+-- ────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS idempotency_keys (
+  key           TEXT PRIMARY KEY,
+  response_json JSONB NOT NULL,
+  status_code   INTEGER NOT NULL DEFAULT 200,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_idempotency_created ON idempotency_keys(created_at);
+
+-- ────────────────────────────────────────────────────────────
+-- 12. REALTIME — subscribe to live call events on the dashboard
 -- ────────────────────────────────────────────────────────────
 ALTER PUBLICATION supabase_realtime ADD TABLE calls;
 ALTER PUBLICATION supabase_realtime ADD TABLE appointments;
 ALTER PUBLICATION supabase_realtime ADD TABLE batch_items;
+ALTER PUBLICATION supabase_realtime ADD TABLE calendar_connections;

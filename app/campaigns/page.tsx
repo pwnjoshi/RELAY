@@ -50,7 +50,10 @@ export default function CampaignsPage() {
     try {
       const res = await fetch("/api/trigger-recall", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": `recall_${patient.id}`
+        },
         body: JSON.stringify({
           phoneNumber: patient.phone,
           patientName: patient.name,
@@ -139,12 +142,12 @@ export default function CampaignsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E4E8E7] dark:divide-[#20324A]">
-                    {recallList.map((patient) => {
-                      const isDispatched = dispatchedSuccessIds.has(patient.id);
+                    {recallList.map((patient, index) => {
+                      const isDispatched = dispatchedSuccessIds.has(patient.id || `patient_${index}`);
                       const isCalling = dispatchingId === patient.id;
 
                       return (
-                        <tr key={patient.id} className="hover:bg-[#FAFAF8] dark:hover:bg-[#081426] transition-colors">
+                        <tr key={patient.id ? `recall_${patient.id}_${index}` : `recall_idx_${index}`} className="hover:bg-[#FAFAF8] dark:hover:bg-[#081426] transition-colors">
                           <td className="py-3 px-4">
                             <div className="font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC]">{patient.name}</div>
                             <div className="text-[11px] font-mono text-[#667085] dark:text-[#9BA8B8] whitespace-nowrap">{patient.phone}</div>

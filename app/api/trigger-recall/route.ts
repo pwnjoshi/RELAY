@@ -4,6 +4,7 @@ import { createDirectCall } from "@/lib/calle-client";
 import { CallRecord, LanguageCode } from "@/lib/types";
 import { telephonyRateLimiter, getClientIp } from "@/lib/rate-limiter";
 import { getSessionUser } from "@/lib/auth";
+import { getDbIdempotencyKey, saveDbIdempotencyKey, syncCallToSupabase } from "@/lib/supabase";
 import fs from "fs";
 import path from "path";
 
@@ -39,10 +40,18 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Idempotency Check
+    // 2. Durable Idempotency Deduplication Check (Supabase + In-Memory Fast Tier)
     const idempotencyKey = req.headers.get("idempotency-key") || req.headers.get("Idempotency-Key");
-    if (idempotencyKey && recallIdempotencyKeys.has(idempotencyKey)) {
-      return NextResponse.json(recallIdempotencyKeys.get(idempotencyKey));
+    if (idempotencyKey) {
+      if (recallIdempotencyKeys.has(idempotencyKey)) {
+        return NextResponse.json(recallIdempotencyKeys.get(idempotencyKey));
+      }
+
+      const dbCached = await getDbIdempotencyKey(idempotencyKey);
+      if (dbCached) {
+        recallIdempotencyKeys.set(idempotencyKey, dbCached.response_json);
+        return NextResponse.json(dbCached.response_json, { status: dbCached.status_code });
+      }
     }
 
     const body = await req.json();
@@ -58,23 +67,24 @@ export async function POST(req: Request) {
       location = locations.find((l: any) => l.id === locationId) || locations[0];
     }
     const name = patientName || "Valued Customer";
-    const localCallId = `recall_${Date.now()}`;
+    const localCallId = `call_${Date.now()}`;
 
-    // 3. Dispatch live recall call to CALL-E REST API
+    // 3. Dispatch recall call to CALL-E REST API
     const directRes = await createDirectCall({
       phoneNumber,
       patientName: name,
       location,
       callType: "outbound_recall",
       language: language as LanguageCode,
-      extraContext: extraContext || (dueFor ? `Client is due for scheduled follow-up: ${dueFor}.` : undefined)
+      customGoal: `Proactive Client Outreach: Follow up for ${dueFor || "scheduled review"}.`,
+      extraContext
     });
 
     if (!directRes.ok) {
       return NextResponse.json(
         {
           ok: false,
-          error: directRes.error || "Failed to dispatch recall call to CALL-E telephony engine.",
+          error: directRes.error || "Failed to dispatch recall call.",
           details: directRes.details
         },
         { status: directRes.status || 500 }
@@ -83,7 +93,6 @@ export async function POST(req: Request) {
 
     const runId = directRes.result?.run_id || directRes.result?.id || localCallId;
 
-    // 4. Record new call in in-memory store
     const initialCall: CallRecord = {
       id: localCallId,
       runId,
@@ -93,6 +102,7 @@ export async function POST(req: Request) {
       departmentId: "dept_general",
       callType: "outbound_recall",
       status: "queued",
+      recoveredRevenue: 0,
       createdAt: new Date().toISOString(),
       structuredOutcome: {
         call_id: localCallId,
@@ -105,30 +115,33 @@ export async function POST(req: Request) {
         callback: { requested: false, priority: null, reason: null },
         opt_out: false,
         sentiment: "neutral",
-        language: language as LanguageCode,
-        notes: "Outbound recall queued in regional carrier PSTN gateway..."
-      },
-      recoveredRevenue: 0,
-      summary: "Outbound recall queued in regional carrier PSTN gateway..."
+        language,
+        notes: `Outbound follow-up campaign dispatched for: ${dueFor || "routine review"}.`
+      }
     };
 
     store.addCall(initialCall);
+    syncCallToSupabase(initialCall);
 
     const responsePayload = {
       ok: true,
-      message: "Recall call successfully dispatched to CALL-E telephony gateway",
       callId: localCallId,
       runId,
-      status: "queued"
+      status: "queued",
+      patientName: name,
+      phoneNumber,
+      message: `Recall call dispatched to ${phoneNumber} in ${language.toUpperCase()}.`,
+      dispatched_at: new Date().toISOString()
     };
 
     if (idempotencyKey) {
       recallIdempotencyKeys.set(idempotencyKey, responsePayload);
+      await saveDbIdempotencyKey(idempotencyKey, responsePayload, 200);
     }
 
     return NextResponse.json(responsePayload);
   } catch (err: any) {
-    console.error("[trigger-recall] Fatal dispatch error:", err);
-    return NextResponse.json({ ok: false, error: err.message || "Internal server error" }, { status: 500 });
+    console.error("[trigger-recall] Error:", err);
+    return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
   }
 }

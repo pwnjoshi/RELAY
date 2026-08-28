@@ -129,13 +129,137 @@ export interface DbDepartment {
   allowed_roles: string[];
 }
 
-export interface DbAuditLog {
+export interface DbCalendarConnection {
   id: string;
-  table_name: string;
-  record_id: string;
-  action: "INSERT" | "UPDATE" | "DELETE";
-  old_data: Record<string, unknown> | null;
-  new_data: Record<string, unknown> | null;
-  actor_id: string | null;
+  branch_id: string;
+  user_id?: string | null;
+  google_email?: string | null;
+  encrypted_refresh_token: string;
+  calendar_id: string;
+  access_token?: string | null;
+  access_token_expires_at?: number | null;
+  config_json?: Record<string, unknown> | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface DbIdempotencyKey {
+  key: string;
+  response_json: Record<string, unknown>;
+  status_code: number;
   created_at: string;
+}
+
+/**
+ * Fetch calendar connection row for a given branch from Supabase
+ */
+export async function getDbCalendarConnection(branchId: string): Promise<DbCalendarConnection | null> {
+  const client = getDirectClient();
+  if (!client) return null;
+
+  try {
+    const { data, error } = await (client.from("calendar_connections") as any)
+      .select("*")
+      .eq("branch_id", branchId)
+      .single();
+
+    if (error || !data) return null;
+    return data as DbCalendarConnection;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Save or update calendar connection row in Supabase
+ */
+export async function saveDbCalendarConnection(record: Partial<DbCalendarConnection> & { branch_id: string }): Promise<boolean> {
+  const client = getDirectClient();
+  if (!client) return false;
+
+  try {
+    const { error } = await (client.from("calendar_connections") as any).upsert(
+      {
+        ...record,
+        updated_at: new Date().toISOString()
+      },
+      { onConflict: "branch_id" }
+    );
+
+    if (error) {
+      console.warn("[Supabase] Error saving calendar connection:", error.message);
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn("[Supabase] Exception saving calendar connection:", err);
+    return false;
+  }
+}
+
+/**
+ * Delete calendar connection row for a given branch from Supabase
+ */
+export async function deleteDbCalendarConnection(branchId: string): Promise<boolean> {
+  const client = getDirectClient();
+  if (!client) return false;
+
+  try {
+    const { error } = await (client.from("calendar_connections") as any)
+      .delete()
+      .eq("branch_id", branchId);
+
+    if (error) {
+      console.warn("[Supabase] Error deleting calendar connection:", error.message);
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Fetch cached idempotency response from Supabase
+ */
+export async function getDbIdempotencyKey(key: string): Promise<DbIdempotencyKey | null> {
+  const client = getDirectClient();
+  if (!client) return null;
+
+  try {
+    const { data, error } = await (client.from("idempotency_keys") as any)
+      .select("*")
+      .eq("key", key)
+      .single();
+
+    if (error || !data) return null;
+    return data as DbIdempotencyKey;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Save cached idempotency response in Supabase
+ */
+export async function saveDbIdempotencyKey(key: string, responseJson: Record<string, unknown>, statusCode = 200): Promise<boolean> {
+  const client = getDirectClient();
+  if (!client) return false;
+
+  try {
+    const { error } = await (client.from("idempotency_keys") as any).upsert({
+      key,
+      response_json: responseJson,
+      status_code: statusCode,
+      created_at: new Date().toISOString()
+    });
+
+    if (error) {
+      console.warn("[Supabase] Error saving idempotency key:", error.message);
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
 }

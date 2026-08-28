@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { store } from "@/lib/store";
 import { parseRestCallOutcome } from "@/lib/calle-client";
-import { analyzeCallTranscriptWithDeepSeek } from "@/lib/nebius-ai";
+import { analyzeCallTranscript } from "@/lib/ai-analyzer";
 import { runPostCallActionPipeline } from "@/lib/connectors";
 import type { CallRecord } from "@/lib/types";
 import fs from "fs";
@@ -44,12 +44,12 @@ export async function POST(req: Request) {
     const callerName = callTask.metadata?.patient_name || existing?.patientName || "Valued Caller";
     const callerPhone = callTask.recipients?.[0]?.phones?.[0] || existing?.phoneNumber || "+15550000000";
 
-    // DeepSeek-V4-Flash-0731 Post-Call Intelligence
+    // AWS Bedrock (Claude 3.5 Sonnet / Llama 3) & Nebius Post-Call Intelligence
     let aiIntelligence;
     try {
       const transcriptText = callTask.transcript || callTask.summary || structuredOutcome.notes || "";
       if (transcriptText) {
-        aiIntelligence = await analyzeCallTranscriptWithDeepSeek(transcriptText, callerName, location.name);
+        aiIntelligence = await analyzeCallTranscript(transcriptText, callerName, location.name);
       }
     } catch (aiErr: any) {
       console.warn("[CALL-E Webhook] AI intelligence skipped on error:", aiErr.message);

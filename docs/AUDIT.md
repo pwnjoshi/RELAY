@@ -52,20 +52,20 @@
 
 ## 2. Library Inventory (`lib/`)
 
-| File | Purpose | External Dependencies | Real vs Mock Status |
-|---|---|---|---|
-| [`lib/auth.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/auth.ts) | User session management, bcrypt hashing, cookie reading | `bcryptjs`, `next/headers` | **Real**: Full 12-round bcrypt hash verification and cookie lifecycle. |
-| [`lib/jwt.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/jwt.ts) | Cryptographic HS256 JWT signature and verification | `crypto` (Node.js built-in) | **Real**: Dual-token architecture with in-memory revocation blocklist. |
-| [`lib/calle-client.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/calle-client.ts) | REST client for CALL-E telephony API, prompt builders | `fetch` | **Real**: Live HTTP REST client connecting to `https://api.heycall-e.com/v1`. |
-| [`lib/nebius-ai.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/nebius-ai.ts) | Client for Nebius DeepSeek-V4 neural reasoning | `fetch` | **Real**: Connects to `https://api.tokenfactory.us-central1.nebius.com/v1/`. |
-| [`lib/calendar.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/calendar.ts) | Slot availability and calendar appointment booking | None (mock in v1.0) | **Mock in v1.0**: Generates synthetic slots; rewritten in Phase 4 for Google Calendar. |
-| [`lib/mcp-bridge.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/mcp-bridge.ts) | Shells out to `calle` CLI via `child_process.exec` | `child_process` | **Legacy CLI Bridge**: Replaced in Phase 5 with generic connector framework. |
-| [`lib/rate-limiter.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/rate-limiter.ts) | Sliding-window in-memory quota & anti-abuse engine | None | **Real**: Tracks 24h rolling quotas (3 calls demo vs 8 calls auth). |
-| [`lib/store.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/store.ts) | Singleton in-memory state store seeded from JSON | `fs`, `path` | **In-Memory Store**: Reads `data/sample-calls.json` on startup. State resets on process restart. |
-| [`lib/supabase.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/supabase.ts) | Supabase PostgreSQL async sync client | `@supabase/supabase-js` | **Real / Optional**: Async upsert to Supabase `calls` table when configured. |
-| [`lib/types.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/types.ts) | TypeScript definitions & interfaces | None | **Real**: Strong type contracts across all layers. |
-| [`lib/utils.ts`](file:///c:/Users/joshi/Desktop/Call-E/lib/utils.ts) | Formatting helpers (dates, currency, classes) | `clsx`, `tailwind-merge` | **Real**: Utility functions. |
-| [`lib/console-context.tsx`](file:///c:/Users/joshi/Desktop/Call-E/lib/console-context.tsx) | React Context Provider for frontend console state | React | **Real**: Manages workspace switching and active language in browser memory. |
+| [`lib/auth.ts`](../lib/auth.ts) | User session management, bcrypt hashing, cookie reading | `bcryptjs`, `next/headers` | **Real**: Full 12-round bcrypt hash verification and cookie lifecycle. |
+| [`lib/jwt.ts`](../lib/jwt.ts) | Cryptographic HS256 JWT signature and verification | `crypto` (Node.js built-in) | **Real**: Dual-token architecture with in-memory revocation blocklist. |
+| [`lib/calle-client.ts`](../lib/calle-client.ts) | REST client for CALL-E telephony API, prompt builders | `fetch` | **Real**: Live HTTP REST client connecting to `https://api.heycall-e.com/v1`. |
+| [`lib/bedrock-ai.ts`](../lib/bedrock-ai.ts) | Amazon Bedrock Claude 3.5 Sonnet / Llama 3 engine | `@aws-sdk/client-bedrock-runtime` | **Real**: Enterprise foundation model reasoning with zero data retention. |
+| [`lib/nebius-ai.ts`](../lib/nebius-ai.ts) | Client for Nebius DeepSeek-V4 neural reasoning | `fetch` | **Real**: Connects to `https://api.tokenfactory.us-central1.nebius.com/v1/`. |
+| [`lib/ai-analyzer.ts`](../lib/ai-analyzer.ts) | Unified post-call intelligence dispatcher | Bedrock / Nebius / Demo | **Real**: Switches between AWS Bedrock, Nebius, and simulated demo mode. |
+| [`lib/calendar.ts`](../lib/calendar.ts) | Multi-branch Google Calendar OAuth2 & Supabase store | REST API v3, Supabase | **Real**: Multi-location OAuth persistence, AES-256 encryption, free/busy masking. |
+| [`lib/connectors.ts`](../lib/connectors.ts) | Generic connector framework with durable idempotency | Supabase, fetch | **Real**: Decoupled connector execution with multi-tier deduplication. |
+| [`lib/rate-limiter.ts`](../lib/rate-limiter.ts) | Sliding-window in-memory quota & anti-abuse engine | None | **Real**: Tracks 24h rolling quotas (3 calls demo vs 8 calls auth). |
+| [`lib/store.ts`](../lib/store.ts) | Singleton in-memory state store seeded from JSON | `fs`, `path` | **In-Memory Store**: Reads `data/sample-calls.json` on startup. State resets on process restart. |
+| [`lib/supabase.ts`](../lib/supabase.ts) | Supabase PostgreSQL async sync client | `@supabase/supabase-js` | **Real**: Persists calls, calendar tokens per branch, and idempotency keys. |
+| [`lib/types.ts`](../lib/types.ts) | TypeScript definitions & interfaces | None | **Real**: Strong type contracts across all layers. |
+| [`lib/utils.ts`](../lib/utils.ts) | Formatting helpers (dates, currency, classes) | `clsx`, `tailwind-merge` | **Real**: Utility functions. |
+| [`lib/console-context.tsx`](../lib/console-context.tsx) | React Context Provider for frontend console state | React | **Real**: Manages workspace switching and active language in browser memory. |
 
 ---
 

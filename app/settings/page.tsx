@@ -31,6 +31,7 @@ export default function SettingsPage() {
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   // Google Calendar State
+  const [selectedBranchId, setSelectedBranchId] = useState<string>("loc_downtown");
   const [gcalConfig, setGcalConfig] = useState<CalendarConfig | null>(null);
   const [gcalEvents, setGcalEvents] = useState<CalendarEvent[]>([]);
   const [testBookingName, setTestBookingName] = useState("");
@@ -38,13 +39,25 @@ export default function SettingsPage() {
   const [testBookingService, setTestBookingService] = useState("");
   const [bookingSuccessMsg, setBookingSuccessMsg] = useState("");
 
+  const fetchCalendarForBranch = useCallback(async (branchId: string) => {
+    try {
+      const res = await fetch(`/api/calendar?branchId=${branchId}`);
+      if (res.ok) {
+        const d = await res.json();
+        setGcalConfig(d.config || null);
+        setGcalEvents(d.events || []);
+      }
+    } catch (err) {
+      console.error("Error loading branch calendar:", err);
+    }
+  }, []);
+
   const fetchData = useCallback(async () => {
     try {
-      const [locsRes, recallRes, statsRes, gcalRes] = await Promise.all([
+      const [locsRes, recallRes, statsRes] = await Promise.all([
         fetch("/api/locations"),
         fetch("/api/locations?type=recall-list"),
-        fetch("/api/call-results/stats"),
-        fetch("/api/calendar")
+        fetch("/api/call-results/stats")
       ]);
 
       if (locsRes.ok) {
@@ -59,19 +72,20 @@ export default function SettingsPage() {
         const d = await statsRes.json();
         setStats(d.stats || null);
       }
-      if (gcalRes.ok) {
-        const d = await gcalRes.json();
-        setGcalConfig(d.config || null);
-        setGcalEvents(d.events || []);
-      }
+      await fetchCalendarForBranch(selectedBranchId);
     } catch (err) {
       console.error("Error loading settings:", err);
     }
-  }, []);
+  }, [fetchCalendarForBranch, selectedBranchId]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  const handleBranchChange = (branchId: string) => {
+    setSelectedBranchId(branchId);
+    fetchCalendarForBranch(branchId);
+  };
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,16 +102,34 @@ export default function SettingsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "update_config",
+          branchId: selectedBranchId,
           config: { strictFreeBusyMasking: newVal }
         })
       });
       if (res.ok) {
         const d = await res.json();
         setGcalConfig(d.config);
-        setGcalEvents(d.events || []);
       }
     } catch (err) {
       console.error("Failed to toggle masking:", err);
+    }
+  };
+
+  const handleDisconnectCalendar = async () => {
+    try {
+      const res = await fetch("/api/calendar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "disconnect",
+          branchId: selectedBranchId
+        })
+      });
+      if (res.ok) {
+        fetchCalendarForBranch(selectedBranchId);
+      }
+    } catch (err) {
+      console.error("Failed to disconnect calendar:", err);
     }
   };
 
@@ -106,25 +138,30 @@ export default function SettingsPage() {
     if (!testBookingName || !testBookingPhone) return;
 
     try {
+      const idempotencyKey = `manual_booking_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
       const res = await fetch("/api/calendar", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": idempotencyKey
+        },
         body: JSON.stringify({
-          action: "book_appointment",
+          action: "book",
+          branchId: selectedBranchId,
           customerName: testBookingName,
           customerPhone: testBookingPhone,
           serviceType: testBookingService || "Consultation Follow-up",
-          startIso: "2026-08-28T12:30:00+05:30",
+          startIso: new Date(Date.now() + 86400000).toISOString(),
           durationMinutes: 30
         })
       });
 
       if (res.ok) {
-        setBookingSuccessMsg(`Booked Friday 12:30 PM for ${testBookingName}!`);
+        setBookingSuccessMsg(`Booked appointment for ${testBookingName}!`);
         setTestBookingName("");
         setTestBookingPhone("");
         setTestBookingService("");
-        fetchData();
+        fetchCalendarForBranch(selectedBranchId);
         setTimeout(() => setBookingSuccessMsg(""), 4000);
       }
     } catch (err) {
@@ -362,26 +399,70 @@ export default function SettingsPage() {
 
             {/* 2. Google Calendar Integration & Privacy Guardrails Card */}
             <div className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl p-6 shadow-subtle space-y-6">
-              <div className="flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-[#E4E8E7] dark:border-[#20324A]">
+              {/* Branch Selector & Connection Header */}
+              <div className="flex items-center justify-between flex-wrap gap-4 pb-4 border-b border-[#E4E8E7] dark:border-[#20324A]">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-[#0B1930] text-white flex items-center justify-center font-bold text-sm shadow-sm">
                     G
                   </div>
                   <div>
                     <h3 className="text-sm font-heading font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-                      Google Calendar Two-Way Sync Engine
+                      Google Calendar Multi-Branch Sync Engine
                     </h3>
                     <p className="text-xs text-[#667085] dark:text-[#9BA8B8]">
-                      Connected: <code>{gcalConfig?.calendarEmail || "admin.schedule@apexoperations.com"}</code>
+                      {gcalConfig?.connected ? (
+                        <>Connected: <code>{gcalConfig.calendarEmail}</code></>
+                      ) : (
+                        <span className="text-amber-600 dark:text-amber-400 font-semibold">Not Configured for this branch</span>
+                      )}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
-                  <span className="text-[11px] font-mono font-bold text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-1 rounded-full border border-[#16A34A]/20">
-                    OAuth Active &bull; Syncing
-                  </span>
+                <div className="flex items-center flex-wrap gap-3">
+                  {/* Branch Switcher */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono font-bold uppercase text-[#667085] dark:text-[#9BA8B8]">Branch:</span>
+                    <select
+                      value={selectedBranchId}
+                      onChange={(e) => handleBranchChange(e.target.value)}
+                      className="bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl px-3 py-1 text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC] outline-none"
+                    >
+                      {locations.map((loc) => (
+                        <option key={loc.id} value={loc.id}>
+                          {loc.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {gcalConfig?.isDemoMode && (
+                    <span className="text-[10px] font-mono font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30">
+                      ⚡ DEMO SIMULATION MODE
+                    </span>
+                  )}
+
+                  {gcalConfig?.connected ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono font-bold text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-1 rounded-full border border-[#16A34A]/20">
+                        OAuth Active &bull; Syncing
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleDisconnectCalendar}
+                        className="text-[10px] font-mono px-2 py-1 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 cursor-pointer"
+                      >
+                        Disconnect
+                      </button>
+                    </div>
+                  ) : (
+                    <a
+                      href={`/api/calendar/auth-url?branchId=${selectedBranchId}`}
+                      className="text-xs font-bold px-3 py-1.5 rounded-xl bg-[#0B1930] hover:bg-[#15294A] text-white shadow-sm transition-all"
+                    >
+                      Authorize Google Account &rarr;
+                    </a>
+                  )}
                 </div>
               </div>
 
