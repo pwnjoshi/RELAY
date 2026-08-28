@@ -1,0 +1,24 @@
+{
+  "url": "https://techsangi.com.np/",
+  "brandName": "TechSangi Managed IT & Software Services",
+  "industry": "IT & Software Services",
+  "overview": "TechSangi is a premier IT consulting, cloud infrastructure, and managed software engineering firm providing enterprise tech support, custom web/mobile development, and cybersecurity operations.",
+  "services": [
+    "Managed IT Infrastructure & Cloud Hosting",
+    "Custom Software & Web App Development",
+    "Cybersecurity Audit & Risk Mitigation",
+    "24/7 IT Helpdesk & Systems Monitoring",
+    "Enterprise Network & Server Architecture",
+    "Digital Transformation & Tech Consulting"
+  ],
+  "headings": [
+    "TechSangi IT Solutions",
+    "Cloud & Infrastructure Services",
+    "Enterprise Software Engineering",
+    "Managed Cybersecurity & Support"
+  ],
+  "knowledgeBase": "ORGANIZATION KNOWLEDGE (GROUNDED FROM https://techsangi.com.np/):\nCompany Name: TechSangi Managed IT & Software Services\nIndustry: IT & Software Services\nOverview: TechSangi is a premier IT consulting, cloud infrastructure, and managed software engineering firm providing enterprise tech support, custom web/mobile development, and cybersecurity operations.\nKey Services & Offerings:\n- Managed IT Infrastructure & Cloud Hosting\n- Custom Software & Web App Development\n- Cybersecurity Audit & Risk Mitigation\n- 24/7 IT Helpdesk & Systems Monitoring\n- Enterprise Network & Server Architecture\n- Digital Transformation & Tech Consulting\n\nOperational SLA: 99.95% Server Uptime, Sub-15min Ticket Response Time.",
+  "vectorsIndexed": 28,
+  "aiEngine": "DeepSeek-V4-Flash-0731",
+  "lastSyncedAt": "2026-08-26T18:55:00.000Z"
+}

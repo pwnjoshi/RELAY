@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SwitchboardCallOutcome",
+  "type": "object",
+  "properties": {
+    "call_id": {
+      "type": "string",
+      "description": "Unique identifier for the call"
+    },
+    "location_id": {
+      "type": "string",
+      "description": "Identifier of the clinic location"
+    },
+    "call_type": {
+      "type": "string",
+      "enum": ["inbound_overflow", "outbound_recall"],
+      "description": "Whether the call was an inbound overflow catch or outbound recall"
+    },
+    "caller_verified": {
+      "type": "boolean",
+      "description": "Whether the identity of the caller/patient was verified"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "booked",
+        "rescheduled",
+        "declined",
+        "callback_requested",
+        "escalated_urgent",
+        "escalated_clinical",
+        "opt_out",
+        "voicemail_left",
+        "no_answer"
+      ],
+      "description": "Primary resolution status of the call"
+    },
+    "appointment": {
+      "type": "object",
+      "properties": {
+        "booked": { "type": "boolean" },
+        "datetime": { "type": ["string", "null"] },
+        "service_type": { "type": ["string", "null"] }
+      },
+      "required": ["booked", "datetime", "service_type"]
+    },
+    "callback": {
+      "type": "object",
+      "properties": {
+        "requested": { "type": "boolean" },
+        "priority": {
+          "type": ["string", "null"],
+          "enum": ["standard", "urgent", null]
+        },
+        "reason": { "type": ["string", "null"] }
+      },
+      "required": ["requested", "priority", "reason"]
+    },
+    "opt_out": {
+      "type": "boolean",
+      "description": "Whether the patient requested not to be contacted again"
+    },
+    "sentiment": {
+      "type": "string",
+      "enum": ["neutral", "positive", "frustrated", "distressed"],
+      "description": "Observed caller emotional sentiment"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Brief clinical or administrative summary of key discussion points"
+    }
+  },
+  "required": [
+    "call_id",
+    "location_id",
+    "call_type",
+    "caller_verified",
+    "outcome",
+    "appointment",
+    "callback",
+    "opt_out",
+    "sentiment",
+    "notes"
+  ]
+}

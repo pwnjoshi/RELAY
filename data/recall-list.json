@@ -1,0 +1,38 @@
+[
+  {
+    "patient_id": "pat_101",
+    "name": "Jordan Miller",
+    "phone": "+15551234567",
+    "location_id": "loc_downtown",
+    "last_visit": "2025-08-15",
+    "due_for": "Routine 6-Month Hygiene Cleaning & Exam",
+    "notes": "Prefers morning slots, previously inquired about teeth whitening"
+  },
+  {
+    "patient_id": "pat_102",
+    "name": "Samantha Reed",
+    "phone": "+15552345678",
+    "location_id": "loc_westside",
+    "last_visit": "2025-07-20",
+    "due_for": "Annual Preventive Wellness & Bloodwork Review",
+    "notes": "Has CareCredit, sensitive to appointment duration"
+  },
+  {
+    "patient_id": "pat_103",
+    "name": "David Kim",
+    "phone": "+15553456789",
+    "location_id": "loc_highland",
+    "last_visit": "2025-06-10",
+    "due_for": "Periodontal Maintenance & Deep Scaling Follow-up",
+    "notes": "High risk of lapse, needs reassurance on zero pain"
+  },
+  {
+    "patient_id": "pat_104",
+    "name": "Taylor Morgan",
+    "phone": "+15554567890",
+    "location_id": "loc_downtown",
+    "last_visit": "2025-05-30",
+    "due_for": "Restorative Crown Fit Assessment",
+    "notes": "Missed previous appointment due to work travel"
+  }
+]

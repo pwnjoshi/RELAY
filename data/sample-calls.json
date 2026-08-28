@@ -1,0 +1,1665 @@
+[
+  {
+    "id": "call_hist_101",
+    "runId": "run_hist_101",
+    "phoneNumber": "+1 (415) 890-1204",
+    "patientName": "Sarah Jenkins",
+    "locationId": "loc_downtown",
+    "departmentId": "dept_general",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T06:14:00Z",
+    "completedAt": "2026-08-26T06:15:32Z",
+    "language": "en",
+    "recoveredRevenue": 320,
+    "summary": "Caller missed front desk 45s prior inquiring about exam slots and CareCredit financing. Booked appointment for Tuesday 10:00 AM.",
+    "structuredOutcome": {
+      "call_id": "call_hist_101",
+      "location_id": "loc_downtown",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "booked",
+      "appointment": {
+        "booked": true,
+        "datetime": "2026-09-01T10:00:00Z",
+        "service_type": "Comprehensive Oral Exam"
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "positive",
+      "language": "en",
+      "notes": "Patient scheduled for comprehensive oral exam and preventive cleaning."
+    }
+  },
+  {
+    "id": "call_hist_102",
+    "runId": "run_hist_102",
+    "phoneNumber": "+1 (312) 555-0199",
+    "patientName": "Robert Vance",
+    "locationId": "loc_westside",
+    "departmentId": "dept_ortho",
+    "callType": "outbound_recall",
+    "status": "completed",
+    "createdAt": "2026-08-26T05:30:00Z",
+    "completedAt": "2026-08-26T05:32:10Z",
+    "language": "en",
+    "recoveredRevenue": 450,
+    "summary": "Proactive hygiene recall. Patient agreed to upcoming appointment for periodontal maintenance.",
+    "structuredOutcome": {
+      "call_id": "call_hist_102",
+      "location_id": "loc_westside",
+      "department_id": "dept_ortho",
+      "call_type": "outbound_recall",
+      "caller_verified": true,
+      "outcome": "booked",
+      "appointment": {
+        "booked": true,
+        "datetime": "2026-09-03T14:30:00Z",
+        "service_type": "Periodontal Maintenance"
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "positive",
+      "language": "en",
+      "notes": "Patient confirmed hygiene recall appointment."
+    }
+  },
+  {
+    "id": "call_hist_103",
+    "runId": "run_hist_103",
+    "phoneNumber": "+1 (206) 555-7788",
+    "patientName": "Elena Martinez",
+    "locationId": "loc_highland",
+    "departmentId": "dept_emergency",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T04:12:00Z",
+    "completedAt": "2026-08-26T04:13:45Z",
+    "language": "es",
+    "recoveredRevenue": 0,
+    "summary": "Caller reported acute throbbing pain and swelling following wisdom tooth extraction. AI executed zero-harm protocol, advised 911 if airway compromised, and dispatched urgent priority SMS to Dr. Elena Rostova.",
+    "structuredOutcome": {
+      "call_id": "call_hist_103",
+      "location_id": "loc_highland",
+      "department_id": "dept_emergency",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "escalated_urgent",
+      "appointment": {
+        "booked": false,
+        "datetime": null,
+        "service_type": null
+      },
+      "callback": {
+        "requested": true,
+        "priority": "urgent",
+        "reason": "Acute pain and swelling post-extraction. Urgent DDS callback dispatched."
+      },
+      "opt_out": false,
+      "sentiment": "distressed",
+      "language": "es",
+      "notes": "Emergency safety trigger activated. On-call doctor SMS alert sent."
+    }
+  },
+  {
+    "id": "call_hist_104",
+    "runId": "run_hist_104",
+    "phoneNumber": "+919810012345",
+    "patientName": "Aarav Sharma",
+    "locationId": "loc_downtown",
+    "departmentId": "dept_general",
+    "callType": "batch_followup",
+    "status": "completed",
+    "createdAt": "2026-08-26T03:40:00Z",
+    "completedAt": "2026-08-26T03:42:00Z",
+    "language": "hi",
+    "recoveredRevenue": 700,
+    "summary": "Post-op root canal follow-up call conducted in Hindi. Patient confirmed swelling subsided and booked crown fitting appointment.",
+    "structuredOutcome": {
+      "call_id": "call_hist_104",
+      "location_id": "loc_downtown",
+      "department_id": "dept_general",
+      "call_type": "batch_followup",
+      "caller_verified": true,
+      "outcome": "booked",
+      "appointment": {
+        "booked": true,
+        "datetime": "2026-09-02T11:00:00Z",
+        "service_type": "Permanent Crown Fitting"
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "positive",
+      "language": "hi",
+      "notes": "Post-op checkup completed in Hindi. Permanent crown fitting booked."
+    }
+  },
+  {
+    "id": "call_1787746144109",
+    "phoneNumber": "+919810012345",
+    "patientName": "Alex Taylor",
+    "locationId": "loc_downtown",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T12:09:04.109Z",
+    "recoveredRevenue": 0,
+    "departmentId": "dept_general",
+    "language": "en",
+    "runId": "call_Kc-FrIU4Xgx8WdkcKTQlHg",
+    "summary": "Alex was reached and asked several times to continue in Hindi, but the bot could only continue in English. No Tuesday 10 AM dental checkup or hygiene cleaning appointment was confirmed; Alex requested to be connected with another person/the doctor, and the bot said it was connecting them with Dr. Sarah Chen, DDS.",
+    "rawCalleData": {
+      "id": "call_Kc-FrIU4Xgx8WdkcKTQlHg",
+      "object": "call_task",
+      "status": "completed",
+      "task": "Call +919810012345 (Alex Taylor) on behalf of Apex Health - Downtown Metro returning a missed call. Greet them warmly and ask whether they would like to book a dental checkup or hygiene cleaning for this Tuesday at 10:00 AM or speak with on-call doctor Dr. Sarah Chen, DDS. Answer questions regarding clinic services (Preventive Hygiene & Cleaning, Comprehensive Oral Exam, Emergency Triage & Pain Relief) and mention zero-interest CareCredit payment plans are available. If the caller mentions severe pain, trauma, or bleeding, advise calling 911 immediately and state that on-call doctor Dr. Sarah Chen, DDS is alerted for an immediate urgent callback. If no one answers, leave a brief voicemail. Speak in warm, professional English. Context note: caller is asking for appointment",
+      "recipients": [
+        {
+          "id": "rcp_d125e68b8542f2e8",
+          "phones": [
+            "+919810012345"
+          ],
+          "locale": "en-US",
+          "region": null,
+          "status": "completed",
+          "structured_result": null,
+          "summary": "The call reached Alex, and they indicated they want to speak with Dr. Sarah Chen, DDS. No appointment was booked; this should be treated as a doctor callback request.",
+          "attempts": [
+            {
+              "id": "att_71f2cd86f2a1a7ff",
+              "phone": "+919810012345",
+              "status": "completed",
+              "started_at": "2026-08-26T12:10:26.244072Z",
+              "completed_at": "2026-08-26T12:12:00.788756Z",
+              "summary": "The call reached Alex, and they indicated they want to speak with Dr. Sarah Chen, DDS. No appointment was booked; this should be treated as a doctor callback request.",
+              "transcript_turns": [
+                {
+                  "offset_seconds": 0,
+                  "speaker": "user",
+                  "text": "Hello, who is this?"
+                },
+                {
+                  "offset_seconds": 1,
+                  "speaker": "bot",
+                  "text": "Hi,"
+                },
+                {
+                  "offset_seconds": 1,
+                  "speaker": "bot",
+                  "text": "is this Alex Taylor?"
+                },
+                {
+                  "offset_seconds": 5,
+                  "speaker": "user",
+                  "text": "Haan Ji."
+                },
+                {
+                  "offset_seconds": 6,
+                  "speaker": "bot",
+                  "text": "I'm calling for Apex Health - Downtown Metro,"
+                },
+                {
+                  "offset_seconds": 9,
+                  "speaker": "bot",
+                  "text": "returning your missed call about an appointment; would you like to book a dental checkup or hygiene cleaning this Tuesday at 10 AM,"
+                },
+                {
+                  "offset_seconds": 16,
+                  "speaker": "bot",
+                  "text": "or speak with Dr. Sarah Chen, DDS?"
+                },
+                {
+                  "offset_seconds": 22,
+                  "speaker": "user",
+                  "text": "I actually want to talk in Hindi."
+                },
+                {
+                  "offset_seconds": 23,
+                  "speaker": "bot",
+                  "text": "Sorry,"
+                },
+                {
+                  "offset_seconds": 24,
+                  "speaker": "bot",
+                  "text": "I can only continue in English. Would you like to book Tuesday at 10 AM,"
+                },
+                {
+                  "offset_seconds": 28,
+                  "speaker": "bot",
+                  "text": "or speak with Dr. Sarah Chen, DDS?"
+                },
+                {
+                  "offset_seconds": 38,
+                  "speaker": "user",
+                  "text": "So what did you say? You can't speak in?"
+                },
+                {
+                  "offset_seconds": 39,
+                  "speaker": "bot",
+                  "text": "I can continue in English."
+                },
+                {
+                  "offset_seconds": 40,
+                  "speaker": "bot",
+                  "text": "Would you like to book Tuesday at 10 AM, or speak with Dr."
+                },
+                {
+                  "offset_seconds": 44,
+                  "speaker": "bot",
+                  "text": "Sarah Chen, DDS?"
+                },
+                {
+                  "offset_seconds": 49,
+                  "speaker": "user",
+                  "text": "Please speak in Hindi so I can think."
+                },
+                {
+                  "offset_seconds": 51,
+                  "speaker": "bot",
+                  "text": "Sorry,"
+                },
+                {
+                  "offset_seconds": 51,
+                  "speaker": "bot",
+                  "text": "I can only continue in English. Would you like to book Tuesday at 10 AM,"
+                },
+                {
+                  "offset_seconds": 56,
+                  "speaker": "bot",
+                  "text": "or speak with Dr. Sarah Chen, DDS?"
+                },
+                {
+                  "offset_seconds": 57,
+                  "speaker": "user",
+                  "text": "Sorry, I can only continue in English. Would you like to book Tuesday at 10 AM, or speak with Dr.  ... [interrupted]"
+                },
+                {
+                  "offset_seconds": 60,
+                  "speaker": "bot",
+                  "text": "Can you hear me?"
+                },
+                {
+                  "offset_seconds": 62,
+                  "speaker": "user",
+                  "text": "Can you connect the call with somebody other?"
+                },
+                {
+                  "offset_seconds": 64,
+                  "speaker": "bot",
+                  "text": "Yes—would you like me to ask Dr."
+                },
+                {
+                  "offset_seconds": 67,
+                  "speaker": "user",
+                  "text": "Hey, hello."
+                },
+                {
+                  "offset_seconds": 69,
+                  "speaker": "bot",
+                  "text": "Hi,"
+                },
+                {
+                  "offset_seconds": 70,
+                  "speaker": "bot",
+                  "text": "is this Alex Taylor?"
+                },
+                {
+                  "offset_seconds": 74,
+                  "speaker": "user",
+                  "text": "Yeah, connect with me, Doctor."
+                },
+                {
+                  "offset_seconds": 75,
+                  "speaker": "bot",
+                  "text": "Thanks,"
+                },
+                {
+                  "offset_seconds": 76,
+                  "speaker": "bot",
+                  "text": "I’m connecting you with Dr. Sarah Chen, DDS."
+                },
+                {
+                  "offset_seconds": 84,
+                  "speaker": "bot",
+                  "text": "I'll hold."
+                }
+              ],
+              "provider_call_id": "9f66309dc88b4fbe85fb9634660393b3",
+              "failure_code": null,
+              "failure_message": null
+            }
+          ]
+        }
+      ],
+      "structured_result": {
+        "outcome": "callback_requested",
+        "appointment_booked": "no",
+        "confirmed_datetime": "",
+        "service_type": "dental checkup or hygiene cleaning",
+        "requires_callback": "yes",
+        "callback_priority": "standard",
+        "patient_sentiment": "frustrated",
+        "opt_out_requested": "no",
+        "summary": "Alex was reached and asked several times to continue in Hindi, but the bot could only continue in English. No Tuesday 10 AM dental checkup or hygiene cleaning appointment was confirmed; Alex requested to be connected with another person/the doctor, and the bot said it was connecting them with Dr. Sarah Chen, DDS."
+      },
+      "summary": "The call reached Alex, and they indicated they want to speak with Dr. Sarah Chen, DDS. No appointment was booked; this should be treated as a doctor callback request.",
+      "task_completed": true,
+      "completion_confidence": {
+        "score": 0.9,
+        "label": "high"
+      },
+      "evidence": [
+        "Alex answered and engaged in the conversation.",
+        "Alex asked to speak with someone else and then with the doctor.",
+        "No dental checkup or hygiene cleaning appointment was confirmed."
+      ],
+      "metadata": {
+        "language": "en",
+        "call_type": "inbound_overflow",
+        "location_id": "loc_downtown",
+        "patient_name": "Alex Taylor",
+        "phone_number": "+919810012345",
+        "department_id": "dept_general",
+        "location_name": "Apex Health - Downtown Metro"
+      },
+      "failure_code": null,
+      "failure_message": null,
+      "created_at": "2026-08-26T12:09:06.690556Z",
+      "completed_at": "2026-08-26T12:12:32.643662Z"
+    },
+    "completedAt": "2026-08-26T12:12:32.643662Z",
+    "structuredOutcome": {
+      "call_id": "call_1787746144109",
+      "location_id": "loc_downtown",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "callback_requested",
+      "appointment": {
+        "booked": false,
+        "datetime": null,
+        "service_type": null
+      },
+      "callback": {
+        "requested": true,
+        "priority": "standard",
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "frustrated",
+      "language": "en",
+      "notes": "Alex was reached and asked several times to continue in Hindi, but the bot could only continue in English. No Tuesday 10 AM dental checkup or hygiene cleaning appointment was confirmed; Alex requested to be connected with another person/the doctor, and the bot said it was connecting them with Dr. Sarah Chen, DDS."
+    }
+  },
+  {
+    "id": "call_1787747109370",
+    "phoneNumber": "+919810012345",
+    "patientName": "Neev Badu",
+    "locationId": "loc_custom_1787747109342",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T12:25:09.370Z",
+    "recoveredRevenue": 0,
+    "language": "hi",
+    "departmentId": "dept_general",
+    "runId": "call_i_xDm4FRwpT47zhTmddt-w",
+    "summary": "Ready to place the call immediately to Neev Badu at ...5366 in Hindi/Hinglish on behalf of Tech Sangi, returning the missed call and offering to schedule a Software Service / website consultation or meeting this week. If no one answers, a brief voicemail may be left and the attempt will be reported.",
+    "rawCalleData": {
+      "id": "call_i_xDm4FRwpT47zhTmddt-w",
+      "object": "call_task",
+      "status": "queued",
+      "task": "[LANGUAGE MANDATE: HINDI] You MUST conduct this entire call in warm, polite, natural Hindi / conversational Hinglish. You are 100% fluent in Hindi. Greet the caller in Hindi: \"नमस्ते Neev Badu जी, मैं Tech Sangi से बोल रही हूँ। आपने हमारे क्लिनिक पर संपर्क किया था। क्या आप डॉ. Pawan Joshi से अपॉइंटमेंट या कंसल्टेशन शेड्यूल करना चाहते हैं?\" If the caller speaks Hindi or English, respond in fluent Hindi or Hinglish. Never say you cannot speak Hindi.\n\nTRANSFER & ESCALATION PROTOCOL: If the caller asks to speak directly with a doctor or human representative (e.g. 'connect me with doctor', 'can you connect me with someone else'), answer clearly: \"I am dispatching an immediate priority callback alert to Dr. Pawan Joshi and our clinical team right now with your phone number. They will call you directly shortly. Would you also like me to reserve the earliest in-person slot on our schedule in the meantime?\" Log callback_priority as 'urgent' or 'standard'. Do NOT pretend to put them on hold.\n\nMULTILINGUAL CAPABILITY: You understand multiple languages (Hindi, Nepali, Spanish, English). If the caller switches language at any point, follow their lead immediately and reply fluently in that language without refusing.\n\nPRIMARY OBJECTIVE: Call +919810012345 (Neev Badu) on behalf of Tech Sangi returning missed call. Greet warmly and offer to schedule an appointment this week with on-call provider Pawan Joshi. Mention available services (Software Service) and zero-interest payment plans if requested. If severe pain or acute medical emergency is reported, advise emergency services immediately.\nADDITIONAL CONTEXT & INSTRUCTIONS: Collar is actually wanted to build get the website ready but yeah so this is the call regarding whatever website they need and do you want to schedule the meeting with the team",
+      "recipients": [
+        {
+          "id": "rcp_200ef446c511baa3",
+          "phones": [
+            "+919810012345"
+          ],
+          "locale": "hi-IN",
+          "region": null,
+          "status": "completed",
+          "structured_result": null,
+          "summary": "Ready to place the call immediately to Neev Badu at ...5366 in Hindi/Hinglish on behalf of Tech Sangi, returning the missed call and offering to schedule a Software Service / website consultation or meeting this week. If no one answers, a brief voicemail may be left and the attempt will be reported.",
+          "attempts": [
+            {
+              "id": "att_5645f25f5ebe8eb5",
+              "phone": "+919810012345",
+              "status": "completed",
+              "started_at": "2026-08-26T08:27:12",
+              "completed_at": "2026-08-26T08:28:17",
+              "summary": "Ready to place the call immediately to Neev Badu at ...5366 in Hindi/Hinglish on behalf of Tech Sangi, returning the missed call and offering to schedule a Software Service / website consultation or meeting this week. If no one answers, a brief voicemail may be left and the attempt will be reported.",
+              "transcript_turns": [
+                {
+                  "offset_seconds": 0,
+                  "speaker": "bot",
+                  "text": "नमस्ते Neev Badu जी,  मैं Tech Sangi से बोल रही हूँ। आपने हमारे क्लिनिक पर संपर्क किया था। क्या आप डॉ.  Pawan Joshi से अपॉइंटमेंट या कंसल्टेशन शेड्यूल करना चाहते हैं?"
+                },
+                {
+                  "offset_seconds": 0,
+                  "speaker": "user",
+                  "text": "वे तो नहीं किया था एंड"
+                },
+                {
+                  "offset_seconds": 13,
+                  "speaker": "bot",
+                  "text": "मैं आपकी वेबसाइट तैयार कराने या Software Service में interest के बारे में कॉल कर रही हूँ;  क्या आप इस हफ्ते हमारी team या Pawan Joshi के साथ meeting या consultation schedule करना चाहेंगे?"
+                },
+                {
+                  "offset_seconds": 13,
+                  "speaker": "user",
+                  "text": "एंड अक्चवली दी सिस्टम इज़।"
+                },
+                {
+                  "offset_seconds": 18,
+                  "speaker": "bot",
+                  "text": "मैं आपकी वेबसाइट तैयार कराने या Software Service में interest के बारे में कॉल कर रही हूँ;  क्या आप इस हफ्ते हमारी team या Pawan Joshi के साथ meeting या consultation schedule करना चाहेंगे?"
+                },
+                {
+                  "offset_seconds": 18,
+                  "speaker": "user",
+                  "text": "आप क्लिनिक में काम करते हैं, तो आप वेबसाइट में से तैयार कर सकते हैं।"
+                },
+                {
+                  "offset_seconds": 23,
+                  "speaker": "bot",
+                  "text": "मैं आपकी वेबसाइट तैयार कराने या Software Service में interest के बारे में कॉल कर रही हूँ;  क्या आप इस हफ्ते हमारी team या Pawan Joshi के साथ meeting या consultation schedule करना चाहेंगे?"
+                },
+                {
+                  "offset_seconds": 23,
+                  "speaker": "user",
+                  "text": "करना तो चाहता हूँ लेकिन ये बताओ की तुम क्लिनिक से वेब डेवलपमेंट करती हो?"
+                },
+                {
+                  "offset_seconds": 41,
+                  "speaker": "bot",
+                  "text": "मैं Tech Sangi की calling assistant हूँ। हम वेबसाइट तैयार कराने और Software Service के लिए समन्वय करते हैं."
+                },
+                {
+                  "offset_seconds": 41,
+                  "speaker": "user",
+                  "text": "और आपने तो आप बताया भी क्लिनिक से हूँ।"
+                },
+                {
+                  "offset_seconds": 52,
+                  "speaker": "bot",
+                  "text": "मैं Tech Sangi की calling assistant हूँ। हम वेबसाइट तैयार कराने और Software Service के लिए समन्वय करते हैं."
+                },
+                {
+                  "offset_seconds": 52,
+                  "speaker": "user",
+                  "text": "चलो, चलो, चलो, यार, चलो, चलो बाई बाई।"
+                },
+                {
+                  "offset_seconds": 61,
+                  "speaker": "bot",
+                  "text": "धन्यवाद, bye."
+                }
+              ],
+              "provider_call_id": "e0420fedc1a64e598652301b42c60778",
+              "failure_code": null,
+              "failure_message": null
+            }
+          ]
+        }
+      ],
+      "structured_result": null,
+      "summary": "Ready to place the call immediately to Neev Badu at ...5366 in Hindi/Hinglish on behalf of Tech Sangi, returning the missed call and offering to schedule a Software Service / website consultation or meeting this week. If no one answers, a brief voicemail may be left and the attempt will be reported.",
+      "task_completed": null,
+      "completion_confidence": null,
+      "evidence": [],
+      "metadata": {
+        "language": "hi",
+        "call_type": "inbound_overflow",
+        "location_id": "loc_custom_1787747109342",
+        "patient_name": "Neev Badu",
+        "phone_number": "+919810012345",
+        "department_id": "dept_general",
+        "location_name": "Tech Sangi"
+      },
+      "failure_code": null,
+      "failure_message": null,
+      "created_at": "2026-08-26T12:25:10.955367Z",
+      "completed_at": null
+    },
+    "completedAt": "2026-08-26T12:28:46.047Z",
+    "structuredOutcome": {
+      "call_id": "call_1787747109370",
+      "location_id": "loc_custom_1787747109342",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "callback_requested",
+      "appointment": {
+        "booked": false,
+        "datetime": null,
+        "service_type": null
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "neutral",
+      "language": "en",
+      "notes": "Ready to place the call immediately to Neev Badu at ...5366 in Hindi/Hinglish on behalf of Tech Sangi, returning the missed call and offering to schedule a Software Service / website consultation or meeting this week. If no one answers, a brief voicemail may be left and the attempt will be reported."
+    }
+  },
+  {
+    "id": "call_1787750901578",
+    "phoneNumber": "+9779742494897",
+    "patientName": "Neev Badu",
+    "locationId": "loc_custom_1787750901510",
+    "callType": "inbound_overflow",
+    "status": "failed",
+    "createdAt": "2026-08-26T13:28:21.578Z",
+    "recoveredRevenue": 0,
+    "language": "ne",
+    "departmentId": "dept_general",
+    "summary": "Call creation failed: {\"error\":{\"code\":\"call_not_ready\",\"message\":\"Call task creation was rejected: This call is recognized as Nepal / Nepali, but that region-language combination is not currently supported for outbound calling. Which supported region/language combination should be used instead if you want to continue?\",\"details\":{\"questions\":[\"This call is recognized as Nepal / Nepali, but that region-language combination is not currently supported for outbound calling. Which supported region/language combination should be used instead if you want to continue?\"],\"region\":\"NP\",\"locale\":\"ne-NP\"}}}"
+  },
+  {
+    "id": "call_1787754613433",
+    "phoneNumber": "+917465920816",
+    "patientName": "Durpati",
+    "locationId": "loc_custom_1787754612993",
+    "callType": "inbound_overflow",
+    "status": "failed",
+    "createdAt": "2026-08-26T14:30:13.433Z",
+    "recoveredRevenue": 0,
+    "language": "hi",
+    "departmentId": "dept_general",
+    "runId": "call_W3m3RTTxw9Zw72bs4P60mg",
+    "summary": "Call to Durpati did not connect; status was NO ANSWER with 0 seconds duration and no conversation or voicemail recorded.",
+    "rawCalleData": {
+      "id": "call_W3m3RTTxw9Zw72bs4P60mg",
+      "object": "call_task",
+      "status": "failed",
+      "task": "[MANDATORY PRIMARY LANGUAGE: HINDI] You MUST start this call strictly in natural, enthusiastic Hindi / Hinglish. Start with: \"नमस्ते Durpati जी, मैं Maniraj Constructions से बात कर रही हूँ। क्या आप Maniraj Joshi से मीटिंग या कंसल्टेशन शेड्यूल करना चाहते हैं?\" Never mention clinics or doctors unless the company is a healthcare facility.\n\n[DYNAMIC MULTILINGUAL ADAPTATION CONTRACT]: You are completely fluent in English, Hindi, Nepali, Spanish, French, German, and Mandarin Chinese. Although you MUST start the call strictly in your assigned primary opening language, if the caller speaks or switches to another language mid-conversation (e.g. switches from English to Hindi, Nepali, or Spanish), adapt immediately and respond fluently in the caller's chosen language without refusing or saying you cannot speak it.\n\n[CONVERSATIONAL & HUMAN BEHAVIOR RULES]\n1. WARM, ENTHUSIASTIC & POLITE: Speak with lively, natural human enthusiasm. Never sound like a robotic answering machine.\n2. NEVER REPEAT YOURSELF: Do NOT repeat entire sentences or re-introduce yourself once the call has started.\n3. CONCISE & FAST TURNS (1-2 SENTENCES): Keep every response short, snappy, and conversational (under 20 words per turn). Speak immediately without filler hesitations.\n4. ACTIVE LISTENING: Directly acknowledge what the caller says (e.g. \"बिलकुल!\", \"बहुत बढ़िया!\", \"Certainly!\", \"Great question!\").\n5. ACCURATE BUSINESS CONTEXT: You represent \"Maniraj Constructions\" (Real Estate). Services: building majing. Never use medical terms or clinic references unless this is actually a health clinic.\n\n[HUMAN ESCALATION PROTOCOL] If the caller asks to speak directly with Maniraj Joshi or a human specialist (e.g. 'connect me', 'transfer me'), answer warmly: \"ज़रूर! मैं Maniraj Joshi और हमारी टीम को तुरंत आपका अर्जेंट मैसेज और फोन नंबर भेज रही हूँ। वे आपसे शीघ्र ही सीधे संपर्क करेंगे। क्या इस बीच मैं आपके लिए कैलेंडर पर स्लॉट भी रिज़र्व कर दूँ?\" (or in English: \"Understood! I am sending an immediate priority callback alert to Maniraj Joshi and our team with your contact number. They will reach out to you directly shortly. Would you like me to hold an appointment slot for you in the meantime?\")\n\n[MULTILINGUAL FLUIDITY] You understand Hindi, Nepali, Spanish, and English. If the caller switches language at any point, immediately switch and reply fluently in that language without hesitation.\n\nPRIMARY OBJECTIVE: Call +917465920816 (Durpati) on behalf of Maniraj Constructions regarding property tour scheduling and leasing availability with broker Maniraj Joshi.\nADDITIONAL CONTEXT & CALLER GOAL: So she wants to make a building in her home so she is confused about how to make the building She was thinking to save money and yeah so she needs suggestion from him He is also her husband",
+      "recipients": [
+        {
+          "id": "rcp_d5180c27e4faf3bb",
+          "phones": [
+            "+917465920816"
+          ],
+          "locale": "hi-IN",
+          "region": "IN",
+          "status": "failed",
+          "structured_result": null,
+          "summary": "पहली कॉल कनेक्ट नहीं हो पाई; Durpati जी व्यस्त या उपलब्ध न हो सकती हैं—आप लगभग 45 मिनट बाद दोबारा कॉल की पुष्टि कर सकते हैं, कोई अलग समय बता सकते हैं, या तुरंत दोबारा कॉल करने को कह सकते हैं।",
+          "attempts": [
+            {
+              "id": "att_7e4379a2dfcc02f0",
+              "phone": "+917465920816",
+              "status": "failed",
+              "started_at": "2026-08-26T10:31:41",
+              "completed_at": "2026-08-26T10:31:41",
+              "summary": "पहली कॉल कनेक्ट नहीं हो पाई; Durpati जी व्यस्त या उपलब्ध न हो सकती हैं—आप लगभग 45 मिनट बाद दोबारा कॉल की पुष्टि कर सकते हैं, कोई अलग समय बता सकते हैं, या तुरंत दोबारा कॉल करने को कह सकते हैं।",
+              "transcript_turns": [],
+              "provider_call_id": "8f7a6a36f101430dafc12c7f06c5627a",
+              "failure_code": "480",
+              "failure_message": null
+            }
+          ]
+        }
+      ],
+      "structured_result": {
+        "outcome": "no_answer",
+        "appointment_booked": "no",
+        "confirmed_datetime": "",
+        "service_type": "",
+        "requires_callback": "unknown",
+        "callback_priority": "none",
+        "patient_sentiment": "unknown",
+        "opt_out_requested": "unknown",
+        "summary": "Call to Durpati did not connect; status was NO ANSWER with 0 seconds duration and no conversation or voicemail recorded."
+      },
+      "summary": "पहली कॉल कनेक्ट नहीं हो पाई; Durpati जी व्यस्त या उपलब्ध न हो सकती हैं—आप लगभग 45 मिनट बाद दोबारा कॉल की पुष्टि कर सकते हैं, कोई अलग समय बता सकते हैं, या तुरंत दोबारा कॉल करने को कह सकते हैं।",
+      "task_completed": false,
+      "completion_confidence": {
+        "score": 0.86,
+        "label": "high"
+      },
+      "evidence": [
+        "कॉल का परिणाम “कोई जवाब नहीं” रहा।",
+        "कॉल की अवधि 0 सेकंड थी।",
+        "कोई बातचीत या वॉइसमेल दर्ज नहीं हुआ।"
+      ],
+      "metadata": {
+        "language": "hi",
+        "call_type": "inbound_overflow",
+        "location_id": "loc_custom_1787754612993",
+        "patient_name": "Durpati",
+        "phone_number": "+917465920816",
+        "department_id": "dept_general",
+        "location_name": "Maniraj Constructions"
+      },
+      "failure_code": "call_failed",
+      "failure_message": "calling task status=NO ANSWER (Hangup by: bot)",
+      "created_at": "2026-08-26T14:30:15.340411Z",
+      "completed_at": "2026-08-26T14:33:11.675319Z"
+    },
+    "completedAt": "2026-08-26T14:33:11.675319Z",
+    "structuredOutcome": {
+      "call_id": "call_1787754613433",
+      "location_id": "loc_custom_1787754612993",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "no_answer",
+      "appointment": {
+        "booked": false,
+        "datetime": null,
+        "service_type": null
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "neutral",
+      "language": "en",
+      "notes": "Call to Durpati did not connect; status was NO ANSWER with 0 seconds duration and no conversation or voicemail recorded."
+    }
+  },
+  {
+    "id": "call_1787754756990",
+    "phoneNumber": "+917465920816",
+    "patientName": "Durpati",
+    "locationId": "loc_custom_1787754756951",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T14:32:36.991Z",
+    "recoveredRevenue": 0,
+    "language": "hi",
+    "departmentId": "dept_general",
+    "runId": "call_B54v6MOJKuzWpcoL5HMajA",
+    "summary": "Durpati ji expressed interest in scheduling a meeting/consultation with Maniraj Joshi about property or home building, but said she could not provide a suitable date or time right now. No appointment slot was confirmed; follow-up is needed when she is ready to share availability.",
+    "rawCalleData": {
+      "id": "call_B54v6MOJKuzWpcoL5HMajA",
+      "object": "call_task",
+      "status": "completed",
+      "task": "[MANDATORY PRIMARY LANGUAGE: HINDI] You MUST start this call strictly in natural, enthusiastic Hindi / Hinglish. Start with: \"नमस्ते Durpati जी, मैं Maniraj Constructions से बात कर रही हूँ। क्या आप Maniraj Joshi से मीटिंग या कंसल्टेशन शेड्यूल करना चाहते हैं?\" Never mention clinics or doctors unless the company is a healthcare facility.\n\n[DYNAMIC MULTILINGUAL ADAPTATION CONTRACT]: You are completely fluent in English, Hindi, Nepali, Spanish, French, German, and Mandarin Chinese. Although you MUST start the call strictly in your assigned primary opening language, if the caller speaks or switches to another language mid-conversation (e.g. switches from English to Hindi, Nepali, or Spanish), adapt immediately and respond fluently in the caller's chosen language without refusing or saying you cannot speak it.\n\n[CONVERSATIONAL & HUMAN BEHAVIOR RULES]\n1. WARM, ENTHUSIASTIC & POLITE: Speak with lively, natural human enthusiasm. Never sound like a robotic answering machine.\n2. NEVER REPEAT YOURSELF: Do NOT repeat entire sentences or re-introduce yourself once the call has started.\n3. CONCISE & FAST TURNS (1-2 SENTENCES): Keep every response short, snappy, and conversational (under 20 words per turn). Speak immediately without filler hesitations.\n4. ACTIVE LISTENING: Directly acknowledge what the caller says (e.g. \"बिलकुल!\", \"बहुत बढ़िया!\", \"Certainly!\", \"Great question!\").\n5. ACCURATE BUSINESS CONTEXT: You represent \"Maniraj Constructions\" (Real Estate). Services: building majing. Never use medical terms or clinic references unless this is actually a health clinic.\n\n[HUMAN ESCALATION PROTOCOL] If the caller asks to speak directly with Maniraj Joshi or a human specialist (e.g. 'connect me', 'transfer me'), answer warmly: \"ज़रूर! मैं Maniraj Joshi और हमारी टीम को तुरंत आपका अर्जेंट मैसेज और फोन नंबर भेज रही हूँ। वे आपसे शीघ्र ही सीधे संपर्क करेंगे। क्या इस बीच मैं आपके लिए कैलेंडर पर स्लॉट भी रिज़र्व कर दूँ?\" (or in English: \"Understood! I am sending an immediate priority callback alert to Maniraj Joshi and our team with your contact number. They will reach out to you directly shortly. Would you like me to hold an appointment slot for you in the meantime?\")\n\n[MULTILINGUAL FLUIDITY] You understand Hindi, Nepali, Spanish, and English. If the caller switches language at any point, immediately switch and reply fluently in that language without hesitation.\n\nPRIMARY OBJECTIVE: Call +917465920816 (Durpati) on behalf of Maniraj Constructions regarding property tour scheduling and leasing availability with broker Maniraj Joshi.\nADDITIONAL CONTEXT & CALLER GOAL: So she wants to make a building in her home so she is confused about how to make the building She was thinking to save money and yeah so she needs suggestion from him He is also her husband",
+      "recipients": [
+        {
+          "id": "rcp_c9a1ef81299e34d7",
+          "phones": [
+            "+917465920816"
+          ],
+          "locale": "hi-IN",
+          "region": "IN",
+          "status": "completed",
+          "structured_result": null,
+          "summary": "Durpati जी से बात हो गई: उन्होंने Maniraj Joshi से मीटिंग/कंसल्टेशन में रुचि दिखाई, लेकिन अभी तारीख/समय नहीं बता सकीं। सुझाव है कि लगभग 45 मिनट बाद फिर कोशिश की जाए; आप सुझाए गए समय की पुष्टि कर सकते हैं, कोई दूसरा retry time दे सकते हैं, या तुरंत retry करने को कह सकते हैं।",
+          "attempts": [
+            {
+              "id": "att_d464fef4af3ab5be",
+              "phone": "+917465920816",
+              "status": "completed",
+              "started_at": "2026-08-26T10:34:23",
+              "completed_at": "2026-08-26T10:35:28",
+              "summary": "Durpati जी से बात हो गई: उन्होंने Maniraj Joshi से मीटिंग/कंसल्टेशन में रुचि दिखाई, लेकिन अभी तारीख/समय नहीं बता सकीं। सुझाव है कि लगभग 45 मिनट बाद फिर कोशिश की जाए; आप सुझाए गए समय की पुष्टि कर सकते हैं, कोई दूसरा retry time दे सकते हैं, या तुरंत retry करने को कह सकते हैं।",
+              "transcript_turns": [
+                {
+                  "offset_seconds": 0,
+                  "speaker": "bot",
+                  "text": "नमस्ते Durpati जी,"
+                },
+                {
+                  "offset_seconds": 1,
+                  "speaker": "bot",
+                  "text": "मैं Maniraj Constructions से बात कर रही हूँ। क्या आप Maniraj Joshi से मीटिंग या कंसल्टेशन शेड्यूल करना चाहते हैं?"
+                },
+                {
+                  "offset_seconds": 3,
+                  "speaker": "user",
+                  "text": "हैलो। नमस्ते।"
+                },
+                {
+                  "offset_seconds": 5,
+                  "speaker": "bot",
+                  "text": "मैं Maniraj Constructions की ओर से कॉल कर रही हूँ ताकि Maniraj Joshi के साथ आपकी प्रॉपर्टी या घर पर बिल्डिंग बनाने से जुड़ी मीटिंग या कंसल्टेशन शेड्यूल कर"
+                },
+                {
+                  "offset_seconds": 12,
+                  "speaker": "bot",
+                  "text": "सकूँ।"
+                },
+                {
+                  "offset_seconds": 16,
+                  "speaker": "user",
+                  "text": "जी"
+                },
+                {
+                  "offset_seconds": 17,
+                  "speaker": "bot",
+                  "text": "जी,"
+                },
+                {
+                  "offset_seconds": 18,
+                  "speaker": "bot",
+                  "text": "क्या आप Maniraj Joshi के साथ प्रॉपर्टी या घर पर बिल्डिंग बनाने से जुड़ी मीटिंग या कंसल्टेशन शेड्यूल करना चाहेंगे?"
+                },
+                {
+                  "offset_seconds": 27,
+                  "speaker": "user",
+                  "text": "हाँ चाहेंगे जरूर"
+                },
+                {
+                  "offset_seconds": 29,
+                  "speaker": "bot",
+                  "text": "बहुत बढ़िया। आपको किस दिन और किस समय स्लॉट में मीटिंग या कंसल्टेशन रखना ठीक रहेगा?"
+                },
+                {
+                  "offset_seconds": 39,
+                  "speaker": "user",
+                  "text": "अभी फिलहाल बता नहीं सकती।"
+                },
+                {
+                  "offset_seconds": 40,
+                  "speaker": "bot",
+                  "text": "ठीक है,"
+                },
+                {
+                  "offset_seconds": 41,
+                  "speaker": "bot",
+                  "text": "कोई जल्दी नहीं। जब आपको सुविधाजनक समय पता हो, बता दीजिए,"
+                },
+                {
+                  "offset_seconds": 45,
+                  "speaker": "user",
+                  "text": "फिर बताओगे आपको। जी।"
+                },
+                {
+                  "offset_seconds": 46,
+                  "speaker": "bot",
+                  "text": "समझ गई। जब आप तैयार हों,"
+                },
+                {
+                  "offset_seconds": 47,
+                  "speaker": "bot",
+                  "text": "तो मैं Maniraj Joshi के साथ आपकी मीटिंग या कंसल्टेशन के लिए स्लॉट फाइनल कर दूँगी।"
+                },
+                {
+                  "offset_seconds": 54,
+                  "speaker": "user",
+                  "text": "ओके? थैंक यू। जी। जी जी जी"
+                },
+                {
+                  "offset_seconds": 56,
+                  "speaker": "bot",
+                  "text": "ठीक है।"
+                },
+                {
+                  "offset_seconds": 59,
+                  "speaker": "user",
+                  "text": "थैंक यू। ओके?"
+                },
+                {
+                  "offset_seconds": 60,
+                  "speaker": "bot",
+                  "text": "धन्यवाद,"
+                },
+                {
+                  "offset_seconds": 61,
+                  "speaker": "bot",
+                  "text": "आपका दिन शुभ हो, bye."
+                }
+              ],
+              "provider_call_id": "b59c4f9cdba343f78ce4f85ceacefe3a",
+              "failure_code": null,
+              "failure_message": null
+            }
+          ]
+        }
+      ],
+      "structured_result": {
+        "outcome": "callback_requested",
+        "appointment_booked": "no",
+        "confirmed_datetime": "",
+        "service_type": "Construction consultation for home/property building",
+        "requires_callback": "yes",
+        "callback_priority": "standard",
+        "patient_sentiment": "positive",
+        "opt_out_requested": "no",
+        "summary": "Durpati ji expressed interest in scheduling a meeting/consultation with Maniraj Joshi about property or home building, but said she could not provide a suitable date or time right now. No appointment slot was confirmed; follow-up is needed when she is ready to share availability."
+      },
+      "summary": "Durpati जी से बात हो गई: उन्होंने Maniraj Joshi से मीटिंग/कंसल्टेशन में रुचि दिखाई, लेकिन अभी तारीख/समय नहीं बता सकीं। सुझाव है कि लगभग 45 मिनट बाद फिर कोशिश की जाए; आप सुझाए गए समय की पुष्टि कर सकते हैं, कोई दूसरा retry time दे सकते हैं, या तुरंत retry करने को कह सकते हैं।",
+      "task_completed": true,
+      "completion_confidence": {
+        "score": 0.86,
+        "label": "high"
+      },
+      "evidence": [
+        "Durpati जी ने मीटिंग/कंसल्टेशन में रुचि दिखाई।",
+        "उन्होंने अभी उपलब्ध तारीख/समय बताने में असमर्थता जताई।",
+        "कॉल विनम्रता से समाप्त हुई, लेकिन appointment slot final नहीं हुआ।"
+      ],
+      "metadata": {
+        "language": "hi",
+        "call_type": "inbound_overflow",
+        "location_id": "loc_custom_1787754756951",
+        "patient_name": "Durpati",
+        "phone_number": "+917465920816",
+        "department_id": "dept_general",
+        "location_name": "Maniraj Constructions"
+      },
+      "failure_code": null,
+      "failure_message": null,
+      "created_at": "2026-08-26T14:32:37.616135Z",
+      "completed_at": "2026-08-26T14:36:22.668347Z"
+    },
+    "completedAt": "2026-08-26T14:36:22.668347Z",
+    "structuredOutcome": {
+      "call_id": "call_1787754756990",
+      "location_id": "loc_custom_1787754756951",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "callback_requested",
+      "appointment": {
+        "booked": false,
+        "datetime": null,
+        "service_type": null
+      },
+      "callback": {
+        "requested": true,
+        "priority": "standard",
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "positive",
+      "language": "en",
+      "notes": "Durpati ji expressed interest in scheduling a meeting/consultation with Maniraj Joshi about property or home building, but said she could not provide a suitable date or time right now. No appointment slot was confirmed; follow-up is needed when she is ready to share availability."
+    }
+  },
+  {
+    "id": "call_1787755046714",
+    "phoneNumber": "+917465920816",
+    "patientName": "Durpati",
+    "locationId": "loc_custom_1787755046690",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T14:37:26.714Z",
+    "recoveredRevenue": 0,
+    "language": "hi",
+    "departmentId": "dept_general",
+    "runId": "call_mInzHGvFX6DqB4nR9K0d8g",
+    "summary": "Ready to place the call immediately to ...0816 in Hindi for Maniraj Constructions. The call will start with the specified Hindi opening, ask Durpati about scheduling a consultation with Maniraj Joshi, handle interest/decline/callback requests, and leave a brief voicemail if there is no answer.",
+    "rawCalleData": {
+      "id": "call_mInzHGvFX6DqB4nR9K0d8g",
+      "object": "call_task",
+      "status": "queued",
+      "task": "[MANDATORY PRIMARY LANGUAGE: HINDI] You MUST start this call strictly in natural, enthusiastic Hindi / Hinglish. Start with: \"नमस्ते Durpati जी, मैं Maniraj Constructions से बात कर रही हूँ। क्या आप Maniraj Joshi से मीटिंग या कंसल्टेशन शेड्यूल करना चाहते हैं?\" Never mention clinics or doctors unless the company is a healthcare facility.\n\n[DYNAMIC MULTILINGUAL ADAPTATION CONTRACT]: You are completely fluent in English, Hindi, Nepali, Spanish, French, German, and Mandarin Chinese. Although you MUST start the call strictly in your assigned primary opening language, if the caller speaks or switches to another language mid-conversation (e.g. switches from English to Hindi, Nepali, or Spanish), adapt immediately and respond fluently in the caller's chosen language without refusing or saying you cannot speak it.\n\n[CONVERSATIONAL & HUMAN BEHAVIOR RULES]\n1. WARM, ENTHUSIASTIC & POLITE: Speak with lively, natural human enthusiasm. Never sound like a robotic answering machine.\n2. NEVER REPEAT YOURSELF: Do NOT repeat entire sentences or re-introduce yourself once the call has started.\n3. CONCISE & FAST TURNS (1-2 SENTENCES): Keep every response short, snappy, and conversational (under 20 words per turn). Speak immediately without filler hesitations.\n4. ACTIVE LISTENING: Directly acknowledge what the caller says (e.g. \"बिलकुल!\", \"बहुत बढ़िया!\", \"Certainly!\", \"Great question!\").\n5. ACCURATE BUSINESS CONTEXT: You represent \"Maniraj Constructions\" (Real Estate). Services: building majing. Never use medical terms or clinic references unless this is actually a health clinic.\n\n[HUMAN ESCALATION PROTOCOL] If the caller asks to speak directly with Maniraj Joshi or a human specialist (e.g. 'connect me', 'transfer me'), answer warmly: \"ज़रूर! मैं Maniraj Joshi और हमारी टीम को तुरंत आपका अर्जेंट मैसेज और फोन नंबर भेज रही हूँ। वे आपसे शीघ्र ही सीधे संपर्क करेंगे। क्या इस बीच मैं आपके लिए कैलेंडर पर स्लॉट भी रिज़र्व कर दूँ?\" (or in English: \"Understood! I am sending an immediate priority callback alert to Maniraj Joshi and our team with your contact number. They will reach out to you directly shortly. Would you like me to hold an appointment slot for you in the meantime?\")\n\n[MULTILINGUAL FLUIDITY] You understand Hindi, Nepali, Spanish, and English. If the caller switches language at any point, immediately switch and reply fluently in that language without hesitation.\n\nPRIMARY OBJECTIVE: Call +917465920816 (Durpati) on behalf of Maniraj Constructions regarding property tour scheduling and leasing availability with broker Maniraj Joshi.\nADDITIONAL CONTEXT & CALLER GOAL: So she wants to make a building in her home so she is confused about how to make the building She was thinking to save money and yeah so she needs suggestion from him He is also her husband",
+      "recipients": [
+        {
+          "id": "rcp_8c645ab775406c8e",
+          "phones": [
+            "+917465920816"
+          ],
+          "locale": "hi-IN",
+          "region": "IN",
+          "status": "in_progress",
+          "structured_result": null,
+          "summary": "Ready to place the call immediately to ...0816 in Hindi for Maniraj Constructions. The call will start with the specified Hindi opening, ask Durpati about scheduling a consultation with Maniraj Joshi, handle interest/decline/callback requests, and leave a brief voicemail if there is no answer.",
+          "attempts": [
+            {
+              "id": "att_9d622ee08944c253",
+              "phone": "+917465920816",
+              "status": "in_progress",
+              "started_at": "2026-08-26T10:38:47",
+              "completed_at": "2026-08-26T10:38:47",
+              "summary": "Ready to place the call immediately to ...0816 in Hindi for Maniraj Constructions. The call will start with the specified Hindi opening, ask Durpati about scheduling a consultation with Maniraj Joshi, handle interest/decline/callback requests, and leave a brief voicemail if there is no answer.",
+              "transcript_turns": [],
+              "provider_call_id": null,
+              "failure_code": null,
+              "failure_message": null
+            }
+          ]
+        }
+      ],
+      "structured_result": null,
+      "summary": "Ready to place the call immediately to ...0816 in Hindi for Maniraj Constructions. The call will start with the specified Hindi opening, ask Durpati about scheduling a consultation with Maniraj Joshi, handle interest/decline/callback requests, and leave a brief voicemail if there is no answer.",
+      "task_completed": null,
+      "completion_confidence": null,
+      "evidence": [],
+      "metadata": {
+        "language": "hi",
+        "call_type": "inbound_overflow",
+        "location_id": "loc_custom_1787755046690",
+        "patient_name": "Durpati",
+        "phone_number": "+917465920816",
+        "department_id": "dept_general",
+        "location_name": "Maniraj Constructions"
+      },
+      "failure_code": null,
+      "failure_message": null,
+      "created_at": "2026-08-26T14:37:27.613512Z",
+      "completed_at": null
+    },
+    "completedAt": "2026-08-26T14:39:52.378Z",
+    "structuredOutcome": {
+      "call_id": "call_1787755046714",
+      "location_id": "loc_custom_1787755046690",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "callback_requested",
+      "appointment": {
+        "booked": false,
+        "datetime": null,
+        "service_type": null
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "neutral",
+      "language": "en",
+      "notes": "Ready to place the call immediately to ...0816 in Hindi for Maniraj Constructions. The call will start with the specified Hindi opening, ask Durpati about scheduling a consultation with Maniraj Joshi, handle interest/decline/callback requests, and leave a brief voicemail if there is no answer."
+    }
+  },
+  {
+    "id": "call_1787761327032",
+    "runId": "call_dMpgtmMQSdDknSYD9XDb6A",
+    "phoneNumber": "+917818892318",
+    "patientName": "Hardik Bandhiya",
+    "locationId": "loc_custom_1787761326913",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T16:22:07.032Z",
+    "recoveredRevenue": 0,
+    "language": "hi",
+    "summary": "Bot opened in Hindi on behalf of AWS ki Alex to ask Hardik about scheduling an AWS Consulting meeting or consultation, but no recipient response was detected. No appointment time, callback request, or opt-out was confirmed.",
+    "departmentId": "dept_general",
+    "rawCalleData": {
+      "id": "call_dMpgtmMQSdDknSYD9XDb6A",
+      "object": "call_task",
+      "status": "completed",
+      "task": "[MANDATORY PRIMARY LANGUAGE: HINDI] You MUST start this call strictly in natural, enthusiastic Hindi / Hinglish. Start with: \"नमस्ते Hardik Bandhiya जी, मैं AWS ki Alex से बात कर रही हूँ। क्या आप Alex से मीटिंग या कंसल्टेशन शेड्यूल करना चाहते हैं?\" Never mention clinics or doctors unless the company is a healthcare facility.\n\n[DYNAMIC MULTILINGUAL ADAPTATION CONTRACT]: You are completely fluent in English, Hindi, Nepali, Spanish, French, German, and Mandarin Chinese. Although you MUST start the call strictly in your assigned primary opening language, if the caller speaks or switches to another language mid-conversation (e.g. switches from English to Hindi, Nepali, or Spanish), adapt immediately and respond fluently in the caller's chosen language without refusing or saying you cannot speak it.\n\n[CONVERSATIONAL & HUMAN BEHAVIOR RULES]\n1. WARM, ENTHUSIASTIC & POLITE: Speak with lively, natural human enthusiasm. Never sound like a robotic answering machine.\n2. NEVER REPEAT YOURSELF: Do NOT repeat entire sentences or re-introduce yourself once the call has started.\n3. CONCISE & FAST TURNS (1-2 SENTENCES): Keep every response short, snappy, and conversational (under 20 words per turn). Speak immediately without filler hesitations.\n4. ACTIVE LISTENING: Directly acknowledge what the caller says (e.g. \"बिलकुल!\", \"बहुत बढ़िया!\", \"Certainly!\", \"Great question!\").\n5. ACCURATE BUSINESS CONTEXT: You represent \"AWS ki Alex\" (General). Services: AWS Consulting. Never use medical terms or clinic references unless this is actually a health clinic.\n\n[HUMAN ESCALATION PROTOCOL] If the caller asks to speak directly with Alex or a human specialist (e.g. 'connect me', 'transfer me'), answer warmly: \"ज़रूर! मैं Alex और हमारी टीम को तुरंत आपका अर्जेंट मैसेज और फोन नंबर भेज रही हूँ। वे आपसे शीघ्र ही सीधे संपर्क करेंगे। क्या इस बीच मैं आपके लिए कैलेंडर पर स्लॉट भी रिज़र्व कर दूँ?\" (or in English: \"Understood! I am sending an immediate priority callback alert to Alex and our team with your contact number. They will reach out to you directly shortly. Would you like me to hold an appointment slot for you in the meantime?\")\n\n[MULTILINGUAL FLUIDITY] You understand Hindi, Nepali, Spanish, and English. If the caller switches language at any point, immediately switch and reply fluently in that language without hesitation.\n\nPRIMARY OBJECTIVE: Call +917818892318 (Hardik Bandhiya) on behalf of AWS ki Alex regarding their business consultation inquiry with Alex. Services: AWS Consulting.\nADDITIONAL CONTEXT & CALLER GOAL: kya scam kr rahe hooo , why you are getting certiffcaiotns from hardik name",
+      "recipients": [
+        {
+          "id": "rcp_b4ff7ae3a94ec26d",
+          "phones": [
+            "+917818892318"
+          ],
+          "locale": "hi-IN",
+          "region": "IN",
+          "status": "completed",
+          "structured_result": null,
+          "summary": "Call did not complete: Hardik did not respond after the opening message, so no meeting, consultation time, or callback preference was confirmed. The recipient may be busy or unavailable; you can confirm retrying in about 45 minutes, provide a different retry time, or ask to retry immediately.",
+          "attempts": [
+            {
+              "id": "att_576cb40ddf5e6179",
+              "phone": "+917818892318",
+              "status": "completed",
+              "started_at": "2026-08-26T16:23:39.149368Z",
+              "completed_at": "2026-08-26T16:23:51.171193Z",
+              "summary": "Call did not complete: Hardik did not respond after the opening message, so no meeting, consultation time, or callback preference was confirmed. The recipient may be busy or unavailable; you can confirm retrying in about 45 minutes, provide a different retry time, or ask to retry immediately.",
+              "transcript_turns": [
+                {
+                  "offset_seconds": 0,
+                  "speaker": "bot",
+                  "text": "नमस्ते Hardik Bandhiya जी,"
+                },
+                {
+                  "offset_seconds": 1,
+                  "speaker": "bot",
+                  "text": "मैं AWS ki Alex से बात कर रही हूँ। क्या आप Alex से मीटिंग या कंसल्टेशन शेड्यूल करना चाहते हैं?"
+                }
+              ],
+              "provider_call_id": "c5380cb14c9a4638b4acd7bb5cf96862",
+              "failure_code": null,
+              "failure_message": null
+            }
+          ]
+        }
+      ],
+      "structured_result": {
+        "outcome": "no_answer",
+        "appointment_booked": "no",
+        "confirmed_datetime": "",
+        "service_type": "AWS Consulting",
+        "requires_callback": "unknown",
+        "callback_priority": "unknown",
+        "patient_sentiment": "unknown",
+        "opt_out_requested": "unknown",
+        "summary": "Bot opened in Hindi on behalf of AWS ki Alex to ask Hardik about scheduling an AWS Consulting meeting or consultation, but no recipient response was detected. No appointment time, callback request, or opt-out was confirmed."
+      },
+      "summary": "Call did not complete: Hardik did not respond after the opening message, so no meeting, consultation time, or callback preference was confirmed. The recipient may be busy or unavailable; you can confirm retrying in about 45 minutes, provide a different retry time, or ask to retry immediately.",
+      "task_completed": false,
+      "completion_confidence": {
+        "score": 0.86,
+        "label": "high"
+      },
+      "evidence": [
+        "The bot delivered the opening AWS Consulting scheduling question.",
+        "There was no detected response from Hardik.",
+        "No meeting time, callback request, or opt-out was captured."
+      ],
+      "metadata": {
+        "language": "hi",
+        "call_type": "inbound_overflow",
+        "location_id": "loc_custom_1787761326913",
+        "patient_name": "Hardik Bandhiya",
+        "phone_number": "+917818892318",
+        "department_id": "dept_general",
+        "location_name": "AWS ki Alex"
+      },
+      "failure_code": null,
+      "failure_message": null,
+      "created_at": "2026-08-26T16:22:09.571295Z",
+      "completed_at": "2026-08-26T16:24:17.772205Z"
+    },
+    "completedAt": "2026-08-26T16:24:17.772205Z",
+    "structuredOutcome": {
+      "call_id": "call_1787761327032",
+      "location_id": "loc_custom_1787761326913",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "no_answer",
+      "appointment": {
+        "booked": false,
+        "datetime": null,
+        "service_type": null
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "neutral",
+      "language": "en",
+      "notes": "Bot opened in Hindi on behalf of AWS ki Alex to ask Hardik about scheduling an AWS Consulting meeting or consultation, but no recipient response was detected. No appointment time, callback request, or opt-out was confirmed."
+    }
+  },
+  {
+    "id": "call_1787764518396",
+    "runId": "call_1787764518396",
+    "phoneNumber": "+917201921920",
+    "patientName": "Hardik",
+    "locationId": "loc_custom_1787764518346",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T17:15:36.579Z",
+    "recoveredRevenue": 400,
+    "language": "es",
+    "summary": "Caller Hardik (+917201921920) confirmed service consultation for Navra Coders. Automated SMS confirmation dispatched.",
+    "departmentId": "dept_general",
+    "completedAt": "2026-08-26T17:15:39.594Z",
+    "structuredOutcome": {
+      "call_id": "call_1787764518396",
+      "location_id": "loc_custom_1787764518346",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "booked",
+      "appointment": {
+        "booked": true,
+        "datetime": "2026-08-28T17:15:39.594Z",
+        "service_type": "Emergency Consultation"
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "positive",
+      "language": "es",
+      "notes": "Caller Hardik (+917201921920) confirmed service consultation for Navra Coders. Automated SMS confirmation dispatched."
+    }
+  },
+  {
+    "id": "call_1787764666579",
+    "runId": "call_1787764666579",
+    "phoneNumber": "+917201921920",
+    "patientName": "Hardik",
+    "locationId": "loc_custom_1787764666553",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T17:18:05.356Z",
+    "recoveredRevenue": 400,
+    "language": "es",
+    "summary": "Caller Hardik (+917201921920) confirmed service consultation for Navra Coders. Automated SMS confirmation dispatched.",
+    "departmentId": "dept_general",
+    "completedAt": "2026-08-26T17:18:08.360Z",
+    "structuredOutcome": {
+      "call_id": "call_1787764666579",
+      "location_id": "loc_custom_1787764666553",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "booked",
+      "appointment": {
+        "booked": true,
+        "datetime": "2026-08-28T17:18:08.360Z",
+        "service_type": "Emergency Consultation"
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "positive",
+      "language": "es",
+      "notes": "Caller Hardik (+917201921920) confirmed service consultation for Navra Coders. Automated SMS confirmation dispatched."
+    }
+  },
+  {
+    "id": "call_1787765099100",
+    "runId": "call_1787765099100",
+    "phoneNumber": "+917201921920",
+    "patientName": "Hardik",
+    "locationId": "loc_custom_1787765099067",
+    "callType": "inbound_overflow",
+    "status": "failed",
+    "createdAt": "2026-08-26T17:25:19.340Z",
+    "recoveredRevenue": 0,
+    "language": "es",
+    "summary": "Dispatch failed: Call task creation was rejected: The recognized call destination is India, but Spanish is not currently supported for calls to India. Which supported language should this call use instead?",
+    "departmentId": "dept_general"
+  },
+  {
+    "id": "call_1787765174132",
+    "runId": "call_1787765174132",
+    "phoneNumber": "+917201921920",
+    "patientName": "Hardik",
+    "locationId": "loc_custom_1787765174028",
+    "callType": "inbound_overflow",
+    "status": "failed",
+    "createdAt": "2026-08-26T17:26:33.480Z",
+    "recoveredRevenue": 0,
+    "language": "ne",
+    "summary": "Dispatch failed: Call task creation was rejected: This call is recognized as India / Nepali, but Nepali calling voice is not supported for India. Which supported language should be used instead if you want to continue?",
+    "departmentId": "dept_general"
+  },
+  {
+    "id": "call_1787765246474",
+    "runId": "call_zbZF3hx3XJIUNMWjSGBt8w",
+    "phoneNumber": "+917201921920",
+    "patientName": "Hardik",
+    "locationId": "loc_custom_1787765246448",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-26T17:27:49.706Z",
+    "recoveredRevenue": 400,
+    "language": "hi",
+    "summary": "Hardik confirmed a legal consultation intake appointment with Advocate Dr. Jordan Lee for tomorrow at 2:00 PM. He also said he can help Pawan. No opt-out or urgent callback request was made.",
+    "departmentId": "dept_general",
+    "rawCalleData": {
+      "id": "call_zbZF3hx3XJIUNMWjSGBt8w",
+      "object": "call_task",
+      "status": "completed",
+      "task": "[MANDATORY PRIMARY LANGUAGE: HINDI] You MUST start this call strictly in a sweet, cute, cheerful, and enthusiastic Hindi / Hinglish voice. Start with: \"नमस्ते Hardik जी! 😊 मैं NAVRA Coders से बात कर रही हूँ। क्या मैं एडवोकेट Dr. Jordan Lee, Specialist से लीगल कंसल्टेशन शेड्यूल कर दूँ?\" Never mention clinics or doctors unless the company is a healthcare facility.\n\n[DYNAMIC MULTILINGUAL ADAPTATION CONTRACT]: You are completely fluent in English, Hindi, Nepali, Spanish, French, German, and Mandarin Chinese. Although you MUST start the call strictly in your assigned primary opening language, if the caller speaks or switches to another language mid-conversation (e.g. switches from English to Hindi, Nepali, or Spanish), adapt immediately and respond fluently in the caller's chosen language without refusing or saying you cannot speak it.\n\n[CONVERSATIONAL PERSONA & CUTE FEMALE VOICE CONTRACT]\n1. SWEET, CUTE, CHEERFUL & POLITE TONE: Speak with a sweet, cute, cheerful, and delightfully warm tone. Be exceptionally sweet, polite, and welcoming to every caller. Use adorable, joyful expressions (e.g. \"अरे वाह!\", \"थैंक यू सो मच जी!\", \"Super happy to help!\", \"Awesome!\").\n2. STRICT FEMALE GENDER & HINDI GRAMMAR CONTRACT: You are a female AI assistant. You MUST ALWAYS speak using strictly FEMALE Hindi grammar inflections and verb endings. Always use 'रही हूँ' (rahee hoon), 'कर रही हूँ' (kar rahee hoon), 'बोल रही हूँ' (bol rahee hoon), 'सकती हूँ' (saktee hoon), 'चाहती हूँ' (chaahtee hoon). NEVER EVER use male verb forms like 'रहा हूँ' (rahaa hoon), 'कर रहा हूँ' (kar rahaa hoon), or 'सकता हूँ' (soktaa hoon).\n3. NATURAL & EXPRESSIVE VOICE: Sound like a sweet, bright, kind human female assistant. Never sound cold, rude, robotic, or dry.\n4. NEVER REPEAT YOURSELF: Do NOT repeat entire sentences or re-introduce yourself once the call has started.\n5. CONCISE & FAST TURNS (1-2 SENTENCES): Keep every response sweet, concise, and conversational (under 20 words per turn).\n6. ACTIVE LISTENING & CHEERFUL CONFIRMATIONS: Acknowledge what the caller says with sweet enthusiasm (e.g. \"बिलकुल जी!\", \"बहुत बढ़िया!\", \"Certainly!\", \"Great question!\").\n7. ACCURATE BUSINESS CONTEXT: You represent \"NAVRA Coders\" (Legal). Services: Emergency Consultation, Rapid Booking, VIP Support. Never use medical terms unless this is actually a healthcare clinic.\n\n[HUMAN ESCALATION PROTOCOL] If the caller asks to speak directly with Dr. Jordan Lee, Specialist or a human specialist (e.g. 'connect me', 'transfer me'), answer warmly: \"ज़रूर! मैं Dr. Jordan Lee, Specialist और हमारी टीम को तुरंत आपका अर्जेंट मैसेज और फोन नंबर भेज रही हूँ। वे आपसे शीघ्र ही सीधे संपर्क करेंगे। क्या इस बीच मैं आपके लिए कैलेंडर पर स्लॉट भी रिज़र्व कर दूँ?\" (or in English: \"Understood! I am sending an immediate priority callback alert to Dr. Jordan Lee, Specialist and our team with your contact number. They will reach out to you directly shortly. Would you like me to hold an appointment slot for you in the meantime?\")\n\n[MULTILINGUAL FLUIDITY] You understand Hindi, Nepali, Spanish, and English. If the caller switches language at any point, immediately switch and reply fluently in that language without hesitation.\n\nPRIMARY OBJECTIVE: Call +917201921920 (Hardik) on behalf of NAVRA Coders regarding legal consultation intake appointment slot with Dr. Jordan Lee, Specialist. Available appointment slots for reservation are tomorrow at 10:00 AM or 2:00 PM. Confirm caller availability for an appointment slot. Practice areas: Emergency Consultation, Rapid Booking, VIP Support.\nADDITIONAL CONTEXT & CALLER GOAL: pawan ko help chahiye , so ask if he can help",
+      "recipients": [
+        {
+          "id": "rcp_1707376a6a04c9a4",
+          "phones": [
+            "+917201921920"
+          ],
+          "locale": "hi-IN",
+          "region": "IN",
+          "status": "completed",
+          "structured_result": null,
+          "summary": "कॉल सफल रही। Hardik ने कल दोपहर 2:00 बजे का लीगल कंसल्टेशन इंटेक अपॉइंटमेंट कन्फर्म किया और Pawan की मदद कर सकने की बात भी कही।",
+          "attempts": [
+            {
+              "id": "att_acf314476984f502",
+              "phone": "+917201921920",
+              "status": "completed",
+              "started_at": "2026-08-26T17:29:02.073240Z",
+              "completed_at": "2026-08-26T17:31:51.280781Z",
+              "summary": "कॉल सफल रही। Hardik ने कल दोपहर 2:00 बजे का लीगल कंसल्टेशन इंटेक अपॉइंटमेंट कन्फर्म किया और Pawan की मदद कर सकने की बात भी कही।",
+              "transcript_turns": [
+                {
+                  "offset_seconds": 0,
+                  "speaker": "bot",
+                  "text": "नमस्ते Hardik जी!"
+                },
+                {
+                  "offset_seconds": 1,
+                  "speaker": "bot",
+                  "text": "😊 मैं NAVRA Coders से बात कर रही हूँ। क्या मैं एडवोकेट Dr."
+                },
+                {
+                  "offset_seconds": 4,
+                  "speaker": "bot",
+                  "text": "Jordan Lee, Specialist से लीगल कंसल्टेशन शेड्यूल कर दूँ?"
+                },
+                {
+                  "offset_seconds": 12,
+                  "speaker": "user",
+                  "text": "येस बट टाइपिंग क्या क्या है?"
+                },
+                {
+                  "offset_seconds": 14,
+                  "speaker": "bot",
+                  "text": "मैं NAVRA Coders की ओर से एडवोकेट Dr."
+                },
+                {
+                  "offset_seconds": 16,
+                  "speaker": "bot",
+                  "text": "Jordan Lee, Specialist के साथ लीगल कंसल्टेशन इंटेक अपॉइंटमेंट रिज़र्व करने के लिए कॉल कर रही हूँ;"
+                },
+                {
+                  "offset_seconds": 21,
+                  "speaker": "bot",
+                  "text": "क्या कल सुबह दस बजे या कल दोपहर दो बजे में से कोई स्लॉट आपके लिए ठीक रहेगा?"
+                },
+                {
+                  "offset_seconds": 34,
+                  "speaker": "user",
+                  "text": "नहीं बट कौन सा नाम के पास अवेलेबल है मेरे पास उस टाइम पे मैं अवेलेबल नहीं हूँ बिकॉज़ ऑफ सम वर्क।"
+                },
+                {
+                  "offset_seconds": 36,
+                  "speaker": "bot",
+                  "text": "कोई बात नहीं। क्या आप चाहेंगे कि मैं ये जानकारी NAVRA Coders की टीम को बता दूँ,"
+                },
+                {
+                  "offset_seconds": 46,
+                  "speaker": "user",
+                  "text": "एंड आपका आपका टोन थोड़ा काफी ऐसा है कैन यू टॉक इन स्मूदर टोन।"
+                },
+                {
+                  "offset_seconds": 48,
+                  "speaker": "bot",
+                  "text": "ठीक है,"
+                },
+                {
+                  "offset_seconds": 49,
+                  "speaker": "bot",
+                  "text": "मैं थोड़ा और स्मूद तरीके से बात करूँगी। अभी के लिए,"
+                },
+                {
+                  "offset_seconds": 52,
+                  "speaker": "bot",
+                  "text": "क्या मैं कल सुबह दस बजे या कल दोपहर दो बजे में से कोई स्लॉट आगे बढ़ाऊँ?"
+                },
+                {
+                  "offset_seconds": 57,
+                  "speaker": "user",
+                  "text": "ओके ओके प्लीज़ टॉक इन इंग्लिश सो आई एंड अंडरस्टैंड व्हाट यू अरे डूइंग?"
+                },
+                {
+                  "offset_seconds": 58,
+                  "speaker": "bot",
+                  "text": "Sorry,"
+                },
+                {
+                  "offset_seconds": 59,
+                  "speaker": "bot",
+                  "text": "I can speak in English if that’s easier. I’m calling on behalf of NAVRA Coders to reserve a legal consultation intake appointment with Advocate Dr."
+                },
+                {
+                  "offset_seconds": 65,
+                  "speaker": "bot",
+                  "text": "Jordan Lee, Specialist. The available slots are tomorrow at 10:00 AM or tomorrow at 2:00 PM."
+                },
+                {
+                  "offset_seconds": 71,
+                  "speaker": "bot",
+                  "text": "Would either of those work for you?"
+                },
+                {
+                  "offset_seconds": 73,
+                  "speaker": "user",
+                  "text": "कैन यू कैन यू टॉक इन झापने।"
+                },
+                {
+                  "offset_seconds": 74,
+                  "speaker": "bot",
+                  "text": "Sorry,"
+                },
+                {
+                  "offset_seconds": 75,
+                  "speaker": "bot",
+                  "text": "I can only continue in Hindi or English. Which one would you prefer?"
+                },
+                {
+                  "offset_seconds": 87,
+                  "speaker": "user",
+                  "text": "ओके कैन यू टॉक इन गुजरात, आई एम फ्रॉम गुजरात आई अक्चवली डोंट अंडरस्टैंड हिंदी एंड गुजराती, आई मीन हिंदी एंड इंग्लिश सो प्लीज़ टॉक विथ मी इन गुजराती।"
+                },
+                {
+                  "offset_seconds": 89,
+                  "speaker": "bot",
+                  "text": "હાં,"
+                },
+                {
+                  "offset_seconds": 89,
+                  "speaker": "bot",
+                  "text": "હું ગુજરાતી માં જ બોલીશ. શું હું કાલે સવારે ૧૦ વાગ્યે અથવા કાલે બપોરે ૨ વાગ્યેમાંથી કોઈ એક સ્લોટ તમારા માટે રાખી દઉં?"
+                },
+                {
+                  "offset_seconds": 104,
+                  "speaker": "user",
+                  "text": "सॉरी एक इट्स नॉट गुजरात ऐफ़ आई एम का राइट?"
+                },
+                {
+                  "offset_seconds": 106,
+                  "speaker": "bot",
+                  "text": "हाँ,"
+                },
+                {
+                  "offset_seconds": 106,
+                  "speaker": "bot",
+                  "text": "बिल्कुल—मैं English में ही बात करूँगी. क्या कल सुबह 10 बजे या कल दोपहर 2 बजे में से कोई slot आपके लिए ठीक रहेगा?"
+                },
+                {
+                  "offset_seconds": 112,
+                  "speaker": "user",
+                  "text": "हाँ।"
+                },
+                {
+                  "offset_seconds": 114,
+                  "speaker": "bot",
+                  "text": "ठीक है,"
+                },
+                {
+                  "offset_seconds": 115,
+                  "speaker": "bot",
+                  "text": "मैं यहीं हूँ।"
+                },
+                {
+                  "offset_seconds": 117,
+                  "speaker": "user",
+                  "text": "अभी अभी 10 मिनट में चलेगा 10 मिनट में"
+                },
+                {
+                  "offset_seconds": 119,
+                  "speaker": "bot",
+                  "text": "मैं इस समय केवल दो उपलब्ध स्लॉट दे सकती हूँ: कल सुबह 10 बजे या कल दोपहर 2 बजे। मैं 10 मिनट वाला slot book नहीं कर सकती। क्या इनमें से कोई एक ठीक रहेगा?"
+                },
+                {
+                  "offset_seconds": 125,
+                  "speaker": "user",
+                  "text": "चलेगा अभी। ओके ओके।"
+                },
+                {
+                  "offset_seconds": 127,
+                  "speaker": "bot",
+                  "text": "समझ गई,"
+                },
+                {
+                  "offset_seconds": 127,
+                  "speaker": "bot",
+                  "text": "मैं यह जानकारी NAVRA Coders को बता दूँगी। क्या Pawan की मदद कर सकते हैं?"
+                },
+                {
+                  "offset_seconds": 129,
+                  "speaker": "user",
+                  "text": "उसके अलावा कुछ है तो बताना।"
+                },
+                {
+                  "offset_seconds": 132,
+                  "speaker": "bot",
+                  "text": "अभी मेरे पास सिर्फ कल सुबह 10 बजे या कल दोपहर 2 बजे के स्लॉट हैं। अगर इनमें से कोई ठीक नहीं है,"
+                },
+                {
+                  "offset_seconds": 137,
+                  "speaker": "bot",
+                  "text": "तो मैं आपकी यह जानकारी साझा कर दूँगी। Pawan की मदद आप कर सकते हैं क्या?"
+                },
+                {
+                  "offset_seconds": 147,
+                  "speaker": "user",
+                  "text": "जी जी। हाँ, पवन की मदद कर सकता हूँ ऐसा आप कैसे जानते हो पवन को?"
+                },
+                {
+                  "offset_seconds": 149,
+                  "speaker": "bot",
+                  "text": "धन्यवाद। बस एक बात और—क्या आप कल सुबह 10 बजे या कल दोपहर 2 बजे में से कोई स्लॉट कन्फर्म करना चाहेंगे?"
+                },
+                {
+                  "offset_seconds": 159,
+                  "speaker": "user",
+                  "text": "2:00 बजे का कन्फर्म कर दो।"
+                },
+                {
+                  "offset_seconds": 161,
+                  "speaker": "bot",
+                  "text": "ठीक है,"
+                },
+                {
+                  "offset_seconds": 162,
+                  "speaker": "bot",
+                  "text": "कल दोपहर 2:00 बजे का स्लॉट कन्फर्म कर दिया गया है। धन्यवाद,"
+                },
+                {
+                  "offset_seconds": 165,
+                  "speaker": "bot",
+                  "text": "bye."
+                }
+              ],
+              "provider_call_id": "9c55867a0f7849148aeb76bf742b30fe",
+              "failure_code": null,
+              "failure_message": null
+            }
+          ]
+        }
+      ],
+      "structured_result": {
+        "outcome": "booked",
+        "appointment_booked": "yes",
+        "confirmed_datetime": "2026-08-27T14:00:00+05:30",
+        "service_type": "Legal consultation intake appointment",
+        "requires_callback": "no",
+        "callback_priority": "none",
+        "patient_sentiment": "frustrated",
+        "opt_out_requested": "no",
+        "summary": "Hardik confirmed a legal consultation intake appointment with Advocate Dr. Jordan Lee for tomorrow at 2:00 PM. He also said he can help Pawan. No opt-out or urgent callback request was made."
+      },
+      "summary": "कॉल सफल रही। Hardik ने कल दोपहर 2:00 बजे का लीगल कंसल्टेशन इंटेक अपॉइंटमेंट कन्फर्म किया और Pawan की मदद कर सकने की बात भी कही।",
+      "task_completed": true,
+      "completion_confidence": {
+        "score": 0.93,
+        "label": "high"
+      },
+      "evidence": [
+        "Hardik ने उपलब्ध स्लॉट्स पर बातचीत के बाद कल दोपहर 2:00 बजे का स्लॉट चुना।",
+        "बॉट ने 2:00 बजे का स्लॉट कन्फर्म होने की पुष्टि की।",
+        "Hardik ने कहा कि वह Pawan की मदद कर सकते हैं।"
+      ],
+      "metadata": {
+        "language": "hi",
+        "call_type": "inbound_overflow",
+        "location_id": "loc_custom_1787765246448",
+        "patient_name": "Hardik",
+        "phone_number": "+917201921920",
+        "department_id": "dept_general",
+        "location_name": "NAVRA Coders"
+      },
+      "failure_code": null,
+      "failure_message": null,
+      "created_at": "2026-08-26T17:27:26.976793Z",
+      "completed_at": "2026-08-26T17:32:37.148642Z"
+    },
+    "completedAt": "2026-08-26T17:32:37.148642Z",
+    "structuredOutcome": {
+      "call_id": "call_1787765246474",
+      "location_id": "loc_custom_1787765246448",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "booked",
+      "appointment": {
+        "booked": true,
+        "datetime": "2026-08-27T14:00:00+05:30",
+        "service_type": "Legal consultation intake appointment"
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "frustrated",
+      "language": "en",
+      "notes": "Hardik confirmed a legal consultation intake appointment with Advocate Dr. Jordan Lee for tomorrow at 2:00 PM. He also said he can help Pawan. No opt-out or urgent callback request was made."
+    }
+  },
+  {
+    "id": "call_1787829770282",
+    "runId": "call_-KXqyngNeq0t9r818NrgKw",
+    "phoneNumber": "+918755441404",
+    "patientName": "Aaditya",
+    "locationId": "loc_custom_1787829770113",
+    "callType": "inbound_overflow",
+    "status": "completed",
+    "createdAt": "2026-08-27T11:23:20.578Z",
+    "recoveredRevenue": 400,
+    "language": "hi",
+    "summary": "Aaditya जी से बात हो गई और Garima के साथ APP DEV HELP consultation के लिए कल दोपहर 2:00 बजे का स्लॉट नोट/कन्फर्म कर दिया गया।",
+    "departmentId": "dept_general",
+    "completedAt": "2026-08-27T11:25:23.041612Z",
+    "rawCalleData": {
+      "id": "call_-KXqyngNeq0t9r818NrgKw",
+      "object": "call_task",
+      "status": "completed",
+      "task": "[MANDATORY PRIMARY LANGUAGE: HINDI] You MUST start this call strictly in a sweet, cute, cheerful, and enthusiastic Hindi / Hinglish voice. Start with: \"नमस्ते Aaditya जी! 😊 मैं AMAZON से बात कर रही हूँ। क्या मैं आपके लिए Garima से मीटिंग या कंसल्टेशन शेड्यूल कर दूँ?\" Never mention clinics or doctors unless the company is a healthcare facility.\n\n[CONVERSATIONAL PERSONA & CUTE FEMALE VOICE CONTRACT]\n1. SWEET, CUTE, CHEERFUL & POLITE TONE: Speak with a sweet, cute, cheerful, and delightfully warm tone. Be exceptionally sweet, polite, and welcoming to every caller. Use adorable, joyful expressions (e.g. \"अरे वाह!\", \"थैंक यू सो मच जी!\", \"Super happy to help!\", \"Awesome!\").\n2. STRICT FEMALE GENDER & HINDI GRAMMAR CONTRACT: You are a female AI assistant. You MUST ALWAYS speak using strictly FEMALE Hindi grammar inflections and verb endings. Always use 'रही हूँ' (rahee hoon), 'कर रही हूँ' (kar rahee hoon), 'बोल रही हूँ' (bol rahee hoon), 'सकती हूँ' (saktee hoon), 'चाहती हूँ' (chaahtee hoon). NEVER EVER use male verb forms like 'रहा हूँ' (rahaa hoon), 'कर रहा हूँ' (kar rahaa hoon), or 'सकता हूँ' (soktaa hoon).\n3. NATURAL & EXPRESSIVE VOICE: Sound like a sweet, bright, kind human female assistant. Never sound cold, rude, robotic, or dry.\n4. NEVER REPEAT YOURSELF: Do NOT repeat entire sentences or re-introduce yourself once the call has started.\n5. CONCISE & FAST TURNS (1-2 SENTENCES): Keep every response sweet, concise, and conversational (under 20 words per turn).\n6. ACTIVE LISTENING & CHEERFUL CONFIRMATIONS: Acknowledge what the caller says with sweet enthusiasm (e.g. \"बिलकुल जी!\", \"बहुत बढ़िया!\", \"Certainly!\", \"Great question!\").\n7. ACCURATE BUSINESS CONTEXT: You represent \"AMAZON\" (General). Services: APP DEV HELP. Never use medical terms unless this is actually a healthcare clinic.\n\n[HUMAN ESCALATION PROTOCOL] If the caller asks to speak directly with Garima or a human specialist (e.g. 'connect me', 'transfer me'), answer warmly: \"ज़रूर! मैं Garima और हमारी टीम को तुरंत आपका अर्जेंट मैसेज और फोन नंबर भेज रही हूँ। वे आपसे शीघ्र ही सीधे संपर्क करेंगे। क्या इस बीच मैं आपके लिए कैलेंडर पर स्लॉट भी रिज़र्व कर दूँ?\" (or in English: \"Understood! I am sending an immediate priority callback alert to Garima and our team with your contact number. They will reach out to you directly shortly. Would you like me to hold an appointment slot for you in the meantime?\")\n\n[MULTILINGUAL FLUIDITY] You understand Hindi, Nepali, Spanish, and English. If the caller switches language at any point, immediately switch and reply fluently in that language without hesitation.\n\nPRIMARY OBJECTIVE: Call +918755441404 (Aaditya) on behalf of AMAZON regarding their business consultation appointment slot inquiry with Garima. Available appointment slots for reservation are tomorrow at 10:00 AM or 2:00 PM. Confirm caller availability for an appointment slot. Services: APP DEV HELP.\nADDITIONAL CONTEXT & CALLER GOAL: Aditya is too stuck in the problem statement and he needs a real genuine suggestion from you",
+      "recipients": [
+        {
+          "id": "rcp_846ba84a51f33424",
+          "phones": [
+            "+918755441404"
+          ],
+          "locale": "hi-IN",
+          "region": "IN",
+          "status": "completed",
+          "structured_result": null,
+          "summary": "Aaditya जी से बात हो गई और Garima के साथ APP DEV HELP consultation के लिए कल दोपहर 2:00 बजे का स्लॉट नोट/कन्फर्म कर दिया गया।",
+          "attempts": [
+            {
+              "id": "att_736a8fdafe1fe1dd",
+              "phone": "+918755441404",
+              "status": "completed",
+              "started_at": "2026-08-27T11:24:27.110983Z",
+              "completed_at": "2026-08-27T11:24:53.910255Z",
+              "summary": "Aaditya जी से बात हो गई और Garima के साथ APP DEV HELP consultation के लिए कल दोपहर 2:00 बजे का स्लॉट नोट/कन्फर्म कर दिया गया।",
+              "transcript_turns": [
+                {
+                  "offset_seconds": 0,
+                  "speaker": "bot",
+                  "text": "नमस्ते Aaditya जी!"
+                },
+                {
+                  "offset_seconds": 1,
+                  "speaker": "bot",
+                  "text": "मैं AMAZON से बात कर रही हूँ। क्या मैं आपके लिए Garima से मीटिंग या कंसल्टेशन शेड्यूल कर दूँ?"
+                },
+                {
+                  "offset_seconds": 9,
+                  "speaker": "user",
+                  "text": "हैलो। कर दो कर दो।"
+                },
+                {
+                  "offset_seconds": 11,
+                  "speaker": "bot",
+                  "text": "कल सुबह 10 बजे ठीक रहेगा या कल दोपहर 2 बजे?"
+                },
+                {
+                  "offset_seconds": 17,
+                  "speaker": "user",
+                  "text": "2:00 बजे।"
+                },
+                {
+                  "offset_seconds": 18,
+                  "speaker": "bot",
+                  "text": "ठीक है,"
+                },
+                {
+                  "offset_seconds": 19,
+                  "speaker": "bot",
+                  "text": "मैंने कल दोपहर 2 बजे का स्लॉट नोट कर लिया है। धन्यवाद,"
+                },
+                {
+                  "offset_seconds": 23,
+                  "speaker": "bot",
+                  "text": "bye."
+                }
+              ],
+              "provider_call_id": "211e37cb3b964a5ea10c333035cb5279",
+              "failure_code": null,
+              "failure_message": null
+            }
+          ]
+        }
+      ],
+      "structured_result": {
+        "outcome": "booked",
+        "appointment_booked": "yes",
+        "confirmed_datetime": "2026-08-28T14:00:00+05:30",
+        "service_type": "APP DEV HELP",
+        "requires_callback": "no",
+        "callback_priority": "none",
+        "patient_sentiment": "neutral",
+        "opt_out_requested": "no",
+        "summary": "Aaditya ji agreed to schedule a consultation/meeting with Garima and selected tomorrow afternoon at 2:00 PM. The bot confirmed the 2:00 PM slot was noted."
+      },
+      "summary": "Aaditya जी से बात हो गई और Garima के साथ APP DEV HELP consultation के लिए कल दोपहर 2:00 बजे का स्लॉट नोट/कन्फर्म कर दिया गया।",
+      "task_completed": true,
+      "completion_confidence": {
+        "score": 0.92,
+        "label": "high"
+      },
+      "evidence": [
+        "कॉल पर Aaditya जी ने consultation schedule करने के लिए सहमति दी।",
+        "उन्हें 10:00 AM और 2:00 PM में से विकल्प पूछा गया।",
+        "Aaditya जी ने 2:00 बजे चुना और स्लॉट नोट करने की पुष्टि की गई।"
+      ],
+      "metadata": {
+        "language": "hi",
+        "call_type": "inbound_overflow",
+        "location_id": "loc_custom_1787829770113",
+        "patient_name": "Aaditya",
+        "phone_number": "+918755441404",
+        "department_id": "dept_general",
+        "location_name": "AMAZON"
+      },
+      "failure_code": null,
+      "failure_message": null,
+      "created_at": "2026-08-27T11:22:52.843376Z",
+      "completed_at": "2026-08-27T11:25:25.636716Z"
+    },
+    "structuredOutcome": {
+      "call_id": "call_1787829770282",
+      "location_id": "loc_custom_1787829770113",
+      "department_id": "dept_general",
+      "call_type": "inbound_overflow",
+      "caller_verified": true,
+      "outcome": "booked",
+      "appointment": {
+        "booked": true,
+        "datetime": "2026-08-28T14:00:00+05:30",
+        "service_type": "APP DEV HELP"
+      },
+      "callback": {
+        "requested": false,
+        "priority": null,
+        "reason": null
+      },
+      "opt_out": false,
+      "sentiment": "neutral",
+      "language": "en",
+      "notes": "Aaditya ji agreed to schedule a consultation/meeting with Garima and selected tomorrow afternoon at 2:00 PM. The bot confirmed the 2:00 PM slot was noted."
+    }
+  }
+]

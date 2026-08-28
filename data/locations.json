@@ -1,0 +1,204 @@
+[
+  {
+    "id": "loc_downtown",
+    "name": "Apex Health - Downtown Metro",
+    "industry": "Healthcare",
+    "phone": "+1-555-0100",
+    "address": "450 Sutter St, Suite 1200, San Francisco, CA",
+    "hours": "Mon-Fri: 8:00 AM - 6:00 PM, Sat: 9:00 AM - 2:00 PM",
+    "services": [
+      "Preventive Hygiene & Cleaning",
+      "Comprehensive Oral Exam",
+      "Emergency Triage & Pain Relief",
+      "Invisalign Consultation",
+      "Crowns & Restorative Care"
+    ],
+    "payment_plans_available": true,
+    "on_call_doctor": "Dr. Sarah Chen, DDS",
+    "average_ticket_value": 320,
+    "defaultContext": "Caller is requesting next available appointment for tooth pain."
+  },
+  {
+    "id": "loc_westside",
+    "name": "Apex Health - Westside Family Clinic",
+    "industry": "Healthcare",
+    "phone": "+1-555-0200",
+    "address": "2100 Olympic Blvd, Los Angeles, CA",
+    "hours": "Mon-Fri: 8:30 AM - 5:30 PM",
+    "services": [
+      "Routine Health & Wellness Exam",
+      "Pediatric Checkups",
+      "Hygiene & Teeth Whitening",
+      "Chronic Condition Follow-up"
+    ],
+    "payment_plans_available": true,
+    "on_call_doctor": "Dr. Marcus Vance, MD",
+    "average_ticket_value": 280,
+    "defaultContext": "Patient following up on annual wellness checkup and lab results."
+  },
+  {
+    "id": "loc_highland",
+    "name": "Apex Health - Highland Urgent & Specialty",
+    "industry": "Healthcare",
+    "phone": "+1-555-0300",
+    "address": "880 North Highland Ave, Austin, TX",
+    "hours": "24/7 Acute Triage & Urgent Walk-ins",
+    "services": [
+      "24/7 Acute Pain Triage",
+      "Advanced Dental Implants",
+      "Oral Surgery & Extraction",
+      "Emergency Trauma Relief"
+    ],
+    "payment_plans_available": true,
+    "on_call_doctor": "Dr. Elena Rostova, DMD",
+    "average_ticket_value": 550,
+    "defaultContext": "Caller with acute discomfort requesting immediate emergency surgical evaluation."
+  },
+  {
+    "id": "loc_auto_metro",
+    "name": "Apex Velocity - Metro Auto Group & Service",
+    "industry": "Automotive",
+    "phone": "+1-555-0400",
+    "address": "1200 Motor Speedway Blvd, Dallas, TX",
+    "hours": "Mon-Sat: 7:00 AM - 6:00 PM",
+    "services": [
+      "15k / 30k Synthetic Oil Service",
+      "OEM Safety Recalls & Diagnostics",
+      "Brake Rotor & Pad Replacement",
+      "Complimentary Shuttle & Loaner Fleet"
+    ],
+    "payment_plans_available": true,
+    "on_call_doctor": "Dave Miller (Lead Service Advisor)",
+    "average_ticket_value": 450,
+    "defaultContext": "Customer inquiring about 15,000-mile brake inspection and loaner car reservation."
+  },
+  {
+    "id": "loc_auto_west",
+    "name": "Apex Velocity - Collision & Express Fleet Hub",
+    "industry": "Automotive",
+    "phone": "+1-555-0450",
+    "address": "740 Industrial Parkway, Chicago, IL",
+    "hours": "Mon-Fri: 7:30 AM - 5:30 PM",
+    "services": [
+      "Direct Insurance Collision Repair",
+      "Commercial Fleet Maintenance",
+      "Transmission Diagnostics",
+      "Tire Alignment & Precision Balance"
+    ],
+    "payment_plans_available": true,
+    "on_call_doctor": "Jessica Hayes (Collision & Fleet Manager)",
+    "average_ticket_value": 680,
+    "defaultContext": "Fleet manager scheduling multi-vehicle preventative maintenance inspection."
+  },
+  {
+    "id": "loc_legal_hq",
+    "name": "Apex Legal - Downtown Litigation & Advisory",
+    "industry": "Legal",
+    "phone": "+1-555-0500",
+    "address": "100 Wall Street, 28th Floor, New York, NY",
+    "hours": "Mon-Fri: 8:30 AM - 6:30 PM",
+    "services": [
+      "Commercial Breach of Contract",
+      "Corporate Shareholder Arbitration",
+      "Client Intake & Conflict Checks",
+      "Partner Strategy Consultation"
+    ],
+    "payment_plans_available": false,
+    "on_call_doctor": "Morgan Blake, Esq. (Managing Partner)",
+    "average_ticket_value": 1200,
+    "defaultContext": "Prospective corporate client seeking initial partner consultation for contract dispute."
+  },
+  {
+    "id": "loc_legal_trusts",
+    "name": "Apex Legal - Century City Estate & Wealth Hub",
+    "industry": "Legal",
+    "phone": "+1-555-0550",
+    "address": "1999 Avenue of the Stars, Los Angeles, CA",
+    "hours": "Mon-Fri: 9:00 AM - 5:00 PM",
+    "services": [
+      "Revocable Living Trusts & Wills",
+      "High Net-Worth Asset Protection",
+      "Probate Administration",
+      "Tax Strategy & Succession Planning"
+    ],
+    "payment_plans_available": false,
+    "on_call_doctor": "Claire Sterling, JD (Senior Partner)",
+    "average_ticket_value": 950,
+    "defaultContext": "Client requesting appointment to update family estate trust and asset protection plan."
+  },
+  {
+    "id": "loc_grand_apex",
+    "name": "The Grand Apex - Luxury Hotel Concierge & Dining",
+    "industry": "Hospitality",
+    "phone": "+1-555-0600",
+    "address": "500 Oceanfront Promenade, Miami Beach, FL",
+    "hours": "24/7 VIP Concierge & Guest Services",
+    "services": [
+      "Michelin-Starred Dining Reservations",
+      "VIP Suite Inquiries & Upgrades",
+      "Airport Chauffeur Dispatch",
+      "Private Event & Cabana Booking"
+    ],
+    "payment_plans_available": false,
+    "on_call_doctor": "Henri Dupond (Head Concierge)",
+    "average_ticket_value": 750,
+    "defaultContext": "Guest inquiring about dinner reservation for 4 at the rooftop lounge this Saturday."
+  },
+  {
+    "id": "loc_apex_living",
+    "name": "Apex Living - Premier Residential & Property Ops",
+    "industry": "Real Estate",
+    "phone": "+1-555-0700",
+    "address": "350 Seattle Waterfront Ave, Seattle, WA",
+    "hours": "Mon-Sat: 9:00 AM - 6:00 PM",
+    "services": [
+      "Private Penthouse & Townhome Tours",
+      "Lease Application Pre-screening",
+      "Tenant Maintenance Dispatch",
+      "Property Acquisition Inquiries"
+    ],
+    "payment_plans_available": false,
+    "on_call_doctor": "Samantha Vance (Lead Leasing Broker)",
+    "average_ticket_value": 850,
+    "defaultContext": "Prospective tenant requesting private weekend walkthrough tour of 2-bedroom unit."
+  },
+  {
+    "id": "loc_techsangi",
+    "name": "TechSangi IT Solutions & Software Engineering",
+    "industry": "IT & Software Services",
+    "phone": "+977-9818975366",
+    "address": "Kathmandu Tech Park, New Baneshwor, Nepal",
+    "hours": "24/7 Managed IT Support & NOC Monitoring",
+    "website_url": "https://techsangi.com.np/",
+    "services": [
+      "Managed IT Infrastructure & Cloud Hosting",
+      "Custom Software & Web App Development",
+      "Cybersecurity Audit & Risk Mitigation",
+      "24/7 IT Helpdesk & Systems Monitoring",
+      "Enterprise Network & Server Architecture",
+      "Digital Transformation & Tech Consulting"
+    ],
+    "payment_plans_available": true,
+    "on_call_doctor": "Aayush Sharma (Lead Solutions Architect)",
+    "average_ticket_value": 1500,
+    "defaultContext": "Client inquiring about custom web application development, cloud server setup, and IT support retainer."
+  },
+  {
+    "id": "loc_logistics_hq",
+    "name": "Apex Global Supply & Freight Logistics",
+    "industry": "Logistics & Transport",
+    "phone": "+1-555-0800",
+    "address": "1500 Logistics Way, Port of Long Beach, CA",
+    "hours": "24/7 Fleet Dispatch & Cargo Tracking",
+    "services": [
+      "Intermodal Freight Dispatch",
+      "Real-Time Cargo Tracking & Manifest",
+      "Cold Chain Refrigerated Transit",
+      "Warehouse Storage & Customs Clearance"
+    ],
+    "payment_plans_available": true,
+    "on_call_doctor": "Marcus Brody (Head of Fleet Operations)",
+    "average_ticket_value": 2200,
+    "defaultContext": "Shipper requesting urgent status update and customs release for container shipment."
+  }
+]
