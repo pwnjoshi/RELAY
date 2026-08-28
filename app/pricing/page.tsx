@@ -117,9 +117,11 @@ export default function PublicPricingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] dark:bg-[#081426] text-[#0B1930] dark:text-[#F8FAFC] flex flex-col selection:bg-[#1B9A9C]/20 transition-colors overflow-x-clip animate-page-entrance">
+    <div className="min-h-screen bg-[#FAFAF8] dark:bg-[#081426] text-[#0B1930] dark:text-[#F8FAFC] flex flex-col selection:bg-[#1B9A9C]/20 transition-colors overflow-x-clip">
       {/* 1. Public Header */}
       <PublicHeader />
+
+      <main className="flex-1 flex flex-col animate-page-entrance">
 
       {/* 2. Hero Section */}
       <section className="px-6 sm:px-12 pt-16 pb-10 max-w-5xl mx-auto text-center space-y-4">
@@ -411,9 +413,10 @@ export default function PublicPricingPage() {
           })}
         </div>
       </section>
+    </main>
 
-      {/* 6. Footer */}
-      <PublicFooter />
+    {/* 6. Footer */}
+    <PublicFooter />
     </div>
   );
 }

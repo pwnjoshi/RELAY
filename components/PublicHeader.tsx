@@ -49,59 +49,51 @@ export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
   }, []);
 
   const navLinks = [
-    { href: "/solutions", label: "Solutions", icon: Icons.Building },
-    { href: "/how-it-works", label: "How It Works", icon: Icons.Cpu },
-    { href: "/security", label: "Security & Privacy", icon: Icons.Shield },
-    { href: "/pricing", label: "Pricing & ROI", icon: Icons.CreditCard },
-    { href: "/about", label: "About", icon: Icons.Layers },
+    { href: "/", label: "Home" },
+    { href: "/solutions", label: "Solutions" },
+    { href: "/how-it-works", label: "How It Works" },
+    { href: "/security", label: "Security & Privacy" },
+    { href: "/pricing", label: "Pricing & ROI" },
+    { href: "/about", label: "About" },
   ];
 
   return (
-    <header className="border-b border-[#E4E8E7]/80 dark:border-[#1E324F]/80 bg-white/80 dark:bg-[#081426]/80 backdrop-blur-xl sticky top-0 z-50 px-4 sm:px-8 py-3 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_25px_rgba(0,0,0,0.25)]">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+    <header className="border-b border-[#E4E8E7]/80 dark:border-[#1E324F]/80 bg-white/85 dark:bg-[#081426]/85 backdrop-blur-xl sticky top-0 z-50 px-6 sm:px-10 lg:px-16 py-3.5 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_25px_rgba(0,0,0,0.25)]">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
         {/* Brand Signature */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-shrink-0">
           <RelayLogo size="md" />
         </div>
 
-        {/* Desktop Luxury Floating Glass Navigation Dock */}
-        <nav className="hidden lg:flex items-center gap-1.5 p-1.5 rounded-2xl bg-[#F4F6F5]/90 dark:bg-[#0E1E36]/90 border border-[#E2E8E7] dark:border-[#1E324F] shadow-inner backdrop-blur-md">
+        {/* Desktop Luxury Floating Glass Navigation Dock (No Icons, Pure Typographic Elegance) */}
+        <nav className="hidden lg:flex items-center gap-1 p-1 rounded-2xl bg-[#F0F4F4]/90 dark:bg-[#0E1E36]/90 border border-[#E0E7E6] dark:border-[#1E324F] shadow-inner backdrop-blur-md">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            const IconComponent = link.icon;
+            const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ease-out flex items-center gap-2 select-none group cursor-pointer ${
+                className={`relative px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ease-out select-none flex items-center cursor-pointer ${
                   isActive
-                    ? "bg-white dark:bg-[#162A48] text-[#0B1930] dark:text-[#F8FAFC] shadow-[0_2px_12px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_14px_rgba(0,0,0,0.35)] border border-[#E2E8E7]/90 dark:border-[#2A4368]"
-                    : "text-[#667085] dark:text-[#9BA8B8] hover:text-[#0B1930] dark:hover:text-[#F8FAFC] hover:bg-white/60 dark:hover:bg-[#162A48]/50 hover:shadow-sm"
+                    ? "bg-white dark:bg-[#162A48] text-[#0B1930] dark:text-[#F8FAFC] shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_14px_rgba(0,0,0,0.3)] border border-[#E0E7E6] dark:border-[#2A4368] font-bold"
+                    : "text-[#667085] dark:text-[#9BA8B8] hover:text-[#0B1930] dark:hover:text-[#F8FAFC] hover:bg-white/50 dark:hover:bg-[#162A48]/50"
                 }`}
               >
-                <IconComponent
-                  className={`w-3.5 h-3.5 transition-colors ${
-                    isActive ? "text-[#1B9A9C]" : "text-[#98A2B3] group-hover:text-[#1B9A9C]"
-                  }`}
-                />
                 <span>{link.label}</span>
-                {isActive && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C] shadow-[0_0_6px_#1B9A9C] animate-pulse" />
-                )}
               </Link>
             );
           })}
         </nav>
 
         {/* Right CTA Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5 flex-shrink-0">
           <ThemeToggle />
 
-          {/* Dynamic Smart Auth Button */}
+          {/* Dynamic Smart Auth Button with Generous Comfortable Padding */}
           {isUserAuthenticated ? (
             <Link
               href="/dashboard"
-              className="flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card transition-all duration-200 active:scale-95 hover:shadow-elevated hover:-translate-y-0.5 cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card transition-all duration-200 active:scale-95 hover:shadow-elevated hover:-translate-y-0.5 border border-transparent dark:border-[#38BDF8]/20 cursor-pointer"
             >
               <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
               <span>Go to Console &rarr;</span>
@@ -109,10 +101,9 @@ export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-2 px-4.5 py-2.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card transition-all duration-200 active:scale-95 hover:shadow-elevated hover:-translate-y-0.5 cursor-pointer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card transition-all duration-200 active:scale-95 hover:shadow-elevated hover:-translate-y-0.5 border border-transparent dark:border-[#38BDF8]/20 cursor-pointer"
             >
-              <Icons.Lock className="w-3.5 h-3.5 text-white/90" />
-              <span>Sign In &rarr;</span>
+              <span>Get Started &rarr;</span>
             </Link>
           )}
 
@@ -120,7 +111,7 @@ export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl bg-[#FAFAF8] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] transition-transform active:scale-90 cursor-pointer"
+            className="lg:hidden p-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] transition-transform active:scale-90 cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             <Icons.Menu className="w-4 h-4" />
@@ -128,28 +119,23 @@ export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
         </div>
       </div>
 
-      {/* Mobile Glassmorphic Drawer */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden mt-3 pt-3 border-t border-[#E4E8E7] dark:border-[#20324A] space-y-1.5 animate-page-entrance">
+        <div className="lg:hidden mt-3 pt-3 border-t border-[#E4E8E7] dark:border-[#20324A] space-y-1.5">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            const IconComponent = link.icon;
+            const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                   isActive
-                    ? "bg-[#1B9A9C]/15 text-[#1B9A9C] border border-[#1B9A9C]/20 shadow-sm"
+                    ? "bg-[#1B9A9C]/15 text-[#1B9A9C] font-bold border border-[#1B9A9C]/20 shadow-sm"
                     : "text-[#667085] dark:text-[#9BA8B8] hover:bg-[#FAFAF8] dark:hover:bg-[#10223A]"
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <IconComponent className="w-4 h-4 text-[#1B9A9C]" />
-                  <span>{link.label}</span>
-                </div>
-                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C]" />}
+                <span>{link.label}</span>
               </Link>
             );
           })}
@@ -166,7 +152,7 @@ export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
                 href="/login"
                 className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B1930] text-white font-bold text-xs shadow-sm"
               >
-                Sign In &rarr;
+                Get Started &rarr;
               </Link>
             )}
           </div>

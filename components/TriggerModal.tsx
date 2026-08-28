@@ -384,9 +384,7 @@ export function TriggerModal({
               </span>
             </div>
             <p className="text-[11px] text-[#667085] dark:text-[#9BA8B8]">
-              {isUserLoggedIn 
-                ? "Dispatch live voice calls to any client (Max 8 calls/day per account)." 
-                : "Dispatch a live test voice call (Max 3 demo calls/day per IP). Sign in for 8 calls/day."}
+              Experience autonomous sub-second voice operations in real time.
             </p>
           </div>
           <button

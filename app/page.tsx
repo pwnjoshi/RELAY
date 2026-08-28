@@ -501,6 +501,8 @@ export default function LandingPage() {
       {/* 1. Top Navigation with Direct Platform Page Links (Sticky Header) */}
       <PublicHeader onOpenTriggerModal={() => setIsTriggerModalOpen(true)} />
 
+      <main className="flex-1 flex flex-col animate-page-entrance">
+
       {/* 2. Hero Section Universal Modern Business Focus */}
       <section className="px-6 sm:px-12 pt-20 pb-16 max-w-6xl mx-auto flex flex-col items-center text-center relative">
         {/* Parallax Floating Telephony Signals */}
@@ -556,7 +558,7 @@ export default function LandingPage() {
             {currentUser ? (
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#0B1930] hover:bg-[#15294A] text-white font-bold text-sm shadow-card transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#0B1930] hover:bg-[#15294A] text-white font-bold text-sm shadow-card transition-all active:scale-95 cursor-pointer"
               >
                 <Icons.Activity className="w-4 h-4 text-[#1B9A9C]" />
                 <span>Go to Operations Console &rarr;</span>
@@ -564,16 +566,15 @@ export default function LandingPage() {
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-sm shadow-card hover:shadow-elevated transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-sm shadow-card hover:shadow-elevated transition-all duration-200 active:scale-95 cursor-pointer"
               >
-                <Icons.Lock className="w-4 h-4 text-[#32C4BE]" />
-                <span>Sign In &rarr;</span>
+                <span>Get Started &rarr;</span>
               </Link>
             )}
             <button
               type="button"
               onClick={() => setIsTriggerModalOpen(true)}
-              className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C] text-[#0B1930] dark:text-[#F8FAFC] font-bold text-sm shadow-subtle hover:shadow-card transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C] text-[#0B1930] dark:text-[#F8FAFC] font-bold text-sm shadow-subtle hover:shadow-card transition-all duration-200 active:scale-95 cursor-pointer"
             >
               <Icons.PhoneCall className="w-4 h-4 text-[#1B9A9C]" />
               <span>Test Live Call</span>
@@ -595,8 +596,8 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Authentic Multi-Turn Conversational Telephony Studio */}
-        <div className="mt-12 w-full max-w-3xl bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl p-5 sm:p-6 shadow-elevated text-left space-y-5">
+        {/* Authentic Multi-Turn Conversational Telephony Studio with Depth & Parallax */}
+        <div className="mt-12 w-full max-w-3xl bg-white/95 dark:bg-[#10223A]/95 backdrop-blur-xl border border-[#E4E8E7] dark:border-[#20324A] rounded-3xl p-6 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_50px_rgba(0,0,0,0.4)] text-left space-y-6 transition-all duration-300 hover:shadow-[0_15px_50px_rgba(27,154,156,0.12)] hover:scale-[1.01]">
           {/* Header row with status & language selector */}
           <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-[#E4E8E7] dark:border-[#20324A]">
             <div className="flex items-center gap-2.5">
@@ -798,15 +799,15 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 text-left">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3.5 text-left">
             {relaySteps.map((s) => (
               <div
                 key={s.step}
-                className="bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#0B1930] rounded-xl p-4 space-y-2 transition-all group"
+                className="bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C] rounded-2xl p-4 space-y-2.5 transition-all duration-200 hover:scale-[1.03] hover:shadow-card group cursor-default"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold text-[#98A2B3]">{s.num}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C] opacity-40 group-hover:opacity-100" />
+                  <span className="text-[10px] font-mono font-bold text-[#98A2B3] group-hover:text-[#1B9A9C] transition-colors">{s.num}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C] opacity-40 group-hover:opacity-100 group-hover:scale-125 transition-all" />
                 </div>
                 <div className="font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC] tracking-wider">{s.step}</div>
                 <div className="font-semibold text-[11px] text-[#0B1930] dark:text-[#F8FAFC] leading-tight">{s.title}</div>
@@ -1144,9 +1145,10 @@ export default function LandingPage() {
           </table>
         </div>
       </section>
+    </main>
 
-      {/* 7. Deep Relay Professional Footer */}
-      <PublicFooter />
+    {/* 7. Deep Relay Professional Footer */}
+    <PublicFooter />
 
       <TriggerModal
         isOpen={isTriggerModalOpen}

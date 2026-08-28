@@ -13,6 +13,8 @@ export default function AboutPage() {
     <div className="min-h-screen bg-[#FAFAF8] dark:bg-[#081426] text-[#0B1930] dark:text-[#F8FAFC] flex flex-col selection:bg-[#1B9A9C]/20 transition-colors">
       <PublicHeader />
 
+      <main className="flex-1 flex flex-col animate-page-entrance">
+
       {/* Hero Section */}
       <section className="px-6 sm:px-12 pt-16 pb-12 max-w-5xl mx-auto text-center space-y-4">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F3F5F4] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-xs font-semibold text-[#1B9A9C]">
@@ -93,9 +95,10 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
+    </main>
 
-      {/* Public Footer */}
-      <PublicFooter />
+    {/* Public Footer */}
+    <PublicFooter />
     </div>
   );
 }
