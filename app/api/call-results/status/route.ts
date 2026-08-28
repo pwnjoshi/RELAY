@@ -49,11 +49,25 @@ export async function GET(req: Request) {
 
       // Also update local store with the fresh vendor data so dashboards stay in sync
       const localCall = store.getCalls().find((c) => c.runId === runId || c.id === runId);
+      const recordingUrl =
+        callData.recording_url ||
+        recipient?.recording_url ||
+        recipient?.attempts?.[0]?.recording_url ||
+        callData.audio_url ||
+        undefined;
+      const durationSeconds =
+        callData.duration_seconds ||
+        recipient?.duration_seconds ||
+        recipient?.attempts?.[0]?.duration_seconds ||
+        undefined;
+
       if (localCall) {
         store.updateCall(localCall.id, {
           status: normalizedStatus as any,
           summary: summary || localCall.summary,
-          completedAt: callData.completed_at || localCall.completedAt
+          completedAt: callData.completed_at || localCall.completedAt,
+          recordingUrl: recordingUrl || localCall.recordingUrl,
+          durationSeconds: durationSeconds || localCall.durationSeconds
         });
       }
 

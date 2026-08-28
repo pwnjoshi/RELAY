@@ -132,6 +132,8 @@ export interface CallRecord {
   recoveredRevenue: number;
   language?: LanguageCode;
   customGoal?: string;
+  recordingUrl?: string;
+  durationSeconds?: number;
 }
 
 export interface BatchFollowupItem {

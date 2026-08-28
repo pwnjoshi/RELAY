@@ -55,6 +55,19 @@ export async function POST(req: Request) {
       console.warn("[CALL-E Webhook] AI intelligence skipped on error:", aiErr.message);
     }
 
+    const recordingUrl =
+      callTask.recording_url ||
+      callTask.recipients?.[0]?.recording_url ||
+      callTask.recipients?.[0]?.attempts?.[0]?.recording_url ||
+      callTask.audio_url ||
+      undefined;
+
+    const durationSeconds =
+      callTask.duration_seconds ||
+      callTask.recipients?.[0]?.duration_seconds ||
+      callTask.recipients?.[0]?.attempts?.[0]?.duration_seconds ||
+      undefined;
+
     const statusVal: CallRecord["status"] = callTask.status === "failed" ? "failed" : "completed";
     const updatedRecord: CallRecord = {
       id: callId,
@@ -70,7 +83,9 @@ export async function POST(req: Request) {
       recoveredRevenue: revenue,
       summary: structuredOutcome.notes,
       aiIntelligence,
-      rawCalleData: callTask
+      rawCalleData: callTask,
+      recordingUrl,
+      durationSeconds
     };
 
     if (existing) {
