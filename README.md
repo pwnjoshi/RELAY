@@ -1,77 +1,77 @@
-# ⚡ RELAY — Universal Autonomous Telephony & AI Voice Operations Platform
+# RELAY — Universal Autonomous Telephony & AI Voice Operations Platform
 
 <p align="center">
-  <img src="./public/logo.png" alt="RELAY Logo" width="160" />
+  <img src="./public/logo.png" alt="RELAY Logo" width="150" />
 </p>
 
 <p align="center">
-  <strong>Sub-15ms PSTN Interconnect • Multilingual Sweet AI Voice Agent • Grounded Web RAG Engine • Universal Enterprise CRM/EHR Sync</strong>
+  <strong>Sub-15ms PSTN Interconnect • Multilingual AI Voice Agent • Grounded Web RAG Engine • Universal Enterprise CRM/EHR Sync</strong>
 </p>
 
 <p align="center">
-  <a href="#-key-features"><img src="https://img.shields.io/badge/Status-Production%20Ready-16A34A?style=for-the-badge&logo=vercel" alt="Status" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/Next.js-16.3.3-000000?style=for-the-badge&logo=next.js" alt="Next.js" /></a>
-  <a href="#-tech-stack"><img src="https://img.shields.io/badge/Telephony-CALL--E%20REST-1B9A9C?style=for-the-badge" alt="CALL-E Telephony" /></a>
-  <a href="#-supported-industries"><img src="https://img.shields.io/badge/Industry-Universal%20Multi--Sector-0B1930?style=for-the-badge" alt="Universal Multi-Sector" /></a>
-  <a href="#-license"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" /></a>
+  <a href="#key-features"><img src="https://img.shields.io/badge/Status-Production%20Ready-16A34A?style=for-the-badge&logo=vercel" alt="Status" /></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/Next.js-16.3.3-000000?style=for-the-badge&logo=next.js" alt="Next.js" /></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/Telephony-CALL--E%20REST-1B9A9C?style=for-the-badge" alt="CALL-E Telephony" /></a>
+  <a href="#supported-industries"><img src="https://img.shields.io/badge/Industry-Universal%20Multi--Sector-0B1930?style=for-the-badge" alt="Universal Multi-Sector" /></a>
+  <a href="#license"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" /></a>
 </p>
 
 ---
 
-## 📖 Overview
+## Overview
 
-**RELAY** is a full-fledged, universal autonomous voice operations platform engineered for **any business, enterprise, or service provider worldwide**. Whether operating real estate brokerages, software agencies, automotive service networks, law firms, hospitality groups, logistics operations, or healthcare facilities, RELAY eliminates missed customer calls, triages complex inquiries, and books appointments 24/7 with zero human intervention.
+**RELAY** is an enterprise-grade autonomous voice operations platform engineered for **any business, enterprise, or service provider worldwide**. Whether operating real estate brokerages, software agencies, automotive service networks, law firms, hospitality groups, logistics operations, or healthcare facilities, RELAY eliminates missed customer calls, triages complex inquiries, and automates appointment scheduling 24/7 with zero human intervention.
 
 By interconnecting low-latency PSTN telephony trunks (`https://api.heycall-e.com/v1`) with grounded website RAG knowledge bases and **DeepSeek-V4** post-call CRM intelligence, RELAY places hyper-fast AI voice calls, triages customer intent, and enforces sweet, natural human voice personas across 7 global languages.
 
 ---
 
-## 🏢 Supported Industry Sectors
+## Supported Industry Sectors
 
 RELAY includes out-of-the-box preset nodes and customizable RAG prompt templates for every major industry around the globe:
 
 | Industry Sector | Autonomous Use Cases | Key Capabilities |
 |---|---|---|
-| 💻 **Software & IT Services** | Technical consultation, project inquiry intake, architecture reviews | Web app consulting, cloud migration scheduling, lead qualification |
-| 🏢 **Real Estate & Leasing** | Walkthrough tour scheduling, property leasing availability, pre-screening | Private penthouse & townhome tour booking, tenant intake |
-| 🚗 **Automotive & Service** | Maintenance scheduling, inspection drop-offs, loaner fleet dispatch | Synthetic oil service, OEM recall triage, brake inspection |
-| ⚖️ **Legal & Law Firms** | Client intake, consultation scheduling, conflict pre-screening | Managing partner consultation intake, case evaluation |
-| 🏨 **Hospitality & Hotels** | VIP concierge assistance, dining reservations, event booking | Michelin-starred dining booking, room upgrade assistance |
-| 🚚 **Logistics & Freight** | Manifest verification, cargo tracking updates, intermodal dispatch | Real-time transit updates, customs clearance triage |
-| 🏥 **Healthcare & Medical** | Routine recall, preventive consultation scheduling, acute triage | Appointment booking, provider callback escalation |
-| 💳 **Finance & Insurance** | Claim reporting, policy consultation, advisor appointment scheduling | Zero-interest payment plan intake, claim triage |
+| **Software & IT Services** | Technical consultation, project inquiry intake, architecture reviews | Web app consulting, cloud migration scheduling, lead qualification |
+| **Real Estate & Leasing** | Walkthrough tour scheduling, property leasing availability, pre-screening | Private penthouse & townhome tour booking, tenant intake |
+| **Automotive & Service** | Maintenance scheduling, inspection drop-offs, loaner fleet dispatch | Synthetic oil service, OEM recall triage, brake inspection |
+| **Legal & Law Firms** | Client intake, consultation scheduling, conflict pre-screening | Managing partner consultation intake, case evaluation |
+| **Hospitality & Hotels** | VIP concierge assistance, dining reservations, event booking | Michelin-starred dining booking, room upgrade assistance |
+| **Logistics & Freight** | Manifest verification, cargo tracking updates, intermodal dispatch | Real-time transit updates, customs clearance triage |
+| **Healthcare & Medical** | Routine recall, preventive consultation scheduling, acute triage | Appointment booking, provider callback escalation |
+| **Finance & Insurance** | Claim reporting, policy consultation, advisor appointment scheduling | Zero-interest payment plan intake, claim triage |
 
 ---
 
-## ✨ Key Platform Features
+## Key Platform Features
 
-### 1. ⚡ Sub-15ms Non-Blocking PSTN Call Dispatch
+### 1. Sub-15ms Non-Blocking PSTN Call Dispatch
 - **Instant Carrier Handshake**: HTTP POST requests dispatch call tasks in `<15ms`, running real-time status polling asynchronously in the background.
 - **Direct Carrier Status Stream**: Status transitions (`Queued` $\rightarrow$ `Ringing` $\rightarrow$ `In-Progress` $\rightarrow$ `Completed`) poll live PSTN handset state every 300ms.
 
-### 2. 🎀 Sweet, Cute & Respectful AI Voice Persona
+### 2. Sweet, Respectful & Warm AI Voice Persona
 - **Female Hindi Grammatical Agreement (स्त्री-लिंग प्रयोग)**: Strictly enforces natural female Hindi verb inflections (`रही हूँ`, `सकती हूँ`, `कर रही हूँ`) and eliminates unnatural male verb forms.
-- **Warm & Joyful Expressions**: Opens with cute, cheerful greetings (*"नमस्ते Hardik जी! 😊 मैं Apex Group से बहुत प्यार से बोल रही हूँ..."*).
+- **Warm & Professional Expressions**: Opens with courteous, cheerful greetings (*"नमस्ते Hardik जी! 😊 मैं Apex Group से बात कर रही हूँ..."*).
 
-### 3. 🌐 Grounded Branch RAG Knowledge Base Editor
+### 3. Grounded Branch RAG Knowledge Base Editor
 - **Custom Branch Context**: Configure company FAQs, on-call specialists, offered service catalogs, and pricing rules per physical location node.
 - **Factually Grounded Voice Prompting**: Prevents AI hallucinations by grounding responses directly in official company knowledge bases.
 
-### 4. 🌍 Regional Carrier Compliance & Multilingual Adaptability
+### 4. Regional Carrier Compliance & Multilingual Adaptability
 - **Supported Languages**: **हिन्दी (Hindi)**, **English (US/UK)**, **नेपाली (Nepali)**, **Español (Spanish)**, **Français (French)**, **Deutsch (German)**, and **中文 (Mandarin)**.
 - **Auto-Region Mapping**: Automatically maps destination numbers (e.g. India `+91`) to supported carrier locales (`hi-IN` / `en-US`), ensuring `HTTP 201 Created` acceptance without carrier 422 errors.
 
-### 5. 🎙️ Neural Audio Player & Turn-by-Turn Transcript Viewer
+### 5. Neural Audio Player & Turn-by-Turn Transcript Viewer
 - **Audio Waveform Player**: Playback call audio tracks with interactive frequency visualizers, playback speed controls, and timestamp trackers.
 - **Speaker Dialogue Breakdown**: Inspect turn-by-turn interactions between the AI Voice Agent and the caller with speaker badges and sentiment metrics.
 
-### 6. 📊 1-Click Compliance Export & Google OAuth 2.0 Integration
+### 6. 1-Click Compliance Export & Google OAuth 2.0 Integration
 - **Audit Export**: Export audit logs, extracted CRM facts, and revenue recovery metrics in **CSV** or **JSON** formats with 1 click.
 - **Google Workspace OAuth**: Sign in and switch Google Calendar & Workspace accounts dynamically from an interactive account picker modal.
 
 ---
 
-## 🏛️ System Architecture
+## System Architecture
 
 ```
                                   ┌─────────────────────────────┐
@@ -101,7 +101,7 @@ RELAY includes out-of-the-box preset nodes and customizable RAG prompt templates
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: Next.js 16.3.3 (Turbopack, App Router)
 - **Language**: TypeScript 5.x
@@ -113,7 +113,7 @@ RELAY includes out-of-the-box preset nodes and customizable RAG prompt templates
 
 ---
 
-## 🚀 Quick Start Guide
+## Quick Start Guide
 
 ### Prerequisites
 - **Node.js**: v18.0.0 or higher
@@ -160,7 +160,7 @@ npm start
 
 ---
 
-## 📡 Key REST API Endpoints
+## Key REST API Endpoints
 
 ### 1. Dispatch Universal Voice Call
 ```http
@@ -212,7 +212,7 @@ GET /api/export?format=json
 
 ---
 
-## 📄 License & Compliance
+## License & Compliance
 
 - **License**: [MIT License](LICENSE)
 - **Data Privacy**: Fail-closed data isolation. Temporal free/busy availability masking ensures caller PII and private notes are never exposed across tenants.
