@@ -36,7 +36,7 @@ export default function HowItWorksPage() {
       title: "Native Speech Understanding",
       desc: "Real-time streaming speech-to-text transcribes conversational nuance in Hindi, Nepali, Spanish, and English with 99.4% accuracy.",
       detail: "Understands colloquial speech, mixed accents (Hinglish, code-switching), background noise, and caller emotion with sub-600ms latency.",
-      badge: "4+ NATIVE DIALECTS",
+      badge: "7 WORLD LOCALES",
       code: `// Real-Time Speech Extraction\n{\n  "detected_language": "hi-IN",\n  "intent": "reschedule_consultation",\n  "urgency_score": 0.15,\n  "confidence": 0.994\n}`
     },
     {

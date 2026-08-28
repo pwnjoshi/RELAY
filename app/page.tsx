@@ -1039,7 +1039,7 @@ export default function LandingPage() {
                   <span className="w-2 h-2 rounded-full bg-[#1B9A9C] animate-pulse" />
                   <span className="text-xs font-bold text-white">Experience Real Telephony Audio</span>
                   <span className="text-[10px] font-mono bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30 px-2 py-0.5 rounded-full font-bold">
-                    Unlimited Dev Testing Mode
+                    Live E.164 Telephony Sandbox
                   </span>
                 </div>
                 <span className="text-[11px] text-[#9BA8B8] block">

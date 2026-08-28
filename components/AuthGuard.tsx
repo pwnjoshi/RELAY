@@ -14,31 +14,24 @@ interface AuthGuardProps {
 export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<any>(() => {
-    if (typeof window === "undefined") return null;
-    try {
-      const stored = sessionStorage.getItem("relay_auth_user");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.isLoggedIn) return parsed;
-      }
-    } catch {}
-    return null;
-  });
-  const [loading, setLoading] = useState(() => {
-    if (typeof window === "undefined") return true;
-    try {
-      const stored = sessionStorage.getItem("relay_auth_user");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.isLoggedIn) return false;
-      }
-    } catch {}
-    return true;
-  });
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
+
+    // Fast client-side session hydration
+    try {
+      const stored = sessionStorage.getItem("relay_auth_user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.isLoggedIn) {
+          setUser(parsed);
+          setLoading(false);
+        }
+      }
+    } catch {}
+
     fetch("/api/auth/session")
       .then((r) => r.json())
       .then((d) => {

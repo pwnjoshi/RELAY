@@ -25,23 +25,23 @@ export const metadata: Metadata = {
   authors: [{ name: "RELAY Telephony Engineering" }],
   creator: "RELAY",
   publisher: "RELAY Voice Operations",
-  metadataBase: new URL("https://relay.operations.ai"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://relay.techsangi.com.np"),
   alternates: {
     canonical: "/"
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://relay.operations.ai",
+    url: "https://relay.techsangi.com.np",
     siteName: "RELAY Voice Operations",
     title: "RELAY — Autonomous Voice Operations Platform | Every Call Reaches the Right Outcome",
     description: "Enterprise voice operations platform that intercepts, understands, and acts on customer calls at scale with zero hold time and multi-branch routing.",
     images: [
       {
-        url: "/logo.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "RELAY — Autonomous Voice Operations Platform"
+        alt: "RELAY — Autonomous Voice Operations Platform | AI Telephony & Smart Routing"
       }
     ]
   },
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "RELAY — Autonomous Voice Operations Platform",
     description: "Every call reaches the right outcome. Zero hold times, multilingual voice AI, and automated batch dialing on CALL-E.",
-    images: ["/logo.png"],
+    images: ["/og-image.png"],
     creator: "@RelayVoiceOps"
   },
   robots: {
