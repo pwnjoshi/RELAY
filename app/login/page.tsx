@@ -69,9 +69,15 @@ function LoginForm() {
       }
 
       setSuccessMessage(mode === "login" ? "Authenticated! Redirecting..." : "Workspace created! Setting up onboarding...");
-      setTimeout(() => {
-        router.push(mode === "register" ? "/onboarding" : redirectUrl);
-      }, 300);
+      
+      if (data.user) {
+        try {
+          sessionStorage.setItem("relay_auth_user", JSON.stringify({ isLoggedIn: true, name: data.user.name, role: data.user.role }));
+        } catch {}
+      }
+
+      const targetPath = mode === "register" ? "/onboarding" : redirectUrl;
+      window.location.href = targetPath;
     } catch (err: any) {
       setErrorMessage(err.message || "Invalid credentials.");
       setIsLoading(false);
@@ -92,11 +98,17 @@ function LoginForm() {
       });
 
       const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data.error);
+      if (!res.ok || !data.ok) throw new Error(data.error || "Authentication failed.");
 
-      router.push(redirectUrl);
+      if (data.user) {
+        try {
+          sessionStorage.setItem("relay_auth_user", JSON.stringify({ isLoggedIn: true, name: data.user.name, role: data.user.role }));
+        } catch {}
+      }
+
+      window.location.href = redirectUrl;
     } catch (err: any) {
-      setErrorMessage(err.message);
+      setErrorMessage(err.message || "Authentication failed.");
       setIsLoading(false);
     }
   };

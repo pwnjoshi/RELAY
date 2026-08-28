@@ -14,24 +14,56 @@ interface AuthGuardProps {
 export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const stored = sessionStorage.getItem("relay_auth_user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.isLoggedIn) return parsed;
+      }
+    } catch {}
+    return null;
+  });
+  const [loading, setLoading] = useState(() => {
+    if (typeof window === "undefined") return true;
+    try {
+      const stored = sessionStorage.getItem("relay_auth_user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.isLoggedIn) return false;
+      }
+    } catch {}
+    return true;
+  });
 
   useEffect(() => {
+    let isMounted = true;
     fetch("/api/auth/session")
       .then((r) => r.json())
       .then((d) => {
+        if (!isMounted) return;
         if (d.ok && d.user) {
           setUser(d.user);
+          try {
+            sessionStorage.setItem("relay_auth_user", JSON.stringify({ isLoggedIn: true, ...d.user }));
+          } catch {}
         } else {
-          router.push("/login?redirect=" + encodeURIComponent(pathname));
+          try {
+            sessionStorage.removeItem("relay_auth_user");
+          } catch {}
+          router.replace("/login?redirect=" + encodeURIComponent(pathname));
         }
         setLoading(false);
       })
       .catch(() => {
-        router.push("/login?redirect=" + encodeURIComponent(pathname));
+        if (!isMounted) return;
         setLoading(false);
       });
+
+    return () => {
+      isMounted = false;
+    };
   }, [pathname, router]);
 
   if (loading) {

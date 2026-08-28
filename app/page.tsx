@@ -9,6 +9,7 @@ import { TriggerModal } from "@/components/TriggerModal";
 import { useCurrency } from "@/lib/currency";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
+import { RelayLifecycleRoadmap } from "@/components/RelayLifecycleRoadmap";
 import { ClinicLocation } from "@/lib/types";
 
 // Constant array defined OUTSIDE component so interval is never reset by re-renders
@@ -434,16 +435,6 @@ export default function LandingPage() {
       });
   }, []);
 
-  const relaySteps = [
-    { num: "01", step: "CALL", title: "Inbound or Outbound Trigger", desc: "A customer rings your main line or a scheduled batch campaign triggers." },
-    { num: "02", step: "RECEIVE", title: "Zero-Latency SIP Intercept", desc: "Relay intercepts the audio connection in under 14 seconds." },
-    { num: "03", step: "UNDERSTAND", title: "Multilingual Natural Language", desc: "Listens in Hindi, Nepali, Spanish, or English and extracts caller intent." },
-    { num: "04", step: "DECIDE", title: "Intelligent Decision Engine", desc: "Evaluates policy guidelines, calendar availability, and caller history." },
-    { num: "05", step: "ROUTE", title: "Team & Department Routing", desc: "Directs to specialized departments, managers, or on-call staff alerts." },
-    { num: "06", step: "ACT", title: "Autonomous Resolution", desc: "Confirms bookings, answers complex queries, and executes workflow actions." },
-    { num: "07", step: "OUTCOME", title: "Structured CRM / Database Sync", desc: "Structured JSON committed directly to your enterprise database or CRM." },
-  ];
-
   const workflowPreviews = {
     overflow: {
       title: "Inbound Missed-Call Intercept (Hindi & English)",
@@ -791,15 +782,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 3. The Relay Concept & 7-Stage Pipeline */}
-      <section className="px-6 sm:px-12 py-16 bg-white dark:bg-[#10223A] border-y border-[#E4E8E7] dark:border-[#20324A] transition-colors">
-        <div className="max-w-6xl mx-auto space-y-10">
+      {/* 3. The Relay Concept & 7-Stage Pipeline (Interactive Neural Roadmap) */}
+      <section className="px-4 sm:px-8 lg:px-12 py-16 bg-white dark:bg-[#10223A] border-y border-[#E4E8E7] dark:border-[#20324A] transition-colors overflow-hidden">
+        <div className="max-w-6xl mx-auto space-y-12">
           <div className="text-center space-y-2 max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-              <span className="w-2 h-2 rounded-full bg-[#1B9A9C]" />
-              <span className="uppercase tracking-widest font-mono text-[10px]">The Relay Concept</span>
+              <span className="w-2 h-2 rounded-full bg-[#1B9A9C] animate-pulse" />
+              <span className="uppercase tracking-widest font-mono text-[10px] text-[#1B9A9C]">The Relay Concept</span>
             </div>
-            <h2 className="text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
               A relay receives a signal and passes it forward.
             </h2>
             <p className="text-xs sm:text-sm text-[#667085] dark:text-[#9BA8B8]">
@@ -807,22 +798,8 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3.5 text-left">
-            {relaySteps.map((s) => (
-              <div
-                key={s.step}
-                className="bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C] rounded-2xl p-4 space-y-2.5 transition-all duration-200 hover:scale-[1.03] hover:shadow-card group cursor-default"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold text-[#98A2B3] group-hover:text-[#1B9A9C] transition-colors">{s.num}</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C] opacity-40 group-hover:opacity-100 group-hover:scale-125 transition-all" />
-                </div>
-                <div className="font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC] tracking-wider">{s.step}</div>
-                <div className="font-semibold text-[11px] text-[#0B1930] dark:text-[#F8FAFC] leading-tight">{s.title}</div>
-                <p className="text-[10px] text-[#667085] dark:text-[#9BA8B8] leading-normal">{s.desc}</p>
-              </div>
-            ))}
-          </div>
+          {/* Interactive 7-Stage Neural Roadmap & Signal Flow */}
+          <RelayLifecycleRoadmap />
         </div>
       </section>
 
