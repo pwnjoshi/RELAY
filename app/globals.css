@@ -147,18 +147,19 @@ h1, h2, h3, h4, h5, h6 {
   background: #20324A;
 }
 
-/* Page Entrance Animations */
+/* Premium Page Entrance Animations */
 @keyframes pageEntrance {
   0% {
     opacity: 0;
-    transform: translateY(8px) scale(0.995);
+    transform: translateY(18px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 .animate-page-entrance {
-  animation: pageEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: pageEntrance 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
