@@ -73,31 +73,89 @@ RELAY includes out-of-the-box preset nodes and customizable RAG prompt templates
 
 ## System Architecture
 
+RELAY is built as a layered, event-driven autonomous telephony system. Each layer has a distinct responsibility and communicates over typed REST contracts.
+
 ```
-                                  ┌─────────────────────────────┐
-                                  │   PSTN Destination Phone    │
-                                  └──────────────┬──────────────┘
-                                                 │
-                                       (Live Handset Ringing)
-                                                 │
-                                                 ▼
-┌─────────────────────────────┐           ┌─────────────────────────────┐
-│  DeepSeek-V4 / Nebius AI    │           │  CALL-E Telephony Gateway   │
-│  - Post-Call Intelligence   │◄─────────►│  - Real-Time STT + TTS Voice│
-│  - CRM Fact Extraction      │           │  - 24kHz Opus Voice Stream  │
-└──────────────┬──────────────┘           └──────────────┬──────────────┘
-               │                                         │
-               │ (Extracted Facts & Analytics)           │ (Live Status & Summary)
-               ▼                                         ▼
-┌───────────────────────────────────────────────────────────────────────┐
-│                    RELAY Operations Platform                          │
-│  ┌───────────────────────┐  ┌──────────────────────────────────────┐  │
-│  │ Multi-Branch Fleet    │  │ REST APIs (/api/trigger-overflow)    │  │
-│  │ Telephony Audit Stream│  │ Grounded Branch RAG Engine           │  │
-│  │ Neural Audio Player   │  │ Sliding Window Rate Limiter          │  │
-│  └───────────────────────┘  └──────────────────────────────────────┘  │
-└───────────────────────────────────────────────────────────────────────┘
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                             LAYER 1 — PSTN CARRIER NETWORK                 ║
+║                                                                              ║
+║   Caller / Customer / Lead                                                   ║
+║         │                                                                    ║
+║   E.164 Phone Number (+91, +1, +44, +977...)                                 ║
+║         │                                                                    ║
+║         ▼                                                                    ║
+║   Regional PSTN Trunk (hi-IN | en-US | ta-IN | es-US | ...)                 ║
+╚═══════════════════════════════╦════════════════════════════════════════════╝
+                                ║  Live SIP / RTP Audio Session
+╔═══════════════════════════════▼════════════════════════════════════════════╗
+║                      LAYER 2 — CALL-E TELEPHONY ENGINE                     ║
+║                                                                              ║
+║   ┌────────────────────────┐       ┌──────────────────────────────────┐     ║
+║   │  STT — Speech-to-Text  │──────►│  Conversation State Machine      │     ║
+║   │  24kHz Opus Decoder    │       │  Turn detection & intent routing  │     ║
+║   └────────────────────────┘       └────────────────┬─────────────────┘     ║
+║                                                      │                       ║
+║   ┌────────────────────────┐       ┌────────────────▼─────────────────┐     ║
+║   │  TTS — Neural Voice    │◄──────│  AI Response Generator           │     ║
+║   │  Female Sweet Persona  │       │  (RAG-grounded prompt injection) │     ║
+║   └────────────────────────┘       └──────────────────────────────────┘     ║
+║                                                                              ║
+║   POST-CALL: Structured JSON Outcome Webhook → /api/webhooks/call-e          ║
+╚═══════════════════════════════╦════════════════════════════════════════════╝
+                                ║  HTTP Webhook (JSON Outcome Schema)
+╔═══════════════════════════════▼════════════════════════════════════════════╗
+║                      LAYER 3 — RELAY APPLICATION CORE (Next.js)            ║
+║                                                                              ║
+║   ┌──────────────────────────────────────────────────────────────────────┐  ║
+║   │  REST API Layer                                                      │  ║
+║   │  POST /api/trigger-overflow   — Dispatch inbound overflow recall     │  ║
+║   │  POST /api/trigger-recall     — Outbound patient/client recall       │  ║
+║   │  POST /api/batch/execute      — Bulk campaign call execution         │  ║
+║   │  GET  /api/call-results/status — Live carrier poll (300ms interval)  │  ║
+║   │  GET  /api/export             — CSV / JSON compliance export         │  ║
+║   │  POST /api/knowledge/extract  — Web RAG ingestion from any URL       │  ║
+║   └───────────────────────────────┬──────────────────────────────────────┘  ║
+║                                   │                                          ║
+║   ┌───────────────────────────────▼──────────────────────────────────────┐  ║
+║   │  Business Logic Layer                                                │  ║
+║   │  ├── CALL-E REST Client     (lib/calle-client.ts)                   │  ║
+║   │  ├── Multilingual RAG Prompt Builder (7 languages, auto-locale map) │  ║
+║   │  ├── Sliding Window Rate Limiter    (lib/rate-limiter.ts)           │  ║
+║   │  ├── JWT Auth & Session Management (lib/auth.ts / lib/jwt.ts)       │  ║
+║   │  └── Nebius DeepSeek-V4 Intelligence Engine (lib/nebius-ai.ts)      │  ║
+║   └───────────────────────────────┬──────────────────────────────────────┘  ║
+║                                   │                                          ║
+║   ┌───────────────────────────────▼──────────────────────────────────────┐  ║
+║   │  Persistence Layer                                                   │  ║
+║   │  ├── Local Disk Store    → data/sample-calls.json (zero-latency)    │  ║
+║   │  └── Supabase PostgreSQL → async cloud sync (lib/supabase.ts)       │  ║
+║   └──────────────────────────────────────────────────────────────────────┘  ║
+╚═══════════════════════════════╦════════════════════════════════════════════╝
+                                ║  Server-Side Props / Client API Fetch
+╔═══════════════════════════════▼════════════════════════════════════════════╗
+║                      LAYER 4 — RELAY OPERATIONS CONSOLE (Browser)          ║
+║                                                                              ║
+║   ┌──────────────────┐  ┌──────────────────┐  ┌───────────────────────┐    ║
+║   │  Dashboard &     │  │  Call Drawer &   │  │  Multi-Branch Fleet   │    ║
+║   │  Live Metrics    │  │  Audio Player    │  │  & RAG Editor         │    ║
+║   └──────────────────┘  └──────────────────┘  └───────────────────────┘    ║
+║                                                                              ║
+║   ┌──────────────────┐  ┌──────────────────┐  ┌───────────────────────┐    ║
+║   │  Batch Campaign  │  │  Telephony Audit │  │  Integrations &       │    ║
+║   │  Dialer          │  │  Stream Export   │  │  Google OAuth         │    ║
+║   └──────────────────┘  └──────────────────┘  └───────────────────────┘    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 ```
+
+### Data Flow Summary
+
+| Event | Flow |
+|---|---|
+| **New call dispatched** | Console → `/api/trigger-overflow` → `calle-client.ts` → CALL-E REST API → PSTN Trunk |
+| **Live status update** | Console polls `/api/call-results/status` every 300ms → CALL-E `GET /calls/:id` |
+| **Call completes** | CALL-E webhook → `/api/webhooks/call-e` → store upsert → Supabase async sync |
+| **Post-call intelligence** | Webhook payload → Nebius DeepSeek-V4 → structured CRM fact extraction |
+| **Compliance export** | Console → `/api/export?format=csv` → `SwitchboardStore.getCalls()` → file download |
 
 ---
 
