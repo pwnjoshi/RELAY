@@ -215,9 +215,20 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ────────────────────────────────────────────────────────────
--- 12. REALTIME — subscribe to live call events on the dashboard
+-- 13. RATE LIMITS (Durable Serverless Rate Limit Tracking)
 -- ────────────────────────────────────────────────────────────
-ALTER PUBLICATION supabase_realtime ADD TABLE calls;
-ALTER PUBLICATION supabase_realtime ADD TABLE appointments;
-ALTER PUBLICATION supabase_realtime ADD TABLE batch_items;
-ALTER PUBLICATION supabase_realtime ADD TABLE calendar_connections;
+CREATE TABLE IF NOT EXISTS rate_limits (
+  key             TEXT PRIMARY KEY,
+  timestamps_json JSONB NOT NULL DEFAULT '[]',
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_rate_limits_updated ON rate_limits(updated_at);
+
+-- 24-hour retention cleanup function for rate limits
+CREATE OR REPLACE FUNCTION purge_expired_rate_limits()
+RETURNS void AS $$
+BEGIN
+  DELETE FROM rate_limits WHERE updated_at < NOW() - INTERVAL '24 hours';
+END;
+$$ LANGUAGE plpgsql;

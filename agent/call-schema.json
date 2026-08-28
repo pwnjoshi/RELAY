@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "SwitchboardCallOutcome",
+  "title": "RelayCallOutcome",
   "type": "object",
   "properties": {
     "call_id": {

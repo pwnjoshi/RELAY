@@ -165,7 +165,7 @@ const DEFAULT_BATCH_CAMPAIGNS: BatchCampaign[] = [
   }
 ];
 
-export class SwitchboardStore {
+export class RelayStore {
   private calls: Map<string, CallRecord> = new Map();
   private budget: BudgetStatus = {
     initialBudget: 20,
@@ -407,6 +407,7 @@ export class SwitchboardStore {
 }
 
 // Global Singleton
-const globalForStore = globalThis as unknown as { switchboardStore: SwitchboardStore };
-export const store = globalForStore.switchboardStore || new SwitchboardStore();
-if (process.env.NODE_ENV !== "production") globalForStore.switchboardStore = store;
+export { RelayStore as SwitchboardStore };
+const globalForStore = globalThis as unknown as { relayStore: RelayStore };
+export const store = globalForStore.relayStore || new RelayStore();
+if (process.env.NODE_ENV !== "production") globalForStore.relayStore = store;

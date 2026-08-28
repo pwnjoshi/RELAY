@@ -263,3 +263,47 @@ export async function saveDbIdempotencyKey(key: string, responseJson: Record<str
     return false;
   }
 }
+
+/**
+ * Get durable rate limit timestamps for an IP / user key
+ */
+export async function getDbRateLimit(key: string): Promise<number[] | null> {
+  const client = getDirectClient();
+  if (!client) return null;
+
+  try {
+    const { data, error } = await (client.from("rate_limits") as any)
+      .select("timestamps_json")
+      .eq("key", key)
+      .single();
+
+    if (error || !data || !Array.isArray(data.timestamps_json)) return null;
+    return data.timestamps_json as number[];
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Save durable rate limit timestamps for an IP / user key
+ */
+export async function saveDbRateLimit(key: string, timestamps: number[]): Promise<boolean> {
+  const client = getDirectClient();
+  if (!client) return false;
+
+  try {
+    const { error } = await (client.from("rate_limits") as any).upsert({
+      key,
+      timestamps_json: timestamps,
+      updated_at: new Date().toISOString()
+    });
+
+    if (error) {
+      console.warn("[Supabase] Error saving rate limit:", error.message);
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}

@@ -89,6 +89,19 @@ interface TelephonyQuotaRecord {
   timestamps: number[];
 }
 
+import { getDbRateLimit, saveDbRateLimit } from "./supabase";
+
+export interface RateLimitResult {
+  success: boolean;
+  dailyLimit: number;
+  callsUsed: number;
+  remainingDaily: number;
+  resetTime: number;
+  isLoggedIn: boolean;
+  reason?: "cooldown" | "daily_limit";
+  error?: string;
+}
+
 export class TelephonyQuotaRateLimiter {
   private store: Map<string, TelephonyQuotaRecord> = new Map();
   private cleanupInterval: NodeJS.Timeout | null = null;
@@ -103,33 +116,23 @@ export class TelephonyQuotaRateLimiter {
   }
 
   /**
-   * Enforces:
-   * - Unauthenticated Guest (Demo): 3 calls per 24 hours per IP.
-   * - Authenticated User (Logged In): 8 calls per 24 hours per User.
-   * - 15-second cooldown between consecutive calls.
+   * Async durable quota check with Supabase persistence (for serverless environments)
    */
-  public check(
+  public async checkAsync(
     key: string,
     isUserLoggedIn: boolean = false,
     cooldownSeconds: number = 15
-  ): {
-    success: boolean;
-    dailyLimit: number;
-    callsUsed: number;
-    remainingDaily: number;
-    resetTime: number;
-    isLoggedIn: boolean;
-    reason?: "cooldown" | "daily_limit";
-    error?: string;
-  } {
+  ): Promise<RateLimitResult> {
     const now = Date.now();
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
     const windowStart = now - ONE_DAY_MS;
     const dailyLimit = isUserLoggedIn ? 8 : 3;
 
+    // Load from memory or fallback to Supabase
     let record = this.store.get(key);
     if (!record) {
-      record = { timestamps: [] };
+      const dbTimestamps = await getDbRateLimit(key);
+      record = { timestamps: dbTimestamps || [] };
       this.store.set(key, record);
     }
 
@@ -176,8 +179,80 @@ export class TelephonyQuotaRateLimiter {
       };
     }
 
-    // Record this successful call
+    // Record this successful call in-memory and in Supabase
     record.timestamps.push(now);
+    saveDbRateLimit(key, record.timestamps).catch(() => {});
+
+    return {
+      success: true,
+      dailyLimit,
+      callsUsed: record.timestamps.length,
+      remainingDaily: Math.max(0, dailyLimit - record.timestamps.length),
+      resetTime: Math.ceil(ONE_DAY_MS / 1000),
+      isLoggedIn: isUserLoggedIn
+    };
+  }
+
+  /**
+   * Synchronous fallback check (also triggers async background sync)
+   */
+  public check(
+    key: string,
+    isUserLoggedIn: boolean = false,
+    cooldownSeconds: number = 15
+  ): RateLimitResult {
+    const now = Date.now();
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+    const windowStart = now - ONE_DAY_MS;
+    const dailyLimit = isUserLoggedIn ? 8 : 3;
+
+    let record = this.store.get(key);
+    if (!record) {
+      record = { timestamps: [] };
+      this.store.set(key, record);
+    }
+
+    record.timestamps = record.timestamps.filter((ts) => ts > windowStart);
+
+    if (cooldownSeconds > 0 && record.timestamps.length > 0) {
+      const lastCall = record.timestamps[record.timestamps.length - 1];
+      const timeSinceLast = (now - lastCall) / 1000;
+      if (timeSinceLast < cooldownSeconds) {
+        const waitSeconds = Math.ceil(cooldownSeconds - timeSinceLast);
+        return {
+          success: false,
+          dailyLimit,
+          callsUsed: record.timestamps.length,
+          remainingDaily: Math.max(0, dailyLimit - record.timestamps.length),
+          resetTime: waitSeconds,
+          isLoggedIn: isUserLoggedIn,
+          reason: "cooldown",
+          error: `Please wait ${waitSeconds}s before dispatching another call.`
+        };
+      }
+    }
+
+    if (record.timestamps.length >= dailyLimit) {
+      const oldestCall = record.timestamps[0];
+      const resetHours = Math.max(1, Math.ceil((oldestCall + ONE_DAY_MS - now) / (60 * 60 * 1000)));
+      const errorMessage = isUserLoggedIn
+        ? `Daily Account Quota Reached: You have reached the maximum of 8 calls per day for your account. Quota resets in ~${resetHours}h.`
+        : `Daily Demo Quota Reached: Maximum 3 test calls per day reached for your IP. Sign in to your account to unlock up to 8 calls per day.`;
+
+      return {
+        success: false,
+        dailyLimit,
+        callsUsed: record.timestamps.length,
+        remainingDaily: 0,
+        resetTime: resetHours * 3600,
+        isLoggedIn: isUserLoggedIn,
+        reason: "daily_limit",
+        error: errorMessage
+      };
+    }
+
+    record.timestamps.push(now);
+    saveDbRateLimit(key, record.timestamps).catch(() => {});
 
     return {
       success: true,

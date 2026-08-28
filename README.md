@@ -5,13 +5,14 @@
 </p>
 
 <p align="center">
-  <strong>Sub-15ms Async API Dispatch • Sub-Second Real-Time Neural Voice • Grounded Web RAG Engine • Universal Enterprise CRM/EHR Sync</strong>
+  <strong>Sub-15ms Async API Dispatch • Sub-Second Real-Time Neural Voice • Grounded Web RAG Engine • Amazon Bedrock Intelligence • Multi-Branch Google OAuth & CRM Sync</strong>
 </p>
 
 <p align="center">
   <a href="#key-features"><img src="https://img.shields.io/badge/Status-Production%20Ready-16A34A?style=for-the-badge&logo=vercel" alt="Status" /></a>
   <a href="#tech-stack"><img src="https://img.shields.io/badge/Next.js-16.3.3-000000?style=for-the-badge&logo=next.js" alt="Next.js" /></a>
   <a href="#tech-stack"><img src="https://img.shields.io/badge/Telephony-CALL--E%20REST-1B9A9C?style=for-the-badge" alt="CALL-E Telephony" /></a>
+  <a href="#tech-stack"><img src="https://img.shields.io/badge/AI%20Engine-Amazon%20Bedrock-FF9900?style=for-the-badge&logo=amazonaws" alt="Amazon Bedrock" /></a>
   <a href="#supported-industries"><img src="https://img.shields.io/badge/Industry-Universal%20Multi--Sector-0B1930?style=for-the-badge" alt="Universal Multi-Sector" /></a>
   <a href="#license"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" /></a>
 </p>
@@ -22,7 +23,7 @@
 
 **RELAY** is an enterprise-grade autonomous voice operations platform engineered for **any business, enterprise, or service provider worldwide**. Whether operating real estate brokerages, software agencies, automotive service networks, law firms, hospitality groups, logistics operations, or healthcare facilities, RELAY eliminates missed customer calls, triages complex inquiries, and automates appointment scheduling 24/7 with zero human intervention.
 
-By interconnecting low-latency PSTN telephony trunks (`https://api.heycall-e.com/v1`) with grounded website RAG knowledge bases and **DeepSeek-V4** post-call CRM intelligence, RELAY places AI voice calls with sub-15ms API dispatch, triages customer intent, and enforces sweet, natural human voice personas across 7 global languages.
+By interconnecting low-latency PSTN telephony trunks (`https://api.heycall-e.com/v1`) with grounded website RAG knowledge bases and **Amazon Bedrock (Claude 3.5 Sonnet / Llama 3)** post-call neural intelligence (with Nebius DeepSeek Token Factory as a configurable alternate provider), RELAY places AI voice calls with sub-15ms API dispatch, triages customer intent, and enforces sweet, natural human voice personas across 7 global languages.
 
 ---
 
@@ -54,27 +55,25 @@ RELAY includes out-of-the-box preset nodes and customizable RAG prompt templates
 - **Female Hindi Grammatical Agreement (स्त्री-लिंग प्रयोग)**: Strictly enforces natural female Hindi verb inflections (`रही हूँ`, `सकती हूँ`, `कर रही हूँ`) and eliminates unnatural male verb forms.
 - **Warm & Professional Expressions**: Opens with courteous, cheerful greetings (*"नमस्ते Hardik जी! 😊 मैं Apex Group से बात कर रही हूँ..."*).
 
-### 3. Grounded Branch RAG Knowledge Base Editor
+### 3. Amazon Bedrock & Neural Post-Call Intelligence
+- **Amazon Bedrock (Primary)**: Uses `@aws-sdk/client-bedrock-runtime` with Claude 3.5 Sonnet / Llama 3 for HIPAA-ready, zero-retention transcript analysis and fact extraction.
+- **Nebius DeepSeek-V4 (Configurable Alternate)**: Full token factory driver supported via `LLM_PROVIDER="nebius"`.
+
+### 4. Grounded Branch RAG Knowledge Base Editor
 - **Custom Branch Context**: Configure company FAQs, on-call specialists, offered service catalogs, and pricing rules per physical location node.
 - **Factually Grounded Voice Prompting**: Prevents AI hallucinations by grounding responses directly in official company knowledge bases.
 
-### 4. Regional Carrier Compliance & Multilingual Adaptability
-- **Supported Languages**: **हिन्दी (Hindi)**, **English (US/UK)**, **नेपाली (Nepali)**, **Español (Spanish)**, **Français (French)**, **Deutsch (German)**, and **中文 (Mandarin)**.
-- **Auto-Region Mapping**: Automatically maps destination numbers (e.g. India `+91`) to supported carrier locales (`hi-IN` / `en-US`), ensuring `HTTP 201 Created` acceptance without carrier 422 errors.
+### 5. Multi-Branch Google Calendar OAuth & 2-Way Sync
+- **Location-Scoped Persistence**: Each branch location independently owns its Google OAuth 2.0 refresh tokens, encrypted with AES-256 and persisted in Supabase PostgreSQL (`calendar_connections` table).
+- **Free/Busy Privacy Masking**: Exposes open time slots while masking caller PII and private calendar titles.
 
-### 5. Neural Audio Player & Turn-by-Turn Transcript Viewer
-- **Audio Waveform Player**: Playback call audio tracks with interactive frequency visualizers, playback speed controls, and timestamp trackers.
-- **Speaker Dialogue Breakdown**: Inspect turn-by-turn interactions between the AI Voice Agent and the caller with speaker badges and sentiment metrics.
-
-### 6. 1-Click Compliance Export & Google OAuth 2.0 Integration
-- **Audit Export**: Export audit logs, extracted CRM facts, and revenue recovery metrics in **CSV** or **JSON** formats with 1 click.
-- **Google Workspace OAuth**: Sign in and switch Google Calendar & Workspace accounts dynamically from an interactive account picker modal.
+### 6. Durable End-to-End Idempotency & TTL Cache
+- **Multi-Tier Deduplication**: Client-side UUIDs passed via `Idempotency-Key` headers on single calls, recalls, and batch campaigns.
+- **Sliding-Window TTL Eviction**: In-memory cache evicts entries after 24 hours to prevent memory leaks in long-running processes, backed by Supabase `idempotency_keys`.
 
 ---
 
 ## System Architecture
-
-RELAY is built as a layered, event-driven autonomous telephony system. Each layer has a distinct responsibility and communicates over typed REST contracts.
 
 ```
 ╔══════════════════════════════════════════════════════════════════════════════╗
@@ -112,24 +111,26 @@ RELAY is built as a layered, event-driven autonomous telephony system. Each laye
 ║   │  POST /api/trigger-overflow   — Dispatch inbound overflow recall     │  ║
 ║   │  POST /api/trigger-recall     — Outbound patient/client recall       │  ║
 ║   │  POST /api/batch/execute      — Bulk campaign call execution         │  ║
-║   │  GET  /api/call-results/status — Live carrier poll (300ms interval)  │  ║
+║   │  GET  /api/call-results/status — Live carrier poll                   │  ║
 ║   │  GET  /api/export             — CSV / JSON compliance export         │  ║
-║   │  POST /api/knowledge/extract  — Web RAG ingestion from any URL       │  ║
+║   │  POST /api/integrations/verify — Live external connection probe      │  ║
 ║   └───────────────────────────────┬──────────────────────────────────────┘  ║
 ║                                   │                                          ║
 ║   ┌───────────────────────────────▼──────────────────────────────────────┐  ║
-║   │  Business Logic Layer                                                │  ║
-║   │  ├── CALL-E REST Client     (lib/calle-client.ts)                   │  ║
-║   │  ├── Multilingual RAG Prompt Builder (7 languages, auto-locale map) │  ║
-║   │  ├── Sliding Window Rate Limiter    (lib/rate-limiter.ts)           │  ║
-║   │  ├── JWT Auth & Session Management (lib/auth.ts / lib/jwt.ts)       │  ║
-║   │  └── Nebius DeepSeek-V4 Intelligence Engine (lib/nebius-ai.ts)      │  ║
+║   │  Business Logic & Intelligence Layer                                 │  ║
+║   │  ├── CALL-E REST Client        (lib/calle-client.ts)                │  ║
+║   │  ├── Amazon Bedrock Intelligence (lib/bedrock-ai.ts)                 │  ║
+║   │  ├── Nebius Token Factory      (lib/nebius-ai.ts)                    │  ║
+║   │  ├── Multi-Branch Calendar     (lib/calendar.ts)                     │  ║
+║   │  ├── Durable Idempotency Engine(lib/idempotency.ts)                  │  ║
+║   │  ├── JWT Auth & Session        (lib/auth.ts / lib/jwt.ts)            │  ║
+║   │  └── Rate Limiter Engine       (lib/rate-limiter.ts)                 │  ║
 ║   └───────────────────────────────┬──────────────────────────────────────┘  ║
 ║                                   │                                          ║
 ║   ┌───────────────────────────────▼──────────────────────────────────────┐  ║
 ║   │  Persistence Layer                                                   │  ║
-║   │  ├── Local Disk Store    → data/sample-calls.json (zero-latency)    │  ║
-║   │  └── Supabase PostgreSQL → async cloud sync (lib/supabase.ts)       │  ║
+║   │  ├── Relay In-Memory Store     (lib/store.ts)                        │  ║
+║   │  └── Supabase PostgreSQL Cloud (lib/supabase.ts)                     │  ║
 ║   └──────────────────────────────────────────────────────────────────────┘  ║
 ╚═══════════════════════════════╦════════════════════════════════════════════╝
                                 ║  Server-Side Props / Client API Fetch
@@ -148,16 +149,6 @@ RELAY is built as a layered, event-driven autonomous telephony system. Each laye
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
-### Data Flow Summary
-
-| Event | Flow |
-|---|---|
-| **New call dispatched** | Console → `/api/trigger-overflow` → `calle-client.ts` → CALL-E REST API → PSTN Trunk |
-| **Live status update** | Console polls `/api/call-results/status` every 300ms → CALL-E `GET /calls/:id` |
-| **Call completes** | CALL-E webhook → `/api/webhooks/call-e` → store upsert → Supabase async sync |
-| **Post-call intelligence** | Webhook payload → Nebius DeepSeek-V4 → structured CRM fact extraction |
-| **Compliance export** | Console → `/api/export?format=csv` → `SwitchboardStore.getCalls()` → file download |
-
 ---
 
 ## Tech Stack
@@ -166,17 +157,14 @@ RELAY is built as a layered, event-driven autonomous telephony system. Each laye
 - **Language**: TypeScript 5.x
 - **Styling**: Tailwind CSS, Custom Glassmorphism Theme
 - **Telephony API**: CALL-E Direct REST API (`https://api.heycall-e.com/v1`)
-- **AI Intelligence**: DeepSeek-V4-Flash-0731 on Nebius Token Factory
-- **Database**: Dual Persistence Architecture (Local Disk Store + Supabase Cloud PostgreSQL)
-- **State Management**: In-Memory Thread-Safe Store (`SwitchboardStore`)
+- **Primary AI Intelligence**: Amazon Bedrock Claude 3.5 Sonnet / Llama 3 (`@aws-sdk/client-bedrock-runtime`)
+- **Alternate AI Intelligence**: Nebius DeepSeek-V4 Flash (`DeepSeek-V4-Flash-0731`)
+- **Database**: Dual Persistence Architecture (Relay Store + Supabase Cloud PostgreSQL)
+- **Authentication**: Bcrypt-12 with Dual-Token HS256 JWT & Secure HTTP-Only Cookies
 
 ---
 
 ## Quick Start Guide
-
-### Prerequisites
-- **Node.js**: v18.0.0 or higher
-- **npm**: v9.0.0 or higher
 
 ### 1. Clone Repository
 ```bash
@@ -190,19 +178,20 @@ npm install
 ```
 
 ### 3. Environment Setup
-Copy `.env.example` to `.env.local`:
-```bash
-cp .env.example .env.local
-```
-
 Configure your environment variables in `.env.local`:
 ```env
-# CALL-E Telephony API Key
+# Telephony & AI Engine
 CALLE_API_KEY=iams_live_your_api_key_here
+AWS_REGION=us-east-1
+LLM_PROVIDER=bedrock
 
-# Optional Supabase Cloud PostgreSQL Sync
+# JWT & Cryptographic Security (>= 32 chars required)
+JWT_SECRET=your-32-char-secure-secret-key-entropy-here
+
+# Supabase Cloud PostgreSQL
 NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-url.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-supabase-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 ### 4. Run Development Server
@@ -211,7 +200,12 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 5. Build for Production
+### 5. Run Verification Test Suite
+```bash
+npm test
+```
+
+### 6. Build for Production
 ```bash
 npm run build
 npm start
@@ -219,59 +213,7 @@ npm start
 
 ---
 
-## Key REST API Endpoints
-
-### 1. Dispatch Universal Voice Call
-```http
-POST /api/trigger-overflow
-Content-Type: application/json
-
-{
-  "phoneNumber": "+917201921920",
-  "patientName": "Hardik Bandhiya",
-  "language": "hi",
-  "locationId": "loc_techsangi",
-  "extraContext": "Client requested urgent software architecture review and project consultation."
-}
-```
-
-**Response (`200 OK`)**:
-```json
-{
-  "ok": true,
-  "message": "Call dispatched on regional carrier gateway",
-  "callId": "call_1787764666579",
-  "runId": "call_bQ41dU2925qUEVYcBWHePA",
-  "status": "queued",
-  "location": "TechSangi IT Solutions"
-}
-```
-
-### 2. Query Live Carrier Call Status
-```http
-GET /api/call-results/status?runId=call_bQ41dU2925qUEVYcBWHePA
-```
-
-**Response (`200 OK`)**:
-```json
-{
-  "ok": true,
-  "runId": "call_bQ41dU2925qUEVYcBWHePA",
-  "status": "completed",
-  "summary": "Client confirmed consultation appointment slot for tomorrow at 10:00 AM.",
-  "completedAt": "2026-08-28T08:44:00Z"
-}
-```
-
-### 3. Export Telephony Audit Stream (CSV / JSON)
-```http
-GET /api/export?format=csv
-GET /api/export?format=json
-```
-
----
-
 ## License & Compliance
 
 - **License**: [MIT License](LICENSE)
-- **Data Privacy**: Fail-closed data isolation. Temporal free/busy availability masking ensures caller PII and private notes are never exposed across tenants.
+- **Data Isolation**: Temporal free/busy availability masking ensures caller PII and private notes are never exposed across tenants.

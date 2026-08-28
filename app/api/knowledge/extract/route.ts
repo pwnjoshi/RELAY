@@ -40,7 +40,7 @@ function cleanHtmlToText(html: string): { title: string; metaDescription: string
   const metaDescription = metaMatch ? metaMatch[1].trim() : "";
 
   // Remove scripts, styles, SVGs, base64 images, navs, footers
-  let clean = html
+  const clean = html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, " ")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, " ")
     .replace(/<svg\b[^<]*(?:(?!<\/svg>)<[^<]*)*<\/svg>/gi, " ")
@@ -194,7 +194,7 @@ export async function POST(req: Request) {
       }
     }
 
-    let industry = aiExtraction?.industry || (isTechSangi ? "IT & Software Services" : "Business Operations");
+    const industry = aiExtraction?.industry || (isTechSangi ? "IT & Software Services" : "Business Operations");
     let overview = aiExtraction?.overview || parsed.metaDescription;
     if (!overview) {
       if (isTechSangi) {

@@ -51,7 +51,7 @@ const ConsoleContext = createContext<ConsoleContextType>({
 
 // Module-level persistent cache across page changes
 let cachedCurrentUser: TeamMember | null = null;
-let cachedDepartments: Department[] = [];
+const cachedDepartments: Department[] = [];
 let cachedLocations: ClinicLocation[] = [];
 let cachedStats: DashboardStats | null = null;
 let cachedLang: LanguageCode = "en";

@@ -25,8 +25,8 @@ export default function OnboardingPage() {
       .then((d) => {
         if (d.ok && d.user) {
           setCurrentUser(d.user);
-          if (!workspaceName && d.user.name) {
-            setWorkspaceName(`${d.user.name}'s Organization`);
+          if (d.user.name) {
+            setWorkspaceName((prev) => prev || `${d.user.name}'s Organization`);
           }
         }
       })

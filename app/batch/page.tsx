@@ -200,7 +200,7 @@ export default function BatchPage() {
     const ws = XLSX.utils.json_to_sheet(sampleData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "FollowupContacts");
-    XLSX.writeFile(wb, "switchboard_patient_followup_template.xlsx");
+    XLSX.writeFile(wb, "relay_patient_followup_template.xlsx");
   };
 
   const batchIdempotencyKeyRef = React.useRef<string | null>(null);

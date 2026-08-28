@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     return new NextResponse(JSON.stringify(calls, null, 2), {
       headers: {
         "Content-Type": "application/json",
-        "Content-Disposition": `attachment; filename="switchboard-call-audit-${Date.now()}.json"`
+        "Content-Disposition": `attachment; filename="relay-call-audit-${Date.now()}.json"`
       }
     });
   }
@@ -66,7 +66,7 @@ export async function GET(req: Request) {
   return new NextResponse(csvContent, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="switchboard-call-audit-${Date.now()}.csv"`
+      "Content-Disposition": `attachment; filename="relay-call-audit-${Date.now()}.csv"`
     }
   });
 }

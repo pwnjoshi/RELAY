@@ -6,6 +6,7 @@
  * structured JSON entity extraction parsing, and live call polling.
  */
 import { LanguageCode, SUPPORTED_LANGUAGES, StructuredCallOutcome } from "./types";
+import { logger, maskPhone } from "./logger";
 
 const CALLE_API_BASE = "https://api.heycall-e.com/v1";
 
@@ -19,10 +20,23 @@ function getCalleApiKey(): string {
   return key;
 }
 
+export interface ClinicLocationParam {
+  id: string;
+  name: string;
+  contactPerson?: string;
+  services?: string[];
+  address?: string;
+  phone?: string;
+  industryCategory?: "health" | "tech" | "auto" | "legal" | "hospitality" | "real_estate" | "general";
+  industry?: string;
+  on_call_doctor?: string;
+  knowledge_base?: string;
+}
+
 export interface CreateCallParams {
   phoneNumber: string;
   patientName: string;
-  location: any;
+  location: ClinicLocationParam;
   callType: "inbound_overflow" | "outbound_recall" | "batch_followup";
   departmentId?: string;
   language?: LanguageCode;
@@ -64,9 +78,9 @@ function getLanguageGuidance(
   let neGreeting = `नमस्ते ${callerName} ज्यू! 😊 म ${orgName} बाट बोल्दै छु। के म तपाईंको लागि ${contactPerson} सँग समय मिलाइदिऊँ?`;
   let esGreeting = `¡Hola ${callerName}! 😊 Le llamo con mucho gusto de ${orgName}. ¿Le gustaría agendar una linda consulta con ${contactPerson}?`;
   let enGreeting = `Hello ${callerName}! 😊 This is ${orgName}. I'd love to help schedule a consultation for you with ${contactPerson}!`;
-  let frGreeting = `Bonjour ${callerName}! 😊 Je vous appelle avec grand plaisir de ${orgName}. Souhaitez-vous planifier un rendez-vous avec ${contactPerson}?`;
-  let deGreeting = `Hallo ${callerName}! 😊 Ich rufe sehr gerne von ${orgName} an. Möchten Sie einen Termin mit ${contactPerson} vereinbaren?`;
-  let zhGreeting = `您好 ${callerName}！😊 我是 ${orgName} 的客服小助手。很高兴为您服务，请问需要为您预约 ${contactPerson} 吗？`;
+  const frGreeting = `Bonjour ${callerName}! 😊 Je vous appelle avec grand plaisir de ${orgName}. Souhaitez-vous planifier un rendez-vous avec ${contactPerson}?`;
+  const deGreeting = `Hallo ${callerName}! 😊 Ich rufe sehr gerne von ${orgName} an. Möchten Sie einen Termin mit ${contactPerson} vereinbaren?`;
+  const zhGreeting = `您好 ${callerName}！😊 我是 ${orgName} 的客服小助手。很高兴为您服务，请问需要为您预约 ${contactPerson} 吗？`;
 
   if (isHealth) {
     hiGreeting = `नमस्ते ${callerName} जी! 😊 मैं ${orgName} से बहुत प्यार से बोल रही हूँ। क्या आप डॉ. ${contactPerson} से अपॉइंटमेंट शेड्यूल करना चाहते हैं?`;
@@ -310,7 +324,7 @@ export async function createDirectCall(params: CreateCallParams) {
   const region = getRegionFromPhone(phoneNumber);
 
   try {
-    console.log(`[CALL-E REST] Dispatching call (${language}, region: ${region || "auto"}) to: ${phoneNumber}`);
+    logger.info(`[CALL-E REST] Dispatching call (${language}, region: ${region || "auto"}) to: ${maskPhone(phoneNumber)}`);
     const res = await fetch(`${CALLE_API_BASE}/calls`, {
       method: "POST",
       headers: {
@@ -342,7 +356,7 @@ export async function createDirectCall(params: CreateCallParams) {
 
     const data = await res.json();
     if (!res.ok) {
-      console.error(`[CALL-E REST] Error response (${res.status}):`, data);
+      logger.error(`[CALL-E REST] Error response (${res.status}):`, data);
       const errMsg = data.error?.message || data.message || (typeof data.error === "string" ? data.error : JSON.stringify(data));
       return { ok: false, error: errMsg, details: data, status: res.status };
     }
@@ -357,9 +371,10 @@ export async function createDirectCall(params: CreateCallParams) {
         raw: data
       }
     };
-  } catch (err: any) {
-    console.error("[CALL-E REST] Fetch failed:", err);
-    return { ok: false, error: err.message || String(err) };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    logger.error("[CALL-E REST] Fetch failed:", errorMsg);
+    return { ok: false, error: errorMsg };
   }
 }
 
@@ -368,7 +383,7 @@ export async function createDirectCall(params: CreateCallParams) {
  */
 export async function getDirectCall(callId: string) {
   try {
-    const res = await fetch(`${CALLE_API_BASE}/calls/${callId}`, {
+    const res = await fetch(`${CALLE_API_BASE}/calls/${encodeURIComponent(callId)}`, {
       headers: {
         Authorization: `Bearer ${getCalleApiKey()}`
       }
@@ -380,8 +395,9 @@ export async function getDirectCall(callId: string) {
     }
 
     return { ok: true, result: data };
-  } catch (err: any) {
-    return { ok: false, error: err.message || String(err) };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : String(err);
+    return { ok: false, error: errorMsg };
   }
 }
 
@@ -389,7 +405,7 @@ export async function getDirectCall(callId: string) {
  * Parse structured JSON outcome from CALL-E Direct REST API result
  */
 export function parseRestCallOutcome(
-  callData: any,
+  callData: Record<string, any>,
   fallbackDefaults: {
     callId: string;
     locationId: string;
