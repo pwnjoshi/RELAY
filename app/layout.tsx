@@ -75,6 +75,7 @@ export const metadata: Metadata = {
 
 import { JudgeTourModal } from "@/components/JudgeTourModal";
 import { Preloader } from "@/components/Preloader";
+import { ScrollReset } from "@/components/ScrollReset";
 
 export default function RootLayout({
   children
@@ -118,6 +119,7 @@ export default function RootLayout({
         <ThemeProvider>
           <CurrencyProvider>
             <ConsoleProvider>
+              <ScrollReset />
               <Preloader />
               {children}
               <JudgeTourModal />
