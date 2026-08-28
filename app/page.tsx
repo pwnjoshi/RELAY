@@ -344,36 +344,55 @@ export default function LandingPage() {
       currentAudioRef.current = null;
     }
 
-    // 1. Primary: Direct Neural Human Audio MP3 Stream
-    const mp3Path = `/audio/dialogues/${audioStreamLang}_turn_${turnIndex}.mp3`;
-    const audio = new Audio(mp3Path);
-    currentAudioRef.current = audio;
+    // 1. Primary: Amazon Polly Neural Conversational Voice Synthesizer
+    fetch("/api/voice/synthesize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: turn.speakText || turn.displayText,
+        lang: audioStreamLang,
+        isAI: turn.isAI
+      })
+    })
+      .then(async (res) => {
+        if (!isPlayingAudioRef.current || sessionId !== audioSessionIdRef.current) return;
+        const contentType = res.headers.get("content-type") || "";
 
-    audio.onended = () => {
-      if (!isPlayingAudioRef.current || sessionId !== audioSessionIdRef.current) return;
-      if (turnIndex + 1 < currentDialogue.turns.length) {
-        // Natural human conversational turn-taking pause (500ms)
-        turnTimerRef.current = setTimeout(() => {
-          if (isPlayingAudioRef.current && sessionId === audioSessionIdRef.current) {
-            playSpeechTurn(turnIndex + 1, sessionId);
-          }
-        }, 500);
-      } else {
-        stopAllAudio();
-        setActiveAudioTurn(0);
-      }
-    };
+        if (res.ok && contentType.includes("audio")) {
+          const blob = await res.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          const audio = new Audio(audioUrl);
+          currentAudioRef.current = audio;
 
-    audio.onerror = () => {
-      // 2. Transparent Fallback: SpeechSynthesis if MP3 cannot be decoded
-      if (!isPlayingAudioRef.current || sessionId !== audioSessionIdRef.current) return;
-      playSpeechSynthesisFallback(turnIndex, sessionId);
-    };
+          audio.onended = () => {
+            URL.revokeObjectURL(audioUrl);
+            if (!isPlayingAudioRef.current || sessionId !== audioSessionIdRef.current) return;
+            if (turnIndex + 1 < currentDialogue.turns.length) {
+              turnTimerRef.current = setTimeout(() => {
+                if (isPlayingAudioRef.current && sessionId === audioSessionIdRef.current) {
+                  playSpeechTurn(turnIndex + 1, sessionId);
+                }
+              }, 450);
+            } else {
+              stopAllAudio();
+              setActiveAudioTurn(0);
+            }
+          };
 
-    audio.play().catch(() => {
-      // Fallback if autoplay policy blocked audio
-      playSpeechSynthesisFallback(turnIndex, sessionId);
-    });
+          audio.onerror = () => {
+            URL.revokeObjectURL(audioUrl);
+            playSpeechSynthesisFallback(turnIndex, sessionId);
+          };
+
+          audio.play().catch(() => playSpeechSynthesisFallback(turnIndex, sessionId));
+        } else {
+          // Fallback to client synthesis if Amazon Polly environment requires credential grant
+          playSpeechSynthesisFallback(turnIndex, sessionId);
+        }
+      })
+      .catch(() => {
+        playSpeechSynthesisFallback(turnIndex, sessionId);
+      });
   };
 
   // Fallback speech synthesizer in case local network blocks media asset loading

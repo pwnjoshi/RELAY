@@ -88,19 +88,59 @@ export function CallDrawer({ isOpen = true, call, locations, onClose }: CallDraw
   };
 
   const handlePlayTurnAudio = (turnIndex: number, text: string) => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      if (playingTurn === turnIndex) {
-        setPlayingTurn(null);
-        return;
+    if (typeof window === "undefined") return;
+
+    if (playingTurn === turnIndex) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
       }
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
-      utterance.onend = () => setPlayingTurn(null);
-      utterance.onerror = () => setPlayingTurn(null);
-      setPlayingTurn(turnIndex);
-      window.speechSynthesis.speak(utterance);
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      setPlayingTurn(null);
+      return;
     }
+
+    setPlayingTurn(turnIndex);
+
+    fetch("/api/voice/synthesize", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text,
+        lang: call.language || "en",
+        isAI: turnIndex % 2 === 0
+      })
+    })
+      .then(async (res) => {
+        const contentType = res.headers.get("content-type") || "";
+        if (res.ok && contentType.includes("audio")) {
+          const blob = await res.blob();
+          const audioUrl = URL.createObjectURL(blob);
+          const audio = new Audio(audioUrl);
+          audioRef.current = audio;
+
+          audio.onended = () => {
+            URL.revokeObjectURL(audioUrl);
+            setPlayingTurn(null);
+          };
+          audio.onerror = () => {
+            URL.revokeObjectURL(audioUrl);
+            setPlayingTurn(null);
+          };
+          audio.play().catch(() => setPlayingTurn(null));
+        } else if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.onend = () => setPlayingTurn(null);
+          utterance.onerror = () => setPlayingTurn(null);
+          window.speechSynthesis.speak(utterance);
+        } else {
+          setPlayingTurn(null);
+        }
+      })
+      .catch(() => setPlayingTurn(null));
   };
 
   return (

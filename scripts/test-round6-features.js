@@ -81,6 +81,18 @@ test("components/TriggerModal.tsx supports Autonomous Goal Mode and Keypad IVR n
   assert.ok(modalContent.includes("ivrDtmfSequence"), "Must accept ivrDtmfSequence");
 });
 
+// 7. Amazon Polly Neural Voice Engine & Synthesize API Route
+test("lib/aws-polly.ts and app/api/voice/synthesize/route.ts implement Amazon Polly voice synthesis", () => {
+  const pollyContent = fs.readFileSync(path.resolve(process.cwd(), "lib/aws-polly.ts"), "utf-8");
+  assert.ok(pollyContent.includes("PollyClient"), "Must instantiate PollyClient");
+  assert.ok(pollyContent.includes("SynthesizeSpeechCommand"), "Must execute SynthesizeSpeechCommand");
+  assert.ok(pollyContent.includes("cloudblueprint"), "Must support AWS cloudblueprint profile");
+
+  const routeContent = fs.readFileSync(path.resolve(process.cwd(), "app/api/voice/synthesize/route.ts"), "utf-8");
+  assert.ok(routeContent.includes("export async function POST"), "Must export POST route");
+  assert.ok(routeContent.includes("synthesizeAmazonPollySpeech"), "Must invoke Amazon Polly synthesis");
+});
+
 console.log("\n-------------------------------------------------------");
 console.log(`  FEATURE TESTS: ${passed} passed, ${failed} failed`);
 console.log("-------------------------------------------------------\n");
