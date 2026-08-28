@@ -51,7 +51,7 @@ export default function FleetPage() {
 
         <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
         <Header
-          title="Multi-Clinic Telephony Fleet"
+          title="Multi-Branch Telephony Fleet"
           badge="FLEET INFRASTRUCTURE"
           onRefresh={fetchData}
           onOpenTriggerModal={() => setIsTriggerModalOpen(true)}
@@ -59,9 +59,9 @@ export default function FleetPage() {
 
         <main className="p-6 sm:p-8 space-y-8 flex-1 max-w-[1600px] w-full animate-fade-in">
           <div>
-            <h2 className="text-xl font-bold text-[#151515] dark:text-[#FAFAF8] tracking-tight">Clinic Telephony Nodes</h2>
+            <h2 className="text-xl font-bold text-[#151515] dark:text-[#FAFAF8] tracking-tight">Enterprise Telephony Nodes</h2>
             <p className="text-xs text-[#666666] dark:text-[#9E9E9E] mt-1">
-              Active physical clinic branches routed through CALL-E zero-latency telephony SIP infrastructure.
+              Active physical business branches routed through CALL-E zero-latency telephony SIP infrastructure across all industry sectors.
             </p>
           </div>
 
