@@ -1096,58 +1096,147 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 6. Comparison Table: Traditional Reception vs. Legacy IVR vs. RELAY */}
-      <section className="px-6 sm:px-12 py-16 max-w-6xl mx-auto space-y-8">
-        <div className="text-center space-y-2">
+      {/* 6. Comparison Section: Traditional Reception vs. Legacy IVR vs. RELAY (Mobile-First) */}
+      <section className="px-4 sm:px-8 lg:px-12 py-12 sm:py-16 max-w-6xl mx-auto space-y-6 sm:space-y-8">
+        <div className="text-center space-y-2 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-            <span className="w-2 h-2 rounded-full bg-[#1B9A9C]" />
-            <span className="uppercase tracking-widest font-mono text-[10px]">Infrastructure Comparison</span>
+            <span className="w-2 h-2 rounded-full bg-[#1B9A9C] animate-pulse" />
+            <span className="uppercase tracking-widest font-mono text-[10px] text-[#1B9A9C]">Infrastructure Comparison</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
             Why Modern Businesses Choose Relay
           </h2>
+          <p className="text-xs sm:text-sm text-[#667085] dark:text-[#9BA8B8]">
+            See how autonomous voice operations replace hold times and manual dialing with sub-second intelligence.
+          </p>
         </div>
 
-        <div className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl overflow-hidden shadow-subtle">
+        {/* Mobile-First Comparative Cards Stack (Phone View < md) */}
+        <div className="block md:hidden space-y-4">
+          {[
+            {
+              title: "Speed to Answer",
+              icon: Icons.Zap,
+              relay: "< 14.2s (Zero Hold Time)",
+              human: "3-5 min (or voicemail)",
+              ivr: "Instant robotic menu"
+            },
+            {
+              title: "Multilingual Fluency",
+              icon: Icons.Globe,
+              relay: "Fluent Hindi, Nepali, Spanish & English",
+              human: "Depends on staff language",
+              ivr: "Recorded prompts only"
+            },
+            {
+              title: "Excel Batch Recall",
+              icon: Icons.Upload,
+              relay: "Autonomous multi-contact booking",
+              human: "Manual 1-by-1 dialing",
+              ivr: "Robocall blast (low pickup)"
+            },
+            {
+              title: "CRM & Database Sync",
+              icon: Icons.Layers,
+              relay: "Direct JSON sync to CRM & EHR",
+              human: "Manual typing entry",
+              ivr: "No live CRM sync"
+            },
+            {
+              title: "Priority Escalation",
+              icon: Icons.Shield,
+              relay: "Intelligent On-Call Staff SMS Routing",
+              human: "Variable manual routing",
+              ivr: "None"
+            }
+          ].map((item, idx) => {
+            const ItemIcon = item.icon || Icons.Zap;
+            return (
+              <div
+                key={idx}
+                className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl p-4 sm:p-5 shadow-subtle space-y-3"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#1B9A9C]/10 text-[#1B9A9C] flex items-center justify-center">
+                      <ItemIcon className="w-3.5 h-3.5" />
+                    </div>
+                    <span className="font-heading font-bold text-xs sm:text-sm text-[#0B1930] dark:text-[#F8FAFC]">
+                      {item.title}
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#1B9A9C]/15 text-[#1B9A9C] border border-[#1B9A9C]/20">
+                    RELAY ⚡
+                  </span>
+                </div>
+
+                {/* Relay Highlight Pill */}
+                <div className="p-3 rounded-xl bg-[#E8F5F2] dark:bg-[#081426] border border-[#1B9A9C]/30 space-y-1">
+                  <div className="text-[10px] font-mono uppercase font-bold text-[#1B9A9C]">
+                    Relay Autonomous Voice
+                  </div>
+                  <div className="font-heading font-extrabold text-xs sm:text-sm text-[#0B1930] dark:text-[#F8FAFC]">
+                    {item.relay}
+                  </div>
+                </div>
+
+                {/* Legacy Comparison Row */}
+                <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
+                  <div className="p-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#0E1E36] border border-[#E4E8E7] dark:border-[#1E324F]">
+                    <div className="text-[9px] font-mono text-[#667085] dark:text-[#9BA8B8] uppercase">Human Front-Desk</div>
+                    <div className="text-[#667085] dark:text-[#9BA8B8] font-medium mt-0.5 line-clamp-2">{item.human}</div>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#0E1E36] border border-[#E4E8E7] dark:border-[#1E324F]">
+                    <div className="text-[9px] font-mono text-[#667085] dark:text-[#9BA8B8] uppercase">Legacy IVR Tree</div>
+                    <div className="text-[#667085] dark:text-[#9BA8B8] font-medium mt-0.5 line-clamp-2">{item.ivr}</div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop Comparison Table (Hidden on Phone View >= md) */}
+        <div className="hidden md:block bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl overflow-hidden shadow-subtle">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-[#E4E8E7] dark:border-[#20324A] bg-[#F3F5F4] dark:bg-[#081426] text-[10px] uppercase font-bold text-[#667085] dark:text-[#9BA8B8] font-mono">
-                <th className="py-3.5 px-4">Capability</th>
-                <th className="py-3.5 px-4">Human Front-Desk</th>
-                <th className="py-3.5 px-4">Legacy Phone Tree (IVR)</th>
-                <th className="py-3.5 px-4 text-[#1B9A9C] font-bold">RELAY Voice Operations</th>
+                <th className="py-4 px-5">Capability</th>
+                <th className="py-4 px-5">Human Front-Desk</th>
+                <th className="py-4 px-5">Legacy Phone Tree (IVR)</th>
+                <th className="py-4 px-5 text-[#1B9A9C] font-bold bg-[#1B9A9C]/5">RELAY Voice Operations ⚡</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E4E8E7] dark:divide-[#20324A]">
               <tr>
-                <td className="py-3.5 px-4 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Speed to Answer</td>
-                <td className="py-3.5 px-4 text-[#667085]">3-5 minutes (or voicemail)</td>
-                <td className="py-3.5 px-4 text-[#667085]">Instant (robotic menu)</td>
-                <td className="py-3.5 px-4 font-bold text-[#0B1930] dark:text-[#F8FAFC]">&lt; 14.2s (Zero Hold Time)</td>
+                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Speed to Answer</td>
+                <td className="py-4 px-5 text-[#667085]">3-5 minutes (or voicemail)</td>
+                <td className="py-4 px-5 text-[#667085]">Instant (robotic menu)</td>
+                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">&lt; 14.2s (Zero Hold Time)</td>
               </tr>
               <tr>
-                <td className="py-3.5 px-4 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Multilingual Fluency</td>
-                <td className="py-3.5 px-4 text-[#667085]">Depends on staff language</td>
-                <td className="py-3.5 px-4 text-[#667085]">Recorded prompts only</td>
-                <td className="py-3.5 px-4 font-bold text-[#0B1930] dark:text-[#F8FAFC]">Fluent Hindi, Nepali, Spanish & English</td>
+                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Multilingual Fluency</td>
+                <td className="py-4 px-5 text-[#667085]">Depends on staff language</td>
+                <td className="py-4 px-5 text-[#667085]">Recorded prompts only</td>
+                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Fluent Hindi, Nepali, Spanish & English</td>
               </tr>
               <tr>
-                <td className="py-3.5 px-4 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Excel Batch Recall</td>
-                <td className="py-3.5 px-4 text-[#667085]">Manual 1-by-1 dialing</td>
-                <td className="py-3.5 px-4 text-[#667085]">Blast robocalls (low pickup)</td>
-                <td className="py-3.5 px-4 font-bold text-[#0B1930] dark:text-[#F8FAFC]">Autonomous multi-contact booking</td>
+                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Excel Batch Recall</td>
+                <td className="py-4 px-5 text-[#667085]">Manual 1-by-1 dialing</td>
+                <td className="py-4 px-5 text-[#667085]">Blast robocalls (low pickup)</td>
+                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Autonomous multi-contact booking</td>
               </tr>
               <tr>
-                <td className="py-3.5 px-4 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">CRM & Database Sync</td>
-                <td className="py-3.5 px-4 text-[#667085]">Manual typing entry</td>
-                <td className="py-3.5 px-4 text-[#667085]">No live CRM sync</td>
-                <td className="py-3.5 px-4 font-bold text-[#0B1930] dark:text-[#F8FAFC]">Direct JSON sync to CRM & Databases</td>
+                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">CRM & Database Sync</td>
+                <td className="py-4 px-5 text-[#667085]">Manual typing entry</td>
+                <td className="py-4 px-5 text-[#667085]">No live CRM sync</td>
+                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Direct JSON sync to CRM & Databases</td>
               </tr>
               <tr>
-                <td className="py-3.5 px-4 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Priority Escalation</td>
-                <td className="py-3.5 px-4 text-[#667085]">Variable manual routing</td>
-                <td className="py-3.5 px-4 text-[#667085]">None</td>
-                <td className="py-3.5 px-4 font-bold text-[#0B1930] dark:text-[#F8FAFC]">Intelligent On-Call Staff SMS Routing</td>
+                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Priority Escalation</td>
+                <td className="py-4 px-5 text-[#667085]">Variable manual routing</td>
+                <td className="py-4 px-5 text-[#667085]">None</td>
+                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Intelligent On-Call Staff SMS Routing</td>
               </tr>
             </tbody>
           </table>

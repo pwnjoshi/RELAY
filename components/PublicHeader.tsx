@@ -119,44 +119,57 @@ export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Backdrop & Floating Overlay Drawer (Floats ABOVE hero section without shifting page layout) */}
       {mobileMenuOpen && (
-        <div className="lg:hidden mt-3 pt-3 border-t border-[#E4E8E7] dark:border-[#20324A] space-y-1.5">
-          {navLinks.map((link) => {
-            const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                  isActive
-                    ? "bg-[#1B9A9C]/15 text-[#1B9A9C] font-bold border border-[#1B9A9C]/20 shadow-sm"
-                    : "text-[#667085] dark:text-[#9BA8B8] hover:bg-[#FAFAF8] dark:hover:bg-[#10223A]"
-                }`}
-              >
-                <span>{link.label}</span>
-              </Link>
-            );
-          })}
-          <div className="pt-2 border-t border-[#E4E8E7] dark:border-[#20324A]">
-            {isUserAuthenticated ? (
-              <Link
-                href="/dashboard"
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B1930] text-white font-bold text-xs shadow-sm"
-              >
-                Go to Console &rarr;
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B1930] text-white font-bold text-xs shadow-sm"
-              >
-                Get Started &rarr;
-              </Link>
-            )}
+        <>
+          <div
+            className="lg:hidden fixed inset-0 top-[60px] bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="lg:hidden absolute top-full left-0 right-0 z-50 bg-white/95 dark:bg-[#081426]/95 backdrop-blur-2xl border-b border-[#E4E8E7] dark:border-[#1E324F] shadow-2xl px-6 py-5 space-y-3 animate-in slide-in-from-top-2 fade-in duration-200">
+            <div className="space-y-1">
+              {navLinks.map((link) => {
+                const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
+                      isActive
+                        ? "bg-[#1B9A9C]/15 text-[#1B9A9C] font-bold border border-[#1B9A9C]/20 shadow-sm"
+                        : "text-[#667085] dark:text-[#9BA8B8] hover:bg-[#FAFAF8] dark:hover:bg-[#10223A] hover:text-[#0B1930] dark:hover:text-[#F8FAFC]"
+                    }`}
+                  >
+                    <span>{link.label}</span>
+                    <span className="text-[11px] text-[#9BA8B8] font-mono">&rarr;</span>
+                  </Link>
+                );
+              })}
+            </div>
+            <div className="pt-3 border-t border-[#E4E8E7] dark:border-[#1E324F]">
+              {isUserAuthenticated ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] text-white font-bold text-xs shadow-card active:scale-95"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
+                  <span>Go to Console &rarr;</span>
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] text-white font-bold text-xs shadow-card active:scale-95"
+                >
+                  <span>Get Started &rarr;</span>
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </header>
   );
