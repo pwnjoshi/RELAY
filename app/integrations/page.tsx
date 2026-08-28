@@ -88,9 +88,10 @@ export default function IntegrationsPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [statsRes, locsRes] = await Promise.all([
+      const [statsRes, locsRes, calRes] = await Promise.all([
         fetch("/api/call-results/stats"),
-        fetch("/api/locations")
+        fetch("/api/locations"),
+        fetch("/api/calendar")
       ]);
       if (statsRes.ok) {
         const d = await statsRes.json();
@@ -99,6 +100,23 @@ export default function IntegrationsPage() {
       if (locsRes.ok) {
         const d = await locsRes.json();
         setLocations(d.locations || []);
+      }
+      if (calRes.ok) {
+        const calData = await calRes.json();
+        if (calData.connected) {
+          setIntegrationsList((prev) =>
+            prev.map((item) =>
+              item.id === "google_cal"
+                ? {
+                    ...item,
+                    status: "connected",
+                    email: calData.config?.calendarEmail,
+                    badge: "OAUTH 2.0 ACTIVE"
+                  }
+                : item
+            )
+          );
+        }
       }
     } catch (err) {
       console.error("Error loading integrations:", err);
@@ -124,14 +142,24 @@ export default function IntegrationsPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("relay_user_integrations", JSON.stringify(nextList));
     }
-    setTestPingMsg(`Successfully authenticated & connected ${updated.name}! Status: 200 OK.`);
+    setTestPingMsg(`Saved configuration for ${updated.name}.`);
     setTimeout(() => setTestPingMsg(""), 4000);
   };
 
-  const handleDisconnect = (id: string, e: React.MouseEvent) => {
+  const handleDisconnect = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (id === "google_cal") {
+      try {
+        await fetch("/api/calendar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "disconnect" })
+        });
+      } catch {}
+    }
+
     const nextList = integrationsList.map((item) =>
-      item.id === id ? { ...item, status: "disconnected" } : item
+      item.id === id ? { ...item, status: "disconnected", email: undefined } : item
     );
     setIntegrationsList(nextList);
     if (typeof window !== "undefined") {
