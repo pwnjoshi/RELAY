@@ -278,6 +278,9 @@ export async function createDirectCall(params: CreateCallParams) {
     taskText += `[OFFICIAL WEBSITE RAG KNOWLEDGE BASE]:\n${location.knowledge_base}\nUse the above grounded knowledge to answer specific questions regarding services, pricing, and company background with 100% factual accuracy.\n\n`;
   }
 
+  const groundedFallback = `[ZERO-HALLUCINATION FALLBACK DIRECTIVE]: If the caller asks about specific pricing, policies, or procedures NOT in the grounded knowledge base above, NEVER guess or invent details. ALWAYS state: "I don't have that exact detail in front of me right now, but I will make sure our team coordinator follows up with you directly."\n\n`;
+  taskText += groundedFallback;
+
   const slotSpec = `Available appointment slots for reservation are tomorrow at 10:00 AM or 2:00 PM. Confirm caller availability for an appointment slot.`;
 
   if (customGoal) {

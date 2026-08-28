@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { store } from "@/lib/store";
 import { parseRestCallOutcome } from "@/lib/calle-client";
 import { analyzeCallTranscriptWithDeepSeek } from "@/lib/nebius-ai";
+import { runPostCallActionPipeline } from "@/lib/connectors";
+import type { CallRecord } from "@/lib/types";
 import fs from "fs";
 import path from "path";
 
@@ -40,6 +42,7 @@ export async function POST(req: Request) {
     // Check if call exists in store
     const existing = store.getCalls().find(c => c.id === callId || c.runId === callTask.id);
     const callerName = callTask.metadata?.patient_name || existing?.patientName || "Valued Caller";
+    const callerPhone = callTask.recipients?.[0]?.phones?.[0] || existing?.phoneNumber || "+15550000000";
 
     // DeepSeek-V4-Flash-0731 Post-Call Intelligence
     let aiIntelligence;
@@ -52,36 +55,38 @@ export async function POST(req: Request) {
       console.warn("[CALL-E Webhook] AI intelligence skipped on error:", aiErr.message);
     }
 
+    const statusVal: CallRecord["status"] = callTask.status === "failed" ? "failed" : "completed";
+    const updatedRecord: CallRecord = {
+      id: callId,
+      runId: callTask.id,
+      phoneNumber: callerPhone,
+      patientName: callerName,
+      locationId: location.id,
+      callType,
+      status: statusVal,
+      createdAt: callTask.created_at || new Date().toISOString(),
+      completedAt: callTask.completed_at || new Date().toISOString(),
+      structuredOutcome,
+      recoveredRevenue: revenue,
+      summary: structuredOutcome.notes,
+      aiIntelligence,
+      rawCalleData: callTask
+    };
+
     if (existing) {
-      store.updateCall(existing.id, {
-        status: callTask.status === "failed" ? "failed" : "completed",
-        completedAt: callTask.completed_at || new Date().toISOString(),
-        structuredOutcome,
-        recoveredRevenue: revenue,
-        summary: structuredOutcome.notes,
-        aiIntelligence,
-        rawCalleData: callTask
-      });
+      store.updateCall(existing.id, updatedRecord);
     } else {
-      store.addCall({
-        id: callId,
-        runId: callTask.id,
-        phoneNumber: callTask.recipients?.[0]?.phones?.[0] || "+15550000000",
-        patientName: callerName,
-        locationId: location.id,
-        callType,
-        status: callTask.status === "failed" ? "failed" : "completed",
-        createdAt: callTask.created_at || new Date().toISOString(),
-        completedAt: callTask.completed_at || new Date().toISOString(),
-        structuredOutcome,
-        recoveredRevenue: revenue,
-        summary: structuredOutcome.notes,
-        aiIntelligence,
-        rawCalleData: callTask
-      });
+      store.addCall(updatedRecord);
     }
 
-    return NextResponse.json({ ok: true, received: true });
+    // Run Post-Call Action Pipeline (Google Calendar, Slack, CRM)
+    try {
+      await runPostCallActionPipeline(updatedRecord as any, structuredOutcome, location.name);
+    } catch (pipelineErr) {
+      console.warn("[CALL-E Webhook] Connector pipeline warning:", pipelineErr);
+    }
+
+    return NextResponse.json({ ok: true, received: true, callId });
   } catch (err: any) {
     console.error("[CALL-E Webhook] Processing error:", err);
     return NextResponse.json({ ok: false, error: err.message || "Failed to process webhook" }, { status: 400 });

@@ -10,8 +10,15 @@ function getLocations() {
   return JSON.parse(fs.readFileSync(locPath, "utf-8"));
 }
 
+import { getSessionUser } from "@/lib/auth";
+
 export async function POST(req: Request) {
   try {
+    const user = await getSessionUser();
+    if (!user) {
+      return NextResponse.json({ ok: false, error: "Unauthorized. Session required to launch batch campaigns." }, { status: 401 });
+    }
+
     const body = await req.json();
     const { campaignId } = body;
 

@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { store } from "@/lib/store";
+import { getSessionUser } from "@/lib/auth";
 
 export async function GET(req: Request) {
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ ok: false, error: "Unauthorized. Session required to export audit records." }, { status: 401 });
+  }
+
   const { searchParams } = new URL(req.url);
   const format = searchParams.get("format") || "csv";
   const calls = store.getCalls();

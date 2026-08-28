@@ -12,8 +12,9 @@ export async function GET(req: NextRequest) {
   const action = searchParams.get("action");
 
   if (action === "availability") {
-    const date = searchParams.get("date") || "2026-08-28";
-    const slots = getAvailableSlots(date);
+    const date = searchParams.get("date") || new Date().toISOString().split("T")[0];
+    const duration = Number(searchParams.get("duration")) || 30;
+    const slots = await getAvailableSlots(date, duration);
     return NextResponse.json({ ok: true, slots });
   }
 
@@ -32,18 +33,22 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === "book") {
-      const { customerName, customerPhone, serviceType, startIso, durationMinutes, notes } = body;
+      const { customerName, customerPhone, serviceType, startIso, durationMinutes, notes, sourceCallId } = body;
       if (!customerName || !customerPhone || !startIso) {
-        return NextResponse.json({ ok: false, error: "Missing required booking details (customerName, customerPhone, startIso)." }, { status: 400 });
+        return NextResponse.json(
+          { ok: false, error: "Missing required booking details (customerName, customerPhone, startIso)." },
+          { status: 400 }
+        );
       }
 
-      const res = bookCalendarAppointment({
+      const res = await bookCalendarAppointment({
         customerName,
         customerPhone,
         serviceType: serviceType || "General Consultation",
         startIso,
-        durationMinutes: durationMinutes || 45,
-        notes
+        durationMinutes: durationMinutes || 30,
+        notes,
+        sourceCallId
       });
 
       return NextResponse.json({ ok: res.success, event: res.event, error: res.error });
@@ -52,10 +57,13 @@ export async function POST(req: NextRequest) {
     if (action === "cancel") {
       const { eventId, verificationPhone } = body;
       if (!eventId || !verificationPhone) {
-        return NextResponse.json({ ok: false, error: "Missing eventId or verificationPhone." }, { status: 400 });
+        return NextResponse.json(
+          { ok: false, error: "Missing eventId or verificationPhone." },
+          { status: 400 }
+        );
       }
 
-      const res = cancelCalendarAppointment(eventId, verificationPhone);
+      const res = await cancelCalendarAppointment(eventId, verificationPhone);
       return NextResponse.json({ ok: res.success, error: res.error });
     }
 
