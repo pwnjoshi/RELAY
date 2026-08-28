@@ -39,3 +39,9 @@ yarn-error.log*
 .vscode/
 *.swp
 *.swo
+
+# Showcase Articles & Publication Drafts
+AWS_BUILDER_SHOWCASE_ARTICLE.md
+BLOG_POST_RELAY_AWS_SHOWCASE.md
+*ARTICLE*.md
+*BLOG*.md
