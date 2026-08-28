@@ -12,6 +12,10 @@ interface RateLimitRecord {
   timestamps: number[];
 }
 
+/**
+ * In-memory sliding window limiter intentionally used for auth endpoints (login/register) to maintain
+ * sub-millisecond response latency and avoid external database round-trips on transient 60-second burst windows.
+ */
 class SlidingWindowRateLimiter {
   private store: Map<string, RateLimitRecord> = new Map();
   private cleanupInterval: NodeJS.Timeout | null = null;
