@@ -566,7 +566,8 @@ export default function LandingPage() {
                 href="/login"
                 className="flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-sm shadow-card hover:shadow-elevated transition-all active:scale-95 cursor-pointer"
               >
-                <span>Launch Operations Console &rarr;</span>
+                <Icons.Lock className="w-4 h-4 text-[#32C4BE]" />
+                <span>Sign In &rarr;</span>
               </Link>
             )}
             <button

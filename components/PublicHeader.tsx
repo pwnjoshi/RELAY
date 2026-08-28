@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { RelayLogo } from "./RelayLogo";
 import { Icons } from "./Icons";
 import { ThemeToggle } from "./ThemeToggle";
-import { useConsole } from "@/lib/console-context";
 
 interface PublicHeaderProps {
   onOpenTriggerModal?: () => void;
@@ -14,54 +13,40 @@ interface PublicHeaderProps {
 
 export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
   const pathname = usePathname();
-  const { currentUser } = useConsole();
-
   const [mounted, setMounted] = useState(false);
-
-  // Initialize authSession synchronously from sessionStorage or currentUser to prevent single-frame flicker
-  const [authSession, setAuthSession] = useState<{ isLoggedIn: boolean; name?: string; role?: string } | null>(() => {
-    if (currentUser) return { isLoggedIn: true, name: currentUser.name, role: currentUser.role };
-    if (typeof window !== "undefined") {
-      const stored = sessionStorage.getItem("relay_auth_user");
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (parsed && parsed.isLoggedIn) return parsed;
-        } catch {}
-      }
-    }
-    return null;
-  });
-
+  const [isUserAuthenticated, setIsUserAuthenticated] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    // Verify active session with backend API
+    
+    // Check local storage session first
+    try {
+      const stored = sessionStorage.getItem("relay_auth_user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed.isLoggedIn) {
+          setIsUserAuthenticated(true);
+        }
+      }
+    } catch {}
+
+    // Verify verified HTTP-only / token auth session with backend API
     fetch("/api/auth/session")
       .then((r) => r.json())
       .then((d) => {
-        if (d.ok && d.user) {
-          const sess = { isLoggedIn: true, name: d.user.name, role: d.user.role };
-          setAuthSession(sess);
-          sessionStorage.setItem("relay_auth_user", JSON.stringify(sess));
+        if (d.ok && d.authenticated && d.user) {
+          setIsUserAuthenticated(true);
+          sessionStorage.setItem("relay_auth_user", JSON.stringify({ isLoggedIn: true, name: d.user.name, role: d.user.role }));
         } else {
-          setAuthSession({ isLoggedIn: false });
+          setIsUserAuthenticated(false);
           sessionStorage.removeItem("relay_auth_user");
         }
       })
-      .catch(() => setAuthSession({ isLoggedIn: false }));
+      .catch(() => {
+        setIsUserAuthenticated(false);
+      });
   }, []);
-
-  useEffect(() => {
-    if (currentUser) {
-      const sess = { isLoggedIn: true, name: currentUser.name, role: currentUser.role };
-      setAuthSession(sess);
-      sessionStorage.setItem("relay_auth_user", JSON.stringify(sess));
-    }
-  }, [currentUser]);
-
-  const isUserAuthenticated = mounted && (authSession ? authSession.isLoggedIn : Boolean(currentUser));
 
   const navLinks = [
     { href: "/solutions", label: "Solutions" },
