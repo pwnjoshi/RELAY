@@ -11,57 +11,60 @@ interface MetricsBarProps {
 export function MetricsBar({ stats }: MetricsBarProps) {
   const cards = [
     {
-      title: "Live Calls Captured",
-      value: stats ? stats.totalCalls.toString() : "0",
-      subtext: `${stats?.completedCalls || 0} completed • 1 active`,
+      title: "Calls Handled",
+      value: stats ? stats.totalCalls.toLocaleString() : "0",
+      subtext: `${stats?.completedCalls || 0} completed • ${stats?.urgentEscalations || 0} urgent escalations`,
       icon: Icons.PhoneCall,
-      highlight: true
     },
     {
-      title: "Appointment Conversion",
+      title: "Booking Capture Rate",
       value: stats ? `${stats.captureRate}%` : "0%",
-      subtext: `${stats?.bookedCalls || 0} slots confirmed`,
+      subtext: `${stats?.bookedCalls || 0} appointments confirmed`,
       icon: Icons.Calendar,
-      highlight: false
     },
     {
-      title: "Revenue Recovered",
+      title: "Recovered Revenue",
       value: stats ? `$${stats.totalRevenueRecovered.toLocaleString("en-US")}` : "$0",
-      subtext: "From missed front-desk rings",
+      subtext: "Recaptured from overflow & recalls",
       icon: Icons.DollarSign,
-      highlight: false
     },
     {
-      title: "Avg Speed to Answer",
-      value: "14.2s",
-      subtext: "Target: < 30s PBX intercept",
+      title: "Average Answer Latency",
+      value: "< 14s",
+      subtext: "PBX SIP carrier intercept",
       icon: Icons.Clock,
-      highlight: false
     },
   ];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards.map((card) => (
-        <div
-          key={card.title}
-          className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl p-5 shadow-subtle hover:border-[#0B1930] dark:hover:border-[#F8FAFC] transition-all flex flex-col justify-between"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-[#667085] dark:text-[#9BA8B8]">{card.title}</span>
-            <div className="w-8 h-8 rounded-lg bg-[#F3F5F4] dark:bg-[#081426] text-[#0B1930] dark:text-[#F8FAFC] flex items-center justify-center border border-[#E4E8E7] dark:border-[#20324A]">
-              <card.icon className="w-4 h-4 text-[#1B9A9C]" />
+      {cards.map((card) => {
+        const Icon = card.icon;
+        return (
+          <div
+            key={card.title}
+            className="bg-white dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048] rounded-xl p-5 shadow-xs hover:border-[#1B9A9C] dark:hover:border-[#2EC4C0] transition-colors flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-[#5B6B82] dark:text-[#94A3B8]">
+                {card.title}
+              </span>
+              <div className="w-8 h-8 rounded-lg bg-[#F3F5F4] dark:bg-[#13243C] text-[#1B9A9C] dark:text-[#2EC4C0] flex items-center justify-center border border-[#E4E8E7] dark:border-[#1E3048]">
+                <Icon className="w-4 h-4" />
+              </div>
             </div>
-          </div>
 
-          <div className="mt-3 space-y-1">
-            <div className="text-2xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
-              {card.value}
+            <div className="mt-3 space-y-1">
+              <div className="text-2xl font-bold font-heading text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
+                {card.value}
+              </div>
+              <p className="text-[11px] text-[#5B6B82] dark:text-[#94A3B8]">
+                {card.subtext}
+              </p>
             </div>
-            <div className="text-[11px] text-[#667085] dark:text-[#9BA8B8] flex items-center gap-1.5" dangerouslySetInnerHTML={{ __html: card.subtext }} />
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

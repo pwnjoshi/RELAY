@@ -2,18 +2,13 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { RelayLogo } from "@/components/RelayLogo";
 import { Icons } from "@/components/Icons";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { TriggerModal } from "@/components/TriggerModal";
 import { useCurrency } from "@/lib/currency";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 import { RelayLifecycleRoadmap } from "@/components/RelayLifecycleRoadmap";
 import { ClinicLocation } from "@/lib/types";
-
-// Constant array defined OUTSIDE component so interval is never reset by re-renders
-const ROTATING_WORDS = ["outcome", "department", "appointment", "resolution", "revenue"];
 
 export default function LandingPage() {
   const { formatPrice, currencyConfig } = useCurrency();
@@ -33,47 +28,13 @@ export default function LandingPage() {
       })
       .catch(() => setCurrentUser(null));
 
-    // Reset scroll to the very top upon refresh/mount
-    if (typeof window !== "undefined") {
-      if ("scrollRestoration" in window.history) {
-        window.history.scrollRestoration = "manual";
-      }
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" as any });
-    }
+    fetch("/api/locations")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok) setLocations(d.locations || []);
+      })
+      .catch(() => {});
   }, []);
-
-  // Reliable Word Rotation State
-  const [wordIndex, setWordIndex] = useState(0);
-  const [fadeState, setFadeState] = useState<"in" | "out">("in");
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFadeState("out");
-      setTimeout(() => {
-        setWordIndex((prev) => (prev + 1) % ROTATING_WORDS.length);
-        setFadeState("in");
-      }, 250);
-    }, 2500);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleManualClick = () => {
-    setFadeState("out");
-    setTimeout(() => {
-      setWordIndex((prev) => (prev + 1) % ROTATING_WORDS.length);
-      setFadeState("in");
-    }, 150);
-  };
-
-  // Subtle Mouse Parallax Effect
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const { clientX, clientY } = e;
-    const x = (clientX / window.innerWidth - 0.5) * 20;
-    const y = (clientY / window.innerHeight - 0.5) * 20;
-    setMousePos({ x, y });
-  };
 
   // Interactive Live Preview State
   const [activeWorkflowTab, setActiveWorkflowTab] = useState<"overflow" | "batch" | "safety">("overflow");
@@ -85,7 +46,7 @@ export default function LandingPage() {
   const monthlyRevenueRecovered = Math.round(missedCallsPerDay * 30 * conversionRate * avgTicketValue);
   const annualRevenueRecovered = monthlyRevenueRecovered * 12;
 
-  // Authentic Telephony Audio Player State & Cancellation Controller
+  // Conversational Telephony Audio Player State
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [activeAudioTurn, setActiveAudioTurn] = useState(0);
   const [audioStreamLang, setAudioStreamLang] = useState<"hi" | "ne" | "es">("hi");
@@ -126,14 +87,14 @@ export default function LandingPage() {
         {
           speaker: "Sarah",
           role: "Relay AI Agent",
-          displayText: "Namaste! You've reached Apex Operations. I noticed you called our main line — how can I help you today?",
-          speakText: "Namaste! You've reached Apex Operations. I noticed you called our main line — how can I help you today?",
+          displayText: "Namaste! You've reached Apex Operations Hub. I noticed you called our main line — how can I help you today?",
+          speakText: "Namaste! You've reached Apex Operations Hub. I noticed you called our main line — how can I help you today?",
           isAI: true,
           lang: "en-IN"
         },
         {
           speaker: "Aarav",
-          role: "Inbound Client",
+          role: "Caller",
           displayText: "Haanji, I had a consultation on Tuesday and had a quick question. Can I book a follow-up with Dr. Sarah for Friday?",
           speakText: "Haanji, I had a consultation on Tuesday and had a quick question. Can I book a follow-up with Doctor Sarah for Friday?",
           isAI: false,
@@ -149,7 +110,7 @@ export default function LandingPage() {
         },
         {
           speaker: "Aarav",
-          role: "Inbound Client",
+          role: "Caller",
           displayText: "Friday 11:30 AM is perfect, thank you so much.",
           speakText: "Friday 11:30 AM is perfect, thank you so much.",
           isAI: false,
@@ -166,7 +127,7 @@ export default function LandingPage() {
       ]
     },
     ne: {
-      title: "Automated Client Recall & Checkup (नेपाली)",
+      title: "Automated Patient Recall & Checkup (नेपाली)",
       caller: "+977 98012 34567 • Bikash Thapa",
       turns: [
         {
@@ -179,7 +140,7 @@ export default function LandingPage() {
         },
         {
           speaker: "Bikash",
-          role: "Client Recall",
+          role: "Patient Recall",
           displayText: "हजुर, मैले review गर्नु पर्ने थियो। कहिले आउन मिल्छ consultation को लागि?",
           speakText: "हजुर, मैले रिभ्यु गर्नु पर्ने थियो। कहिले आउन मिल्छ कन्सलटेसन को लागि?",
           isAI: false,
@@ -195,7 +156,7 @@ export default function LandingPage() {
         },
         {
           speaker: "Bikash",
-          role: "Client Recall",
+          role: "Patient Recall",
           displayText: "हुन्छ, Sunday २ PM मा confirm गरिदिनुस्।",
           speakText: "हुन्छ, आइतबार दुई बजे कन्फर्म गरिदिनुस्।",
           isAI: false,
@@ -225,7 +186,7 @@ export default function LandingPage() {
         },
         {
           speaker: "Carlos",
-          role: "Corporate Client",
+          role: "Caller",
           displayText: "Hola Sarah, necesito asistencia urgente con mi cuenta de operaciones empresariales.",
           speakText: "Hola Sarah, necesito asistencia urgente con mi cuenta de operaciones empresariales.",
           isAI: false,
@@ -241,7 +202,7 @@ export default function LandingPage() {
         },
         {
           speaker: "Carlos",
-          role: "Corporate Client",
+          role: "Caller",
           displayText: "Muchas gracias Sarah por la rápida respuesta.",
           speakText: "Muchas gracias Sarah por la rápida respuesta.",
           isAI: false,
@@ -261,63 +222,6 @@ export default function LandingPage() {
 
   const currentDialogue = audioDialogues[audioStreamLang];
 
-  // Play natural telephony sound effect using Web Audio API
-  const playTelephonyChime = async () => {
-    try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      if (ctx.state === "suspended") {
-        await ctx.resume();
-      }
-
-      // Dual-frequency PBX telecom dial & connect chime (440Hz + 480Hz)
-      const osc1 = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc1.type = "sine";
-      osc2.type = "sine";
-      osc1.frequency.setValueAtTime(440, ctx.currentTime);
-      osc2.frequency.setValueAtTime(480, ctx.currentTime);
-
-      gain.gain.setValueAtTime(0.06, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
-
-      osc1.connect(gain);
-      osc2.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc1.start();
-      osc2.start();
-      osc1.stop(ctx.currentTime + 0.35);
-      osc2.stop(ctx.currentTime + 0.35);
-    } catch (e) {}
-  };
-
-  // Play subtle acoustic voice carrier presence per turn
-  const playTurnBeep = async (isAI: boolean) => {
-    try {
-      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioCtx) return;
-      const ctx = new AudioCtx();
-      if (ctx.state === "suspended") await ctx.resume();
-
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(isAI ? 660 : 420, ctx.currentTime);
-      gain.gain.setValueAtTime(0.03, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.08);
-    } catch (e) {}
-  };
-
-  // Conversational Speech Synthesizer with studio-grade Neural Human Audio MP3s
   const playSpeechTurn = (turnIndex: number, sessionId: number) => {
     if (typeof window === "undefined") return;
     if (!isPlayingAudioRef.current || sessionId !== audioSessionIdRef.current) return;
@@ -333,9 +237,7 @@ export default function LandingPage() {
     setAudioProgress(Math.round(((turnIndex + 1) / currentDialogue.turns.length) * 100));
 
     const turn = currentDialogue.turns[turnIndex];
-    playTurnBeep(turn.isAI);
 
-    // Stop any previous audio element
     if (currentAudioRef.current) {
       try {
         currentAudioRef.current.pause();
@@ -344,7 +246,7 @@ export default function LandingPage() {
       currentAudioRef.current = null;
     }
 
-    // 1. Primary: Amazon Polly Neural Conversational Voice Synthesizer
+    // Amazon Polly Neural Synthesis Gateway
     fetch("/api/voice/synthesize", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -372,7 +274,7 @@ export default function LandingPage() {
                 if (isPlayingAudioRef.current && sessionId === audioSessionIdRef.current) {
                   playSpeechTurn(turnIndex + 1, sessionId);
                 }
-              }, 450);
+              }, 400);
             } else {
               stopAllAudio();
               setActiveAudioTurn(0);
@@ -386,7 +288,6 @@ export default function LandingPage() {
 
           audio.play().catch(() => playSpeechSynthesisFallback(turnIndex, sessionId));
         } else {
-          // Fallback to client synthesis if Amazon Polly environment requires credential grant
           playSpeechSynthesisFallback(turnIndex, sessionId);
         }
       })
@@ -395,7 +296,6 @@ export default function LandingPage() {
       });
   };
 
-  // Fallback speech synthesizer in case local network blocks media asset loading
   const playSpeechSynthesisFallback = (turnIndex: number, sessionId: number) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     if (!isPlayingAudioRef.current || sessionId !== audioSessionIdRef.current) return;
@@ -413,7 +313,7 @@ export default function LandingPage() {
           if (isPlayingAudioRef.current && sessionId === audioSessionIdRef.current) {
             playSpeechTurn(turnIndex + 1, sessionId);
           }
-        }, 500);
+        }, 400);
       } else {
         stopAllAudio();
         setActiveAudioTurn(0);
@@ -435,7 +335,6 @@ export default function LandingPage() {
       const currentSessionId = audioSessionIdRef.current;
       isPlayingAudioRef.current = true;
       setIsPlayingAudio(true);
-      playTelephonyChime();
       playSpeechTurn(0, currentSessionId);
     }
   };
@@ -446,23 +345,15 @@ export default function LandingPage() {
     };
   }, []);
 
-  useEffect(() => {
-    fetch("/api/locations")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.ok) setLocations(d.locations || []);
-      });
-  }, []);
-
   const workflowPreviews = {
     overflow: {
       title: "Inbound Missed-Call Intercept (Hindi & English)",
       caller: "+91 98100 12345 • Aarav Sharma",
       turns: [
         { speaker: "Sarah", role: "Relay AI Agent", text: "Namaste! You've reached Apex Operations Hub. I noticed you called our main line — how can I help you today?" },
-        { speaker: "Aarav", role: "Inbound Client", text: "Haanji, I wanted to confirm my service consultation appointment for Friday morning." },
+        { speaker: "Aarav", role: "Caller", text: "Haanji, I wanted to confirm my service consultation appointment for Friday morning." },
         { speaker: "Sarah", role: "Relay AI Agent", text: "I see your account, Aarav. We have an opening with our lead specialist this Friday at 11:30 AM or 3:00 PM. Which works best?" },
-        { speaker: "Aarav", role: "Inbound Client", text: "Friday 11:30 AM is perfect, thank you." },
+        { speaker: "Aarav", role: "Caller", text: "Friday 11:30 AM is perfect, thank you." },
         { speaker: "Sarah", role: "Relay AI Agent", text: "Booked! I've confirmed your slot and sent an SMS confirmation to your mobile." }
       ],
       outcome: {
@@ -474,13 +365,13 @@ export default function LandingPage() {
       }
     },
     batch: {
-      title: "Automated Excel Lead & Client Recall (Nepali)",
+      title: "Automated Patient Recall Campaign (Nepali)",
       caller: "+977 98012 34567 • Bikash Thapa",
       turns: [
         { speaker: "Sarah", role: "Relay AI Agent", text: "नमस्ते Bikash जी! Westside Practice बाट बोलिरहेको छु। तपाईंको scheduled annual review को समय भएको छ।" },
-        { speaker: "Bikash", role: "Client Recall", text: "हजुर, मैले review गर्नु पर्ने थियो। कहिले slot खाली छ?" },
+        { speaker: "Bikash", role: "Patient Recall", text: "हजुर, मैले review गर्नु पर्ने थियो। कहिले slot खाली छ?" },
         { speaker: "Sarah", role: "Relay AI Agent", text: "हामी सँग Sunday २ PM मा slot खाली छ। तपाईंलाई मिल्छ?" },
-        { speaker: "Bikash", role: "Client Recall", text: "हुन्छ, Sunday २ PM मा confirm गरिदिनुस्।" },
+        { speaker: "Bikash", role: "Patient Recall", text: "हुन्छ, Sunday २ PM मा confirm गरिदिनुस्।" },
         { speaker: "Sarah", role: "Relay AI Agent", text: "Done! तपाईंको consultation Sunday २ PM मा confirm भयो।" }
       ],
       outcome: {
@@ -496,15 +387,15 @@ export default function LandingPage() {
       caller: "+1 (415) 555-0199 • Carlos Mendez",
       turns: [
         { speaker: "Sarah", role: "Relay AI Agent", text: "Apex Priority Support triage line. How can I assist you?" },
-        { speaker: "Carlos", role: "Corporate Client", text: "I have an urgent account escalation that needs immediate senior manager attention." },
+        { speaker: "Carlos", role: "Caller", text: "I have an urgent account escalation that needs immediate senior manager attention." },
         { speaker: "Sarah", role: "Relay AI Agent", text: "Carlos, because this is marked as high priority, I am immediately routing your details and dispatching an emergency SMS alert to our on-call operations director. Please hold on line while we connect you." }
       ],
       outcome: {
         appointment_booked: false,
         emergency_escalation: true,
         on_call_director_alerted: "Operations Director (SMS Sent)",
-        priority: "HIGH_URGENCY",
-        disposition: "escalated_urgent"
+        escalation_reason: "High Priority Account Triage",
+        disposition: "emergency_transfer"
       }
     }
   };
@@ -512,736 +403,548 @@ export default function LandingPage() {
   const currentPreview = workflowPreviews[activeWorkflowTab];
 
   return (
-    <div
-      onMouseMove={handleMouseMove}
-      className="min-h-screen bg-[#FAFAF8] dark:bg-[#081426] text-[#0B1930] dark:text-[#F8FAFC] flex flex-col selection:bg-[#1B9A9C]/20 transition-colors overflow-x-clip"
-    >
-      {/* 1. Top Navigation with Direct Platform Page Links (Sticky Header) */}
+    <div className="min-h-screen bg-[#FAFAF8] dark:bg-[#081220] text-[#0B1930] dark:text-[#F8FAFC] flex flex-col selection:bg-[#1B9A9C]/20 transition-colors">
       <PublicHeader onOpenTriggerModal={() => setIsTriggerModalOpen(true)} />
 
-      <main className="flex-1 flex flex-col animate-page-entrance">
+      <main className="flex-1">
+        {/* 1. Hero Section */}
+        <section className="px-6 sm:px-10 lg:px-16 pt-16 pb-20 max-w-6xl mx-auto flex flex-col items-center text-center">
+          {/* Category Eyebrow Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F3F5F4] dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048] text-[#5B6B82] dark:text-[#94A3B8] text-xs font-medium mb-6">
+            <span className="w-2 h-2 rounded-full bg-[#1B9A9C] dark:bg-[#2EC4C0]" />
+            <span>Autonomous Voice Operations for Modern Healthcare & Multi-Location Networks</span>
+          </div>
 
-      {/* 2. Hero Section Universal Modern Business Focus */}
-      <section className="px-6 sm:px-12 pt-20 pb-16 max-w-6xl mx-auto flex flex-col items-center text-center relative">
-        {/* Parallax Floating Telephony Signals */}
-        <div
-          style={{ transform: `translate(${mousePos.x * 0.8}px, ${mousePos.y * 0.8}px)` }}
-          className="hidden xl:flex items-center gap-2 absolute top-20 left-4 bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl px-3.5 py-2 text-[11px] font-mono text-[#0B1930] dark:text-[#F8FAFC] shadow-card transition-transform duration-200 ease-out"
-        >
-          <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
-          <span>PBX Intercept: &lt; 14.2s</span>
-        </div>
+          {/* Clean, Powerful Headline */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-extrabold tracking-tight text-[#0B1930] dark:text-[#F8FAFC] leading-[1.15] max-w-4xl">
+            Every customer call reaches the right outcome.
+          </h1>
 
-        <div
-          style={{ transform: `translate(${-mousePos.x * 0.7}px, ${-mousePos.y * 0.7}px)` }}
-          className="hidden xl:flex items-center gap-2 absolute top-24 right-4 bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl px-3.5 py-2 text-[11px] font-mono text-[#0B1930] dark:text-[#F8FAFC] shadow-card transition-transform duration-200 ease-out"
-        >
-          <span className="w-2 h-2 rounded-full bg-[#1B9A9C]" />
-          <span>Multilingual Voice &bull; HI &bull; NE &bull; ES</span>
-        </div>
+          <p className="text-base sm:text-lg text-[#5B6B82] dark:text-[#94A3B8] max-w-2xl leading-relaxed mt-5">
+            Relay intercepts missed calls, automates patient recall campaigns, and executes end-to-end phone tasks with sub-second latency and verified EHR/CRM synchronization.
+          </p>
 
-        {/* Universal Category Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#F3F5F4] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] text-xs font-medium mb-6">
-          <span className="w-2 h-2 rounded-full bg-[#1B9A9C]" />
-          <span>Autonomous Voice Operations for Modern Businesses & Multi-Location Networks</span>
-        </div>
-
-        {/* Clean Headline with Dynamic Pill Container */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-heading font-extrabold tracking-tight text-[#0B1930] dark:text-[#F8FAFC] leading-[1.3] max-w-4xl">
-          <span>Every call reaches the right </span>
-          <span className="inline-flex items-center align-middle my-1.5">
+          {/* Hero Actions */}
+          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-8">
             <button
-              onClick={handleManualClick}
-              title="Click to cycle next outcome"
-              className="px-6 sm:px-8 py-2 sm:py-3 rounded-full bg-white dark:bg-[#10223A] border-2 border-[#1B9A9C] dark:border-[#32C4BE] shadow-card hover:shadow-elevated inline-flex items-center justify-center transition-all duration-300 transform active:scale-95 cursor-pointer"
+              type="button"
+              onClick={() => setIsTriggerModalOpen(true)}
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0B1930] dark:bg-[#2EC4C0] dark:text-[#081220] hover:bg-[#15294A] text-white font-semibold text-sm shadow-sm transition-all active:scale-95 cursor-pointer"
             >
-              <span
-                className={`font-heading font-black tracking-tight text-[#1B9A9C] dark:text-[#32C4BE] text-4xl sm:text-5xl md:text-6xl leading-none transition-all duration-200 transform inline-block ${
-                  fadeState === "out" ? "opacity-0 -translate-y-2 scale-95" : "opacity-100 translate-y-0 scale-100"
-                }`}
-              >
-                {ROTATING_WORDS[wordIndex]}
-              </span>
+              <Icons.PhoneCall className="w-4 h-4 text-[#1B9A9C] dark:text-[#081220]" />
+              <span>Test Real Phone Call</span>
             </button>
-          </span>
-        </h1>
 
-        <p className="text-base sm:text-lg text-[#667085] dark:text-[#9BA8B8] max-w-2xl leading-relaxed mt-6">
-          Relay is an autonomous voice operations platform that receives, understands, and acts on conversations at scale. From missed customer calls and lead follow-ups to appointment booking and intelligent routing, important interactions never get lost.
-        </p>
-
-        {/* Hero Actions */}
-        <div className="flex flex-col items-center justify-center gap-3 pt-8">
-          <div className="flex flex-wrap items-center justify-center gap-3.5">
             {currentUser ? (
               <Link
                 href="/dashboard"
-                className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#0B1930] hover:bg-[#15294A] text-white font-bold text-sm shadow-card transition-all active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048] hover:border-[#1B9A9C] text-[#0B1930] dark:text-[#F8FAFC] font-semibold text-sm transition-all"
               >
                 <Icons.Activity className="w-4 h-4 text-[#1B9A9C]" />
-                <span>Go to Operations Console &rarr;</span>
+                <span>Go to Console &rarr;</span>
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-sm shadow-card hover:shadow-elevated transition-all duration-200 active:scale-95 cursor-pointer"
+                className="flex items-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048] hover:border-[#1B9A9C] text-[#0B1930] dark:text-[#F8FAFC] font-semibold text-sm transition-all"
               >
-                <span>Get Started &rarr;</span>
+                <span>Sign In to Console</span>
               </Link>
             )}
-            <button
-              type="button"
-              onClick={() => setIsTriggerModalOpen(true)}
-              className="flex items-center gap-2 px-7 py-3.5 rounded-xl bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] hover:border-[#1B9A9C] text-[#0B1930] dark:text-[#F8FAFC] font-bold text-sm shadow-subtle hover:shadow-card transition-all duration-200 active:scale-95 cursor-pointer"
+
+            <a
+              href="#architecture"
+              className="flex items-center gap-2 px-5 py-3 rounded-xl text-[#5B6B82] dark:text-[#94A3B8] hover:text-[#0B1930] dark:hover:text-[#F8FAFC] text-sm font-medium transition-colors"
             >
-              <Icons.PhoneCall className="w-4 h-4 text-[#1B9A9C]" />
-              <span>Test Live Call</span>
-            </button>
+              <span>Explore Architecture &darr;</span>
+            </a>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] font-mono text-[#667085] dark:text-[#9BA8B8] pt-1">
-            <span className="flex items-center gap-1">
-              <Icons.Check className="w-3 h-3 text-[#16A34A]" /> No credit card required
+          {/* Trust Guarantees */}
+          <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-[#5B6B82] dark:text-[#94A3B8] pt-8">
+            <span className="flex items-center gap-1.5 font-medium">
+              <Icons.Check className="w-3.5 h-3.5 text-[#16A34A]" /> Sub-14s Inbound Intercept
             </span>
-            <span>&bull;</span>
-            <span className="flex items-center gap-1">
-              <Icons.Check className="w-3 h-3 text-[#16A34A]" /> 14-Day Free Trial
+            <span className="flex items-center gap-1.5 font-medium">
+              <Icons.Check className="w-3.5 h-3.5 text-[#16A34A]" /> Native Hindi, Nepali, Spanish & English
             </span>
-            <span>&bull;</span>
-            <span className="flex items-center gap-1">
-              <Icons.Check className="w-3 h-3 text-[#16A34A]" /> Sub-14s Response
+            <span className="flex items-center gap-1.5 font-medium">
+              <Icons.Check className="w-3.5 h-3.5 text-[#16A34A]" /> Two-Way Google Calendar Sync
+            </span>
+            <span className="flex items-center gap-1.5 font-medium">
+              <Icons.Check className="w-3.5 h-3.5 text-[#16A34A]" /> Fail-Closed Emergency Safety
             </span>
           </div>
-        </div>
 
-        {/* Authentic Multi-Turn Conversational Telephony Studio with Depth & Parallax */}
-        <div className="mt-12 w-full max-w-3xl bg-white/95 dark:bg-[#10223A]/95 backdrop-blur-xl border border-[#E4E8E7] dark:border-[#20324A] rounded-3xl p-6 sm:p-8 shadow-[0_10px_40px_rgba(0,0,0,0.06)] dark:shadow-[0_10px_50px_rgba(0,0,0,0.4)] text-left space-y-6 transition-all duration-300 hover:shadow-[0_15px_50px_rgba(27,154,156,0.12)] hover:scale-[1.01]">
-          {/* Header row with status & language selector */}
-          <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-[#E4E8E7] dark:border-[#20324A]">
-            <div className="flex items-center gap-2.5">
-              <span className={`w-2.5 h-2.5 rounded-full ${isPlayingAudio ? "bg-[#16A34A] animate-ping" : "bg-[#1B9A9C]"}`} />
-              <div>
-                <span className="font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC] block">
-                  {currentDialogue.title}
-                </span>
-                <span className="text-[10px] font-mono text-[#667085] dark:text-[#9BA8B8]">
-                  {currentDialogue.caller}
-                </span>
-              </div>
-            </div>
-
-            {/* Language Switcher Tabs */}
-            <div className="flex items-center gap-1 bg-[#FAFAF8] dark:bg-[#081426] p-1 rounded-xl border border-[#E4E8E7] dark:border-[#20324A] text-xs font-semibold font-mono">
-              <button
-                onClick={() => {
-                  stopAllAudio();
-                  setAudioStreamLang("hi");
-                  setActiveAudioTurn(0);
-                }}
-                className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                  audioStreamLang === "hi" ? "bg-white dark:bg-[#10223A] text-[#0B1930] dark:text-white shadow-sm font-bold" : "text-[#667085]"
-                }`}
-              >
-                हिन्दी / EN
-              </button>
-              <button
-                onClick={() => {
-                  stopAllAudio();
-                  setAudioStreamLang("ne");
-                  setActiveAudioTurn(0);
-                }}
-                className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                  audioStreamLang === "ne" ? "bg-white dark:bg-[#10223A] text-[#0B1930] dark:text-white shadow-sm font-bold" : "text-[#667085]"
-                }`}
-              >
-                नेपाली
-              </button>
-              <button
-                onClick={() => {
-                  stopAllAudio();
-                  setAudioStreamLang("es");
-                  setActiveAudioTurn(0);
-                }}
-                className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
-                  audioStreamLang === "es" ? "bg-white dark:bg-[#10223A] text-[#0B1930] dark:text-white shadow-sm font-bold" : "text-[#667085]"
-                }`}
-              >
-                Español
-              </button>
-            </div>
-          </div>
-
-          {/* Interactive Player Controls */}
-          <div className="flex items-center justify-between gap-4 p-3.5 rounded-2xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] shadow-subtle">
-            <div className="flex items-center gap-3.5">
-              <button
-                onClick={handleToggleAudio}
-                className={`w-12 h-12 rounded-full flex items-center justify-center shadow-card hover:scale-105 active:scale-95 transition-all flex-shrink-0 cursor-pointer ${
-                  isPlayingAudio ? "bg-[#1B9A9C] text-white shadow-[#1B9A9C]/30" : "bg-[#0B1930] dark:bg-[#F8FAFC] text-white dark:text-[#0B1930]"
-                }`}
-              >
-                {isPlayingAudio ? <Icons.Pause className="w-5 h-5" /> : <Icons.Play className="w-5 h-5 ml-0.5" />}
-              </button>
-
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC] block">
-                    {isPlayingAudio ? "Streaming Live Telephony Audio..." : "Press Play to Listen to Multi-Turn Human Dialogue"}
+          {/* 2. Conversational Telephony Studio Player */}
+          <div className="mt-14 w-full max-w-3xl bg-white dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048] rounded-2xl p-6 sm:p-8 shadow-sm text-left space-y-6">
+            <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-[#E4E8E7] dark:border-[#1E3048]">
+              <div className="flex items-center gap-2.5">
+                <span className={`w-2 h-2 rounded-full ${isPlayingAudio ? "bg-[#16A34A] animate-ping" : "bg-[#1B9A9C] dark:bg-[#2EC4C0]"}`} />
+                <div>
+                  <span className="font-heading font-bold text-xs text-[#0B1930] dark:text-[#F8FAFC] block">
+                    {currentDialogue.title}
                   </span>
-                  {isPlayingAudio && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#16A34A]/10 text-[#16A34A] text-[9px] font-mono font-bold border border-[#16A34A]/20 animate-pulse">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
-                      LIVE CALL
-                    </span>
-                  )}
+                  <span className="text-[10px] font-mono text-[#5B6B82] dark:text-[#94A3B8]">
+                    {currentDialogue.caller}
+                  </span>
                 </div>
-                <span className="text-[11px] font-mono text-[#667085] dark:text-[#9BA8B8] block">
-                  {isPlayingAudio
-                    ? `Turn ${activeAudioTurn + 1} of ${currentDialogue.turns.length} • Speaking: ${currentDialogue.turns[activeAudioTurn].speaker} (${currentDialogue.turns[activeAudioTurn].role})`
-                    : "Simulates human conversation flow with authentic accents and turn-taking"}
-                </span>
+              </div>
+
+              {/* Language Switcher */}
+              <div className="flex items-center gap-1 bg-[#F3F5F4] dark:bg-[#081220] p-1 rounded-xl border border-[#E4E8E7] dark:border-[#1E3048] text-xs font-medium">
+                <button
+                  type="button"
+                  onClick={() => {
+                    stopAllAudio();
+                    setAudioStreamLang("hi");
+                    setActiveAudioTurn(0);
+                  }}
+                  className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                    audioStreamLang === "hi"
+                      ? "bg-white dark:bg-[#0E1B2E] text-[#0B1930] dark:text-[#F8FAFC] shadow-xs font-semibold"
+                      : "text-[#5B6B82] dark:text-[#94A3B8] hover:text-[#0B1930]"
+                  }`}
+                >
+                  हिन्दी / EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    stopAllAudio();
+                    setAudioStreamLang("ne");
+                    setActiveAudioTurn(0);
+                  }}
+                  className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                    audioStreamLang === "ne"
+                      ? "bg-white dark:bg-[#0E1B2E] text-[#0B1930] dark:text-[#F8FAFC] shadow-xs font-semibold"
+                      : "text-[#5B6B82] dark:text-[#94A3B8] hover:text-[#0B1930]"
+                  }`}
+                >
+                  नेपाली
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    stopAllAudio();
+                    setAudioStreamLang("es");
+                    setActiveAudioTurn(0);
+                  }}
+                  className={`px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+                    audioStreamLang === "es"
+                      ? "bg-white dark:bg-[#0E1B2E] text-[#0B1930] dark:text-[#F8FAFC] shadow-xs font-semibold"
+                      : "text-[#5B6B82] dark:text-[#94A3B8] hover:text-[#0B1930]"
+                  }`}
+                >
+                  Español
+                </button>
               </div>
             </div>
 
-            {/* Bouncing Audio Waveform Frequency Visualizer */}
-            <div className="hidden sm:flex items-center gap-1 h-8 px-3 py-1 rounded-xl bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A]">
-              {[35, 75, 100, 50, 85, 30, 95, 65, 90, 45, 80, 100, 55, 35].map((h, i) => (
-                <div
-                  key={i}
-                  className={`w-1 rounded-full transition-all duration-200 ${
-                    isPlayingAudio ? "bg-[#1B9A9C] animate-pulse" : "bg-[#E4E8E7] dark:bg-[#20324A]"
+            {/* Audio Controls */}
+            <div className="flex items-center justify-between gap-4 p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#081220] border border-[#E4E8E7] dark:border-[#1E3048]">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleToggleAudio}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-xs cursor-pointer ${
+                    isPlayingAudio
+                      ? "bg-[#1B9A9C] dark:bg-[#2EC4C0] text-white dark:text-[#081220]"
+                      : "bg-[#0B1930] dark:bg-white text-white dark:text-[#081220]"
                   }`}
-                  style={{
-                    height: isPlayingAudio ? `${Math.max(25, (h * ((i + activeAudioTurn * 4) % 10 + 3)) / 12)}%` : "20%"
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Studio-Grade Conversational Transcript Stream */}
-          <div className="space-y-3 max-h-80 overflow-y-auto overflow-x-hidden p-1">
-            {currentDialogue.turns.map((turn, i) => {
-              const isCurrent = activeAudioTurn === i && isPlayingAudio;
-              return (
-                <div
-                  key={i}
-                  className={`flex flex-col w-full ${turn.isAI ? "items-start" : "items-end"}`}
+                  aria-label={isPlayingAudio ? "Pause Dialogue" : "Play Dialogue"}
                 >
+                  {isPlayingAudio ? <Icons.Pause className="w-4 h-4" /> : <Icons.Play className="w-4 h-4 ml-0.5" />}
+                </button>
+
+                <div>
+                  <span className="text-xs font-semibold text-[#0B1930] dark:text-[#F8FAFC] block">
+                    {isPlayingAudio ? "Synthesizing Speech via Amazon Polly..." : "Audition Conversational Speech"}
+                  </span>
+                  <span className="text-[10px] text-[#5B6B82] dark:text-[#94A3B8] font-mono">
+                    Turn {activeAudioTurn + 1} of {currentDialogue.turns.length} • Powered by AWS Polly Neural
+                  </span>
+                </div>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-1.5 h-5">
+                {[30, 60, 95, 45, 80, 50, 75, 40, 20].map((h, i) => (
+                  <span
+                    key={i}
+                    className={`w-0.5 rounded-full transition-all duration-200 ${
+                      isPlayingAudio ? "bg-[#1B9A9C] dark:bg-[#2EC4C0] animate-pulse" : "bg-[#CBD5E1] dark:bg-[#1E3048]"
+                    }`}
+                    style={{ height: isPlayingAudio ? `${h}%` : "25%" }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Transcript Flow */}
+            <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              {currentDialogue.turns.map((turn, idx) => {
+                const isActive = idx === activeAudioTurn && isPlayingAudio;
+                return (
                   <div
-                    className={`w-full max-w-[90%] sm:max-w-[84%] p-4 rounded-2xl text-xs space-y-2 transition-all duration-300 ${
-                      turn.isAI
-                        ? "rounded-tl-xs bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A]"
-                        : "rounded-tr-xs bg-[#F3F5F4] dark:bg-[#15294A] border border-[#E4E8E7] dark:border-[#20324A]"
-                    } ${
-                      isCurrent
-                        ? "bg-white dark:bg-[#10223A] border-[#1B9A9C] shadow-md shadow-[#1B9A9C]/10 scale-[1.01]"
-                        : ""
+                    key={idx}
+                    className={`p-3 rounded-xl text-xs transition-colors border ${
+                      isActive
+                        ? "bg-[#1B9A9C]/10 dark:bg-[#2EC4C0]/10 border-[#1B9A9C] dark:border-[#2EC4C0]"
+                        : "bg-[#FAFAF8] dark:bg-[#081220] border-[#E4E8E7] dark:border-[#1E3048]"
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                            turn.isAI
-                              ? "bg-[#1B9A9C] text-white"
-                              : "bg-[#0B1930] dark:bg-[#20324A] text-white"
-                          }`}
-                        >
-                          {turn.isAI ? "R" : turn.speaker.charAt(0)}
-                        </div>
-                        <span className="font-heading font-bold text-[#0B1930] dark:text-[#F8FAFC]">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold text-[#0B1930] dark:text-[#F8FAFC]">
                           {turn.speaker}
                         </span>
-                        <span className={`text-[9px] font-mono px-2 py-0.5 rounded-full font-semibold ${
-                          turn.isAI
-                            ? "bg-[#1B9A9C]/10 text-[#1B9A9C] border border-[#1B9A9C]/20"
-                            : "bg-black/5 dark:bg-white/10 text-[#667085] dark:text-[#9BA8B8]"
-                        }`}>
-                          {turn.role}
+                        <span className="text-[10px] font-mono text-[#5B6B82] dark:text-[#94A3B8]">
+                          ({turn.role})
                         </span>
                       </div>
-
-                      {isCurrent && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#16A34A] animate-pulse">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />
-                          SPEAKING NOW
+                      {isActive && (
+                        <span className="text-[10px] font-mono text-[#1B9A9C] dark:text-[#2EC4C0] font-semibold animate-pulse">
+                          Speaking Now
                         </span>
                       )}
                     </div>
-
-                    <p className="leading-relaxed text-[#0B1930] dark:text-[#F8FAFC] pl-7">
+                    <p className="text-[#0B1930] dark:text-[#F8FAFC] leading-relaxed">
                       &ldquo;{turn.displayText}&rdquo;
                     </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* 4 Metric Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-3 pt-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F3F5F4] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] text-xs font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C]" />
-            <span>Speed: &lt; 14.2s Dial Latency</span>
-          </div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F3F5F4] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] text-xs font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C]" />
-            <span>Conversion: 42.8% Booking Capture</span>
-          </div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F3F5F4] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] text-xs font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C]" />
-            <span>Multilingual: 7 Native Languages</span>
-          </div>
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F3F5F4] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] text-xs font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C]" />
-            <span>Reliability: 99.99% Telephony Uptime</span>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. The Relay Concept & 7-Stage Pipeline (Interactive Neural Roadmap) */}
-      <section className="px-4 sm:px-8 lg:px-12 py-16 bg-white dark:bg-[#10223A] border-y border-[#E4E8E7] dark:border-[#20324A] transition-colors overflow-hidden">
-        <div className="max-w-6xl mx-auto space-y-12">
-          <div className="text-center space-y-2 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-              <span className="w-2 h-2 rounded-full bg-[#1B9A9C] animate-pulse" />
-              <span className="uppercase tracking-widest font-mono text-[10px] text-[#1B9A9C]">The Relay Concept</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
-              A relay receives a signal and passes it forward.
-            </h2>
-            <p className="text-xs sm:text-sm text-[#667085] dark:text-[#9BA8B8]">
-              That concept sits at the center of the platform. Every incoming ring or scheduled batch contact moves through an autonomous chain from detection to verified outcome.
-            </p>
-          </div>
-
-          {/* Interactive 7-Stage Neural Roadmap & Signal Flow */}
-          <RelayLifecycleRoadmap />
-        </div>
-      </section>
-
-      {/* 4. Interactive ROI / Revenue Recovery Calculator */}
-      <section className="px-6 sm:px-12 py-16 max-w-5xl mx-auto w-full">
-        <div className="text-center space-y-2 mb-10">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-            <span className="w-2 h-2 rounded-full bg-[#1B9A9C]" />
-            <span className="uppercase tracking-widest font-mono text-[10px]">Business Economics</span>
-          </div>
-          <h2 className="text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
-            Calculate Your Recovered Business Revenue
-          </h2>
-          <p className="text-xs sm:text-sm text-[#667085] dark:text-[#9BA8B8]">
-            See how much missed-call and recall revenue Relay reclaims for your operations each month.
-          </p>
-        </div>
-
-        <div className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl p-6 sm:p-10 shadow-elevated grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          {/* Controls */}
-          <div className="space-y-6">
-            <div>
-              <div className="flex items-center justify-between text-xs font-semibold mb-2">
-                <label htmlFor="landingMissedCalls" className="text-[#0B1930] dark:text-[#F8FAFC]">Missed Calls / Inquiries per Day:</label>
-                <div className="flex items-center gap-1.5">
-                  <input
-                    id="landingMissedCalls"
-                    type="number"
-                    min="1"
-                    max="500"
-                    value={missedCallsPerDay}
-                    onChange={(e) => setMissedCallsPerDay(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-20 px-2 py-1 rounded-lg bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] focus:border-[#1B9A9C] text-right font-mono font-bold text-xs text-[#1B9A9C] outline-none"
-                  />
-                  <span className="font-mono text-xs text-[#667085] dark:text-[#9BA8B8]">calls</span>
-                </div>
-              </div>
-              <input
-                type="range"
-                min="1"
-                max="100"
-                step="1"
-                value={missedCallsPerDay}
-                onChange={(e) => setMissedCallsPerDay(Number(e.target.value))}
-                className="w-full accent-[#1B9A9C] cursor-pointer"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between text-xs font-semibold mb-2">
-                <label htmlFor="landingTicketValue" className="text-[#0B1930] dark:text-[#F8FAFC]">Average Deal / Service Value:</label>
-                <div className="flex items-center gap-1">
-                  <span className="font-mono text-xs text-[#667085] dark:text-[#9BA8B8]">{currencyConfig.symbol}</span>
-                  <input
-                    id="landingTicketValue"
-                    type="number"
-                    min="1"
-                    max="5000000"
-                    value={Math.round(avgTicketValue * currencyConfig.rate)}
-                    onChange={(e) => {
-                      const val = parseFloat(e.target.value) || 1;
-                      setAvgTicketValue(val / currencyConfig.rate);
-                    }}
-                    className="w-28 px-2 py-1 rounded-lg bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] focus:border-[#1B9A9C] text-right font-mono font-bold text-xs text-[#1B9A9C] outline-none"
-                  />
-                </div>
-              </div>
-              <input
-                type="range"
-                min="10"
-                max="1000"
-                step="10"
-                value={avgTicketValue}
-                onChange={(e) => setAvgTicketValue(Number(e.target.value))}
-                className="w-full accent-[#1B9A9C] cursor-pointer"
-              />
-            </div>
-
-            <div className="pt-2 text-xs text-[#667085] dark:text-[#9BA8B8] space-y-1">
-              <div className="flex items-center justify-between">
-                <span>Relay Benchmark Conversion Rate:</span>
-                <span className="font-mono font-bold text-[#0B1930] dark:text-[#F8FAFC]">42.8%</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Speed to Intercept:</span>
-                <span className="font-mono font-bold text-[#0B1930] dark:text-[#F8FAFC]">&lt; 14.2 seconds</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Result Card */}
-          <div className="p-6 sm:p-8 rounded-2xl bg-[#0B1930] text-[#F8FAFC] space-y-5 text-center flex flex-col justify-between">
-            <div className="space-y-1">
-              <span className="text-xs font-mono uppercase tracking-wider text-[#9BA8B8] block">
-                Estimated Monthly Recovered Revenue ({currencyConfig.code})
-              </span>
-              <div className="text-4xl sm:text-5xl font-heading font-black text-white tracking-tight">
-                {formatPrice(monthlyRevenueRecovered)}
-              </div>
-              <span className="text-xs text-[#32C4BE] font-mono block">
-                +{formatPrice(annualRevenueRecovered)} / year in captured bookings & leads
-              </span>
-            </div>
-
-            <Link
-              href="/dashboard"
-              className="w-full py-3 rounded-xl bg-[#1B9A9C] hover:bg-[#27B5B2] text-white font-bold text-xs shadow-sm transition-all text-center block active:scale-95"
-            >
-              Start Recovering Calls &rarr;
-            </Link>
-          </div>
-        </div>
-</section>
-      
-
-      {/* 5. Relay Navy Dark Operations Section ("Interactive Voice Operations Workbench") */}
-      <section className="px-6 sm:px-12 py-16 bg-[#0B1930] text-[#F8FAFC]">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="text-center space-y-3">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#F8FAFC]">
-              <span className="w-2 h-2 rounded-full bg-[#1B9A9C]" />
-              <span className="uppercase tracking-widest font-mono text-[10px] text-[#9BA8B8]">Interactive Simulation Workbench</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-white">
-              Your voice operations, simplified<span className="text-[#1B9A9C]">.</span>
-            </h2>
-            <p className="text-xs sm:text-sm text-[#9BA8B8] max-w-xl mx-auto">
-              Explore how Relay executes complex multi-turn conversations, extracts structured facts, and enforces intelligent routing.
-            </p>
-
-            {/* Workflow Tabs */}
-            <div className="inline-flex items-center gap-1.5 bg-[#10223A] p-1.5 rounded-xl border border-[#20324A] text-xs">
-              <button
-                onClick={() => setActiveWorkflowTab("overflow")}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                  activeWorkflowTab === "overflow" ? "bg-[#081426] text-white border border-[#20324A]" : "text-[#9BA8B8] hover:text-white"
-                }`}
-              >
-                Inbound Overflow
-              </button>
-              <button
-                onClick={() => setActiveWorkflowTab("batch")}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                  activeWorkflowTab === "batch" ? "bg-[#081426] text-white border border-[#20324A]" : "text-[#9BA8B8] hover:text-white"
-                }`}
-              >
-                Excel Batch Dialing
-              </button>
-              <button
-                onClick={() => setActiveWorkflowTab("safety")}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                  activeWorkflowTab === "safety" ? "bg-[#081426] text-white border border-[#20324A]" : "text-[#9BA8B8] hover:text-white"
-                }`}
-              >
-                Priority Escalation
-              </button>
-            </div>
-          </div>
-
-          {/* Secure Interactive Preview Card */}
-          <div className="bg-[#10223A] border border-[#20324A] rounded-2xl p-6 sm:p-8 max-w-3xl mx-auto space-y-6 shadow-elevated">
-            <div className="flex items-center justify-between pb-4 border-b border-[#20324A] flex-wrap gap-2">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#1B9A9C]" />
-                <span className="font-heading font-bold text-sm text-white">
-                  {currentPreview.title}
-                </span>
-              </div>
-              <span className="text-[10px] font-mono text-[#9BA8B8] bg-[#081426] px-2 py-0.5 rounded border border-[#20324A]">
-                {currentPreview.caller}
-              </span>
-            </div>
-
-            {/* Conversation Turns Simulator */}
-            <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
-              {currentPreview.turns.map((turn, i) => {
-                const isAgent = turn.speaker.startsWith("Sarah");
-                return (
-                  <div
-                    key={i}
-                    className={`p-3.5 rounded-2xl text-xs space-y-2 ${
-                      isAgent
-                        ? "bg-[#081426] border border-[#20324A] text-[#F8FAFC] mr-4 sm:mr-8 rounded-tl-xs"
-                        : "bg-[#15294A] border border-[#20324A] text-white ml-4 sm:ml-8 rounded-tr-xs"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                            isAgent
-                              ? "bg-[#1B9A9C] text-white"
-                              : "bg-[#20324A] text-white"
-                          }`}
-                        >
-                          {isAgent ? "R" : turn.speaker.charAt(0)}
-                        </div>
-                        <span className="font-heading font-bold text-white">
-                          {turn.speaker}
-                        </span>
-                        <span className={`text-[9px] font-mono px-2 py-0.5 rounded-full font-semibold ${
-                          isAgent
-                            ? "bg-[#1B9A9C]/20 text-[#32C4BE]"
-                            : "bg-white/10 text-[#9BA8B8]"
-                        }`}>
-                          {turn.role}
-                        </span>
-                      </div>
-                      <span className="text-[#627284] font-mono text-[10px]">Turn {i + 1}</span>
-                    </div>
-                    <p className="leading-relaxed pl-7 text-[#F8FAFC]">&ldquo;{turn.text}&rdquo;</p>
                   </div>
                 );
               })}
             </div>
+          </div>
+        </section>
 
-            {/* Extracted Schema Outcome */}
-            <div className="pt-4 border-t border-[#20324A] space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-mono text-[10px] text-[#9BA8B8] uppercase font-bold tracking-wider">
-                  Extracted JSON Result committed to CRM / Database
-                </span>
-                <span className="text-[10px] text-[#32C4BE] font-mono font-semibold flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C]" />
-                  Schema Validated
-                </span>
-              </div>
-              <pre className="p-3.5 rounded-xl bg-[#081426] border border-[#20324A] text-[11px] font-mono text-[#32C4BE] overflow-x-auto">
-                {JSON.stringify(currentPreview.outcome, null, 2)}
-              </pre>
+        {/* 3. Architecture & 7-Stage Pipeline */}
+        <section id="architecture" className="px-6 sm:px-10 lg:px-16 py-16 bg-white dark:bg-[#0A1526] border-y border-[#E4E8E7] dark:border-[#1E3048] transition-colors">
+          <div className="max-w-6xl mx-auto space-y-10">
+            <div className="text-center space-y-2 max-w-2xl mx-auto">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#1B9A9C] dark:text-[#2EC4C0]">
+                Pipeline Architecture
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
+                How Relay Operates End-to-End
+              </h2>
+              <p className="text-xs sm:text-sm text-[#5B6B82] dark:text-[#94A3B8]">
+                Every incoming ring or scheduled batch contact moves through an autonomous chain from detection to verified calendar outcome.
+              </p>
             </div>
 
-            {/* Live Audio Test Launcher Card */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-2xl bg-[#081426] border border-[#1B9A9C]/40 shadow-elevated">
-              <div className="space-y-1 text-center sm:text-left">
-                <div className="flex items-center gap-2 justify-center sm:justify-start flex-wrap">
-                  <span className="w-2 h-2 rounded-full bg-[#1B9A9C] animate-pulse" />
-                  <span className="text-xs font-bold text-white">Experience Real Telephony Audio</span>
-                  <span className="text-[10px] font-mono bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30 px-2 py-0.5 rounded-full font-bold">
-                    Live E.164 Telephony Sandbox
-                  </span>
+            <RelayLifecycleRoadmap />
+          </div>
+        </section>
+
+        {/* 4. Interactive ROI / Revenue Recovery Calculator */}
+        <section className="px-6 sm:px-10 lg:px-16 py-16 max-w-5xl mx-auto w-full">
+          <div className="text-center space-y-2 mb-10">
+            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#1B9A9C] dark:text-[#2EC4C0]">
+              Business Economics
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
+              Estimate Recovered Business Revenue
+            </h2>
+            <p className="text-xs sm:text-sm text-[#5B6B82] dark:text-[#94A3B8]">
+              See how much missed-call and recall revenue Relay reclaims for your operations each month.
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048] rounded-2xl p-6 sm:p-10 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            {/* Controls */}
+            <div className="space-y-6">
+              <div>
+                <div className="flex items-center justify-between text-xs font-semibold mb-2">
+                  <label htmlFor="landingMissedCalls" className="text-[#0B1930] dark:text-[#F8FAFC]">
+                    Missed Calls / Inquiries per Day:
+                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <input
+                      id="landingMissedCalls"
+                      type="number"
+                      min="1"
+                      max="500"
+                      value={missedCallsPerDay}
+                      onChange={(e) => setMissedCallsPerDay(Math.max(1, parseInt(e.target.value) || 1))}
+                      className="w-20 px-2 py-1 rounded-lg bg-[#FAFAF8] dark:bg-[#081220] border border-[#E4E8E7] dark:border-[#1E3048] focus:border-[#1B9A9C] text-right font-mono font-bold text-xs text-[#1B9A9C] dark:text-[#2EC4C0] outline-none"
+                    />
+                    <span className="font-mono text-xs text-[#5B6B82] dark:text-[#94A3B8]">calls</span>
+                  </div>
                 </div>
-                <span className="text-[11px] text-[#9BA8B8] block">
-                  Dial your real phone number and test Hindi, Nepali, Spanish, or English voice agents live.
+                <input
+                  type="range"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value={missedCallsPerDay}
+                  onChange={(e) => setMissedCallsPerDay(Number(e.target.value))}
+                  className="w-full accent-[#1B9A9C] cursor-pointer"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between text-xs font-semibold mb-2">
+                  <label htmlFor="landingTicketValue" className="text-[#0B1930] dark:text-[#F8FAFC]">
+                    Average Deal / Service Value:
+                  </label>
+                  <div className="flex items-center gap-1">
+                    <span className="font-mono text-xs text-[#5B6B82] dark:text-[#94A3B8]">{currencyConfig.symbol}</span>
+                    <input
+                      id="landingTicketValue"
+                      type="number"
+                      min="1"
+                      max="5000000"
+                      value={Math.round(avgTicketValue * currencyConfig.rate)}
+                      onChange={(e) => {
+                        const val = parseFloat(e.target.value) || 1;
+                        setAvgTicketValue(val / currencyConfig.rate);
+                      }}
+                      className="w-28 px-2 py-1 rounded-lg bg-[#FAFAF8] dark:bg-[#081220] border border-[#E4E8E7] dark:border-[#1E3048] focus:border-[#1B9A9C] text-right font-mono font-bold text-xs text-[#1B9A9C] dark:text-[#2EC4C0] outline-none"
+                    />
+                  </div>
+                </div>
+                <input
+                  type="range"
+                  min="10"
+                  max="1000"
+                  step="10"
+                  value={avgTicketValue}
+                  onChange={(e) => setAvgTicketValue(Number(e.target.value))}
+                  className="w-full accent-[#1B9A9C] cursor-pointer"
+                />
+              </div>
+
+              <div className="pt-2 text-xs text-[#5B6B82] dark:text-[#94A3B8] space-y-1">
+                <div className="flex items-center justify-between">
+                  <span>Benchmark Capture Rate:</span>
+                  <span className="font-mono font-bold text-[#0B1930] dark:text-[#F8FAFC]">42.8%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Carrier Answer Latency:</span>
+                  <span className="font-mono font-bold text-[#0B1930] dark:text-[#F8FAFC]">&lt; 14 seconds</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Result Card */}
+            <div className="p-6 sm:p-8 rounded-xl bg-[#0B1930] text-[#F8FAFC] space-y-5 text-center flex flex-col justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-mono uppercase tracking-wider text-[#94A3B8] block">
+                  Estimated Monthly Recovered Revenue ({currencyConfig.code})
+                </span>
+                <div className="text-4xl sm:text-5xl font-heading font-extrabold text-white tracking-tight">
+                  {formatPrice(monthlyRevenueRecovered)}
+                </div>
+                <span className="text-xs text-[#2EC4C0] font-mono block">
+                  +{formatPrice(annualRevenueRecovered)} / year in recaptured appointments & bookings
                 </span>
               </div>
+
               <button
                 type="button"
                 onClick={() => setIsTriggerModalOpen(true)}
-                className="px-5 py-2.5 rounded-xl bg-[#1B9A9C] hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card transition-all flex items-center gap-2 flex-shrink-0 active:scale-95 cursor-pointer"
+                className="w-full py-3 rounded-lg bg-[#1B9A9C] hover:bg-[#27B5B2] text-white font-semibold text-xs transition-colors cursor-pointer"
               >
-                <Icons.PhoneCall className="w-4 h-4" />
-                <span>Test Real Audio Call &rarr;</span>
+                Launch Live Test Call &rarr;
               </button>
             </div>
+          </div>
+        </section>
 
-            {/* Authenticated CTA Banner */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[#081426] border border-[#20324A]">
-              <div className="space-y-0.5 text-center sm:text-left">
-                <span className="text-xs font-bold text-white block">Ready to deploy voice operations for your team?</span>
-                <span className="text-[11px] text-[#9BA8B8] block">Sign in to access your organization&apos;s authenticated PBX, CRM sync & fleet fleet.</span>
+        {/* 5. Interactive Simulation Workbench */}
+        <section className="px-6 sm:px-10 lg:px-16 py-16 bg-[#0B1930] text-[#F8FAFC]">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <div className="text-center space-y-2">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#2EC4C0]">
+                Live Workflow Simulation
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight text-white">
+                Structured Telephony In Action
+              </h2>
+              <p className="text-xs sm:text-sm text-[#94A3B8] max-w-xl mx-auto">
+                Select an operational workflow below to see how spoken conversation translates into validated calendar commitments.
+              </p>
+
+              {/* Tabs */}
+              <div className="inline-flex items-center gap-1 bg-[#081220] p-1 rounded-xl border border-[#1E3048] text-xs pt-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkflowTab("overflow")}
+                  className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+                    activeWorkflowTab === "overflow" ? "bg-[#10223A] text-white font-semibold" : "text-[#94A3B8] hover:text-white"
+                  }`}
+                >
+                  Inbound Overflow
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkflowTab("batch")}
+                  className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+                    activeWorkflowTab === "batch" ? "bg-[#10223A] text-white font-semibold" : "text-[#94A3B8] hover:text-white"
+                  }`}
+                >
+                  Patient Recall
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveWorkflowTab("safety")}
+                  className={`px-3.5 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+                    activeWorkflowTab === "safety" ? "bg-[#10223A] text-white font-semibold" : "text-[#94A3B8] hover:text-white"
+                  }`}
+                >
+                  Emergency Triage
+                </button>
               </div>
-              <Link
-                href="/login"
-                className="px-5 py-2 rounded-lg bg-white hover:bg-[#F3F5F4] text-[#0B1930] font-bold text-xs shadow-sm transition-all flex-shrink-0"
+            </div>
+
+            {/* Preview Card */}
+            <div className="bg-[#0E1B2E] border border-[#1E3048] rounded-xl p-6 sm:p-8 space-y-6">
+              <div className="flex items-center justify-between pb-3 border-b border-[#1E3048] flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#2EC4C0]" />
+                  <span className="font-heading font-bold text-sm text-white">
+                    {currentPreview.title}
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono text-[#94A3B8] bg-[#081220] px-2 py-0.5 rounded border border-[#1E3048]">
+                  {currentPreview.caller}
+                </span>
+              </div>
+
+              {/* Dialogue Turns */}
+              <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+                {currentPreview.turns.map((turn, i) => {
+                  const isAgent = turn.speaker.startsWith("Sarah");
+                  return (
+                    <div
+                      key={i}
+                      className={`p-3 rounded-xl text-xs space-y-1 ${
+                        isAgent
+                          ? "bg-[#081220] border border-[#1E3048] text-[#F8FAFC]"
+                          : "bg-[#13243C] border border-[#1E3048] text-white"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-xs text-white">
+                          {turn.speaker} <span className="text-[10px] text-[#94A3B8] font-normal font-mono">({turn.role})</span>
+                        </span>
+                        <span className="text-[#64748B] font-mono text-[10px]">Turn {i + 1}</span>
+                      </div>
+                      <p className="leading-relaxed text-[#F8FAFC]">&ldquo;{turn.text}&rdquo;</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Schema Outcome */}
+              <div className="pt-3 border-t border-[#1E3048] space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-mono text-[10px] text-[#94A3B8] uppercase font-bold tracking-wider">
+                    Structured Outcome Synchronized to CRM
+                  </span>
+                  <span className="text-[10px] text-[#2EC4C0] font-mono font-medium flex items-center gap-1">
+                    <Icons.Check className="w-3 h-3" />
+                    Verified
+                  </span>
+                </div>
+                <pre className="p-3 rounded-lg bg-[#081220] border border-[#1E3048] text-[11px] font-mono text-[#2EC4C0] overflow-x-auto">
+                  {JSON.stringify(currentPreview.outcome, null, 2)}
+                </pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* 6. Infrastructure Comparison */}
+        <section className="px-6 sm:px-10 lg:px-16 py-16 max-w-6xl mx-auto space-y-8">
+          <div className="text-center space-y-2 max-w-2xl mx-auto">
+            <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[#1B9A9C] dark:text-[#2EC4C0]">
+              Operational Comparison
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
+              Why Businesses Switch to Relay
+            </h2>
+            <p className="text-xs sm:text-sm text-[#5B6B82] dark:text-[#94A3B8]">
+              Comparing traditional manual reception, legacy IVR phone trees, and Relay autonomous voice operations.
+            </p>
+          </div>
+
+          <div className="bg-white dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048] rounded-xl overflow-hidden shadow-xs">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-[#E4E8E7] dark:border-[#1E3048] bg-[#F3F5F4] dark:bg-[#081220] text-[10px] uppercase font-bold text-[#5B6B82] dark:text-[#94A3B8] font-mono">
+                  <th className="py-3.5 px-5">Capability</th>
+                  <th className="py-3.5 px-5">Manual Reception</th>
+                  <th className="py-3.5 px-5">Legacy IVR Menu</th>
+                  <th className="py-3.5 px-5 text-[#1B9A9C] dark:text-[#2EC4C0] font-bold bg-[#1B9A9C]/5">Relay Voice Operations</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#E4E8E7] dark:divide-[#1E3048]">
+                <tr>
+                  <td className="py-3.5 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Speed to Answer</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">3–5 minutes (or voicemail)</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">Instant (robotic menu)</td>
+                  <td className="py-3.5 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">&lt; 14s (Zero Hold Time)</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Multilingual Fluency</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">Depends on available staff</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">Pre-recorded audio prompts only</td>
+                  <td className="py-3.5 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Fluent Hindi, Nepali, Spanish & English</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Outbound Batch Recalls</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">Manual 1-by-1 dialing</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">Blast robocalls (low engagement)</td>
+                  <td className="py-3.5 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Autonomous scheduled conversation campaigns</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">CRM & Calendar Sync</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">Manual data entry after call</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">No real-time calendar synchronization</td>
+                  <td className="py-3.5 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Direct two-way Google Calendar & database sync</td>
+                </tr>
+                <tr>
+                  <td className="py-3.5 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Emergency Protocol</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">Manual call transfer</td>
+                  <td className="py-3.5 px-5 text-[#5B6B82] dark:text-[#94A3B8]">None (caller hangs up)</td>
+                  <td className="py-3.5 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Fail-closed triage & instant on-call SMS alert</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* 7. Final Call to Action */}
+        <section className="px-6 sm:px-10 lg:px-16 py-16 max-w-4xl mx-auto text-center space-y-6">
+          <div className="bg-[#0B1930] dark:bg-[#0E1B2E] border border-[#20324A] rounded-2xl p-8 sm:p-12 space-y-5 text-white">
+            <h3 className="text-2xl sm:text-3xl font-heading font-extrabold tracking-tight">
+              Ready to automate your telephone operations?
+            </h3>
+            <p className="text-xs sm:text-sm text-[#94A3B8] max-w-lg mx-auto">
+              Test with a live telephone call to your number in under two minutes, or explore the developer API documentation.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setIsTriggerModalOpen(true)}
+                className="px-6 py-3 rounded-xl bg-[#1B9A9C] dark:bg-[#2EC4C0] dark:text-[#081220] hover:bg-[#27B5B2] text-white font-semibold text-xs shadow-sm transition-colors cursor-pointer"
               >
-                Sign In to Console &rarr;
+                Place Live Test Call &rarr;
+              </button>
+              <Link
+                href="/docs"
+                className="px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs transition-colors"
+              >
+                Read Developer Docs
               </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* 6. Comparison Section: Traditional Reception vs. Legacy IVR vs. RELAY (Mobile-First) */}
-      <section className="px-4 sm:px-8 lg:px-12 py-12 sm:py-16 max-w-6xl mx-auto space-y-6 sm:space-y-8">
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-            <span className="w-2 h-2 rounded-full bg-[#1B9A9C] animate-pulse" />
-            <span className="uppercase tracking-widest font-mono text-[10px] text-[#1B9A9C]">Infrastructure Comparison</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-heading font-extrabold text-[#0B1930] dark:text-[#F8FAFC] tracking-tight">
-            Why Modern Businesses Choose Relay
-          </h2>
-          <p className="text-xs sm:text-sm text-[#667085] dark:text-[#9BA8B8]">
-            See how autonomous voice operations replace hold times and manual dialing with sub-second intelligence.
-          </p>
-        </div>
-
-        {/* Mobile-First Comparative Cards Stack (Phone View < md) */}
-        <div className="block md:hidden space-y-4">
-          {[
-            {
-              title: "Speed to Answer",
-              icon: Icons.Zap,
-              relay: "< 14.2s (Zero Hold Time)",
-              human: "3-5 min (or voicemail)",
-              ivr: "Instant robotic menu"
-            },
-            {
-              title: "Multilingual Fluency",
-              icon: Icons.Globe,
-              relay: "Fluent Hindi, Nepali, Spanish & English",
-              human: "Depends on staff language",
-              ivr: "Recorded prompts only"
-            },
-            {
-              title: "Excel Batch Recall",
-              icon: Icons.Upload,
-              relay: "Autonomous multi-contact booking",
-              human: "Manual 1-by-1 dialing",
-              ivr: "Robocall blast (low pickup)"
-            },
-            {
-              title: "CRM & Database Sync",
-              icon: Icons.Layers,
-              relay: "Direct JSON sync to CRM & EHR",
-              human: "Manual typing entry",
-              ivr: "No live CRM sync"
-            },
-            {
-              title: "Priority Escalation",
-              icon: Icons.Shield,
-              relay: "Intelligent On-Call Staff SMS Routing",
-              human: "Variable manual routing",
-              ivr: "None"
-            }
-          ].map((item, idx) => {
-            const ItemIcon = item.icon || Icons.Zap;
-            return (
-              <div
-                key={idx}
-                className="bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl p-4 sm:p-5 shadow-subtle space-y-3"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-[#1B9A9C]/10 text-[#1B9A9C] flex items-center justify-center">
-                      <ItemIcon className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="font-heading font-bold text-xs sm:text-sm text-[#0B1930] dark:text-[#F8FAFC]">
-                      {item.title}
-                    </span>
-                  </div>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#1B9A9C]/15 text-[#1B9A9C] border border-[#1B9A9C]/20">
-                    RELAY ⚡
-                  </span>
-                </div>
-
-                {/* Relay Highlight Pill */}
-                <div className="p-3 rounded-xl bg-[#E8F5F2] dark:bg-[#081426] border border-[#1B9A9C]/30 space-y-1">
-                  <div className="text-[10px] font-mono uppercase font-bold text-[#1B9A9C]">
-                    Relay Autonomous Voice
-                  </div>
-                  <div className="font-heading font-extrabold text-xs sm:text-sm text-[#0B1930] dark:text-[#F8FAFC]">
-                    {item.relay}
-                  </div>
-                </div>
-
-                {/* Legacy Comparison Row */}
-                <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
-                  <div className="p-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#0E1E36] border border-[#E4E8E7] dark:border-[#1E324F]">
-                    <div className="text-[9px] font-mono text-[#667085] dark:text-[#9BA8B8] uppercase">Human Front-Desk</div>
-                    <div className="text-[#667085] dark:text-[#9BA8B8] font-medium mt-0.5 line-clamp-2">{item.human}</div>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#0E1E36] border border-[#E4E8E7] dark:border-[#1E324F]">
-                    <div className="text-[9px] font-mono text-[#667085] dark:text-[#9BA8B8] uppercase">Legacy IVR Tree</div>
-                    <div className="text-[#667085] dark:text-[#9BA8B8] font-medium mt-0.5 line-clamp-2">{item.ivr}</div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Desktop Comparison Table (Hidden on Phone View >= md) */}
-        <div className="hidden md:block bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] rounded-2xl overflow-hidden shadow-subtle">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-[#E4E8E7] dark:border-[#20324A] bg-[#F3F5F4] dark:bg-[#081426] text-[10px] uppercase font-bold text-[#667085] dark:text-[#9BA8B8] font-mono">
-                <th className="py-4 px-5">Capability</th>
-                <th className="py-4 px-5">Human Front-Desk</th>
-                <th className="py-4 px-5">Legacy Phone Tree (IVR)</th>
-                <th className="py-4 px-5 text-[#1B9A9C] font-bold bg-[#1B9A9C]/5">RELAY Voice Operations ⚡</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#E4E8E7] dark:divide-[#20324A]">
-              <tr>
-                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Speed to Answer</td>
-                <td className="py-4 px-5 text-[#667085]">3-5 minutes (or voicemail)</td>
-                <td className="py-4 px-5 text-[#667085]">Instant (robotic menu)</td>
-                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">&lt; 14.2s (Zero Hold Time)</td>
-              </tr>
-              <tr>
-                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Multilingual Fluency</td>
-                <td className="py-4 px-5 text-[#667085]">Depends on staff language</td>
-                <td className="py-4 px-5 text-[#667085]">Recorded prompts only</td>
-                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Fluent Hindi, Nepali, Spanish & English</td>
-              </tr>
-              <tr>
-                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Excel Batch Recall</td>
-                <td className="py-4 px-5 text-[#667085]">Manual 1-by-1 dialing</td>
-                <td className="py-4 px-5 text-[#667085]">Blast robocalls (low pickup)</td>
-                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Autonomous multi-contact booking</td>
-              </tr>
-              <tr>
-                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">CRM & Database Sync</td>
-                <td className="py-4 px-5 text-[#667085]">Manual typing entry</td>
-                <td className="py-4 px-5 text-[#667085]">No live CRM sync</td>
-                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Direct JSON sync to CRM & Databases</td>
-              </tr>
-              <tr>
-                <td className="py-4 px-5 font-semibold text-[#0B1930] dark:text-[#F8FAFC]">Priority Escalation</td>
-                <td className="py-4 px-5 text-[#667085]">Variable manual routing</td>
-                <td className="py-4 px-5 text-[#667085]">None</td>
-                <td className="py-4 px-5 font-bold text-[#0B1930] dark:text-[#F8FAFC] bg-[#1B9A9C]/5">Intelligent On-Call Staff SMS Routing</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </main>
-
-    {/* 7. Deep Relay Professional Footer */}
-    <PublicFooter />
+      <PublicFooter />
 
       <TriggerModal
         isOpen={isTriggerModalOpen}

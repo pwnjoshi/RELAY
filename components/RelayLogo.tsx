@@ -29,12 +29,12 @@ export function RelayLogo({ className = "", size = "md", variant = "default" }: 
       href="/"
       onClick={handleClick}
       className={`inline-flex items-center group transition-transform active:scale-95 cursor-pointer ${className}`}
-      title="Relay — Voice Operations (Scroll to Top)"
+      title="Relay — Voice Operations"
     >
       <div className={`relative ${heightClass} ${widthClass} flex items-center`}>
         <Image
           src="/logo.png"
-          alt="Relay — Voice Operations"
+          alt="Relay Voice Operations"
           width={180}
           height={60}
           className={`object-contain w-full h-full transition-all ${

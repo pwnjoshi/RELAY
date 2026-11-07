@@ -485,8 +485,9 @@ export function Header({
               </div>
 
               <div className="p-2.5 rounded-xl bg-[#1B9A9C]/10 border border-[#1B9A9C]/20 text-[10px] text-[#0B1930] dark:text-[#F8FAFC] leading-tight space-y-1">
-                <div className="font-bold flex items-center gap-1 text-[#1B9A9C]">
-                  🔒 Multi-Tenant Data Isolation Guarantee:
+                <div className="font-bold flex items-center gap-1.5 text-[#1B9A9C]">
+                  <Icons.Shield className="w-3.5 h-3.5" />
+                  <span>Multi-Tenant Data Isolation Guarantee:</span>
                 </div>
                 <div>
                   This workspace will maintain 100% isolated telemetry records, call history, staff roles, and RAG knowledge bases. Cross-workspace bridging can be enabled by Admins whenever necessary.

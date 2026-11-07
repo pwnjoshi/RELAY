@@ -195,7 +195,7 @@ export function RelayLifecycleRoadmap() {
             className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#0B1930] hover:bg-[#15294A] dark:bg-[#1B9A9C] dark:hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <span className={`w-2 h-2 rounded-full ${isTransmitting ? "bg-[#32C4BE] animate-ping" : "bg-[#16A34A]"}`} />
-            <span>{isTransmitting ? `Transmitting Node 0${activeStage + 1}...` : "Transmit Signal Pulse ⚡"}</span>
+            <span>{isTransmitting ? `Tracing Node 0${activeStage + 1}...` : "Simulate Pipeline Flow"}</span>
           </button>
         </div>
       </div>

@@ -6,21 +6,20 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "RELAY — Autonomous Voice Operations Platform | AI Telephony & Smart Routing",
-    template: "%s | RELAY Voice Operations"
+    default: "RELAY — Autonomous Voice Operations Platform",
+    template: "%s | RELAY"
   },
-  description: "RELAY is the enterprise autonomous voice operations platform powered by CALL-E. Intercept missed calls, automate outbound campaigns, and route customer conversations into verified outcomes with sub-14s latency and native multilingual AI.",
+  description: "Enterprise autonomous voice operations platform powered by CALL-E. Intercept missed calls, execute scheduled patient recalls, and resolve caller goals with sub-second latency and verified EHR/CRM integration.",
   keywords: [
     "autonomous voice operations",
-    "AI phone answering system",
+    "AI telephony",
     "CALL-E voice agent",
-    "enterprise telephony AI",
-    "missed call revenue recovery",
+    "healthcare telephony AI",
+    "missed call recovery",
     "multilingual voice AI",
     "inbound call overflow",
-    "outbound batch dialing",
-    "smart PBX switchboard",
-    "multi-location customer operations"
+    "outbound patient recall",
+    "enterprise voice agent"
   ],
   authors: [{ name: "RELAY Telephony Engineering" }],
   creator: "RELAY",
@@ -34,14 +33,14 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://relay.techsangi.com.np",
     siteName: "RELAY Voice Operations",
-    title: "RELAY — Autonomous Voice Operations Platform | Every Call Reaches the Right Outcome",
+    title: "RELAY — Autonomous Voice Operations Platform",
     description: "Enterprise voice operations platform that intercepts, understands, and acts on customer calls at scale with zero hold time and multi-branch routing.",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "RELAY — Autonomous Voice Operations Platform | AI Telephony & Smart Routing"
+        alt: "RELAY — Autonomous Voice Operations Platform"
       }
     ]
   },
@@ -74,7 +73,6 @@ export const metadata: Metadata = {
 };
 
 import { JudgeTourModal } from "@/components/JudgeTourModal";
-import { Preloader } from "@/components/Preloader";
 import { ScrollReset } from "@/components/ScrollReset";
 
 export default function RootLayout({
@@ -88,19 +86,19 @@ export default function RootLayout({
     "name": "RELAY Voice Operations",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web, Cloud Telephony",
-    "description": "Enterprise autonomous voice operations platform for inbound call overflow, multi-language conversational AI, and scheduled outreach campaigns on CALL-E.",
+    "description": "Enterprise autonomous voice operations platform for inbound call overflow, multilingual conversational AI, and scheduled outreach campaigns on CALL-E.",
     "offers": {
       "@type": "Offer",
       "price": "299.00",
       "priceCurrency": "USD"
     },
     "featureList": [
-      "Sub-14s Zero-Latency SIP Intercept",
+      "Sub-second Inbound SIP Intercept",
       "Multilingual Voice in Hindi, Nepali, Spanish, and English",
-      "Excel Batch Dialing & Scheduled Recall Engine",
+      "Automated Excel / CSV Batch Dialing Engine",
       "Structured CRM and Database Synchronization",
       "Role-Based Access Control and Department Routing",
-      "Google Calendar Two-Way Sync with Zero-Leakage Privacy"
+      "Two-Way Google Calendar Sync with Privacy-Preserving Free/Busy Masking"
     ]
   };
 
@@ -114,13 +112,12 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className="min-h-screen bg-[#FAFAF8] dark:bg-[#081426] text-[#0B1930] dark:text-[#F8FAFC] antialiased selection:bg-[#1B9A9C]/20"
+        className="min-h-screen bg-[#FAFAF8] dark:bg-[#081220] text-[#0B1930] dark:text-[#F8FAFC] antialiased selection:bg-[#1B9A9C]/20"
       >
         <ThemeProvider>
           <CurrencyProvider>
             <ConsoleProvider>
               <ScrollReset />
-              <Preloader />
               {children}
               <JudgeTourModal />
             </ConsoleProvider>

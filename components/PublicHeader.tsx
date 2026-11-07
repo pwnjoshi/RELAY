@@ -31,7 +31,7 @@ export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
       }
     } catch {}
 
-    // Verify verified HTTP-only / token auth session with backend API
+    // Verify authenticated session with backend API
     fetch("/api/auth/session")
       .then((r) => r.json())
       .then((d) => {
@@ -49,127 +49,113 @@ export function PublicHeader({ onOpenTriggerModal }: PublicHeaderProps) {
   }, []);
 
   const navLinks = [
-    { href: "/", label: "Home" },
+    { href: "/", label: "Overview" },
     { href: "/solutions", label: "Solutions" },
-    { href: "/how-it-works", label: "How It Works" },
+    { href: "/how-it-works", label: "Architecture" },
     { href: "/security", label: "Security & Privacy" },
-    { href: "/pricing", label: "Pricing & ROI" },
-    { href: "/about", label: "About" },
+    { href: "/pricing", label: "Pricing" },
+    { href: "/docs", label: "Docs" },
   ];
 
   return (
-    <header className="border-b border-[#E4E8E7]/80 dark:border-[#1E324F]/80 bg-white/85 dark:bg-[#081426]/85 backdrop-blur-xl sticky top-0 z-50 px-6 sm:px-10 lg:px-16 py-3.5 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.03)] dark:shadow-[0_4px_25px_rgba(0,0,0,0.25)]">
+    <header className="border-b border-[#E4E8E7] dark:border-[#1E3048] bg-white/90 dark:bg-[#081220]/90 backdrop-blur-md sticky top-0 z-50 px-6 sm:px-10 lg:px-16 py-3 transition-colors">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-6">
-        {/* Brand Signature */}
+        {/* Brand */}
         <div className="flex items-center gap-3 flex-shrink-0">
           <RelayLogo size="md" />
         </div>
 
-        {/* Desktop Luxury Floating Glass Navigation Dock (No Icons, Pure Typographic Elegance) */}
-        <nav className="hidden lg:flex items-center gap-1 p-1 rounded-2xl bg-[#F0F4F4]/90 dark:bg-[#0E1E36]/90 border border-[#E0E7E6] dark:border-[#1E324F] shadow-inner backdrop-blur-md">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-1 p-1 rounded-xl bg-[#F3F5F4] dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048]">
           {navLinks.map((link) => {
             const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ease-out select-none flex items-center cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors select-none ${
                   isActive
-                    ? "bg-white dark:bg-[#162A48] text-[#0B1930] dark:text-[#F8FAFC] shadow-[0_2px_10px_rgba(0,0,0,0.05)] dark:shadow-[0_2px_14px_rgba(0,0,0,0.3)] border border-[#E0E7E6] dark:border-[#2A4368] font-bold"
-                    : "text-[#667085] dark:text-[#9BA8B8] hover:text-[#0B1930] dark:hover:text-[#F8FAFC] hover:bg-white/50 dark:hover:bg-[#162A48]/50"
+                    ? "bg-white dark:bg-[#13243C] text-[#0B1930] dark:text-[#F8FAFC] shadow-xs font-semibold"
+                    : "text-[#5B6B82] dark:text-[#94A3B8] hover:text-[#0B1930] dark:hover:text-[#F8FAFC]"
                 }`}
               >
-                <span>{link.label}</span>
+                {link.label}
               </Link>
             );
           })}
         </nav>
 
-        {/* Right CTA Actions */}
-        <div className="flex items-center gap-3.5 flex-shrink-0">
+        {/* Actions */}
+        <div className="flex items-center gap-3 flex-shrink-0">
           <ThemeToggle />
 
-          {/* Dynamic Smart Auth Button with Generous Comfortable Padding */}
+          {onOpenTriggerModal && (
+            <button
+              type="button"
+              onClick={onOpenTriggerModal}
+              className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white dark:bg-[#0E1B2E] border border-[#E4E8E7] dark:border-[#1E3048] hover:border-[#1B9A9C] dark:hover:border-[#2EC4C0] text-xs font-semibold text-[#0B1930] dark:text-[#F8FAFC] transition-colors"
+            >
+              <Icons.PhoneCall className="w-3.5 h-3.5 text-[#1B9A9C] dark:text-[#2EC4C0]" />
+              <span>Test Call</span>
+            </button>
+          )}
+
           {isUserAuthenticated ? (
             <Link
               href="/dashboard"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card transition-all duration-200 active:scale-95 hover:shadow-elevated hover:-translate-y-0.5 border border-transparent dark:border-[#38BDF8]/20 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0B1930] dark:bg-[#2EC4C0] dark:text-[#081220] hover:bg-[#15294A] text-white font-semibold text-xs shadow-xs transition-colors"
             >
-              <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
-              <span>Go to Console &rarr;</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse" />
+              <span>Console &rarr;</span>
             </Link>
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] hover:bg-[#15294A] dark:hover:bg-[#27B5B2] text-white font-bold text-xs shadow-card transition-all duration-200 active:scale-95 hover:shadow-elevated hover:-translate-y-0.5 border border-transparent dark:border-[#38BDF8]/20 cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0B1930] dark:bg-[#2EC4C0] dark:text-[#081220] hover:bg-[#15294A] text-white font-semibold text-xs shadow-xs transition-colors"
             >
-              <span>Get Started &rarr;</span>
+              <span>Sign In &rarr;</span>
             </Link>
           )}
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile hamburger */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[#0B1930] dark:text-[#F8FAFC] transition-transform active:scale-90 cursor-pointer"
-            aria-label="Toggle navigation menu"
+            className="md:hidden p-2 rounded-lg text-[#5B6B82] hover:text-[#0B1930] dark:text-[#94A3B8] dark:hover:text-[#F8FAFC] border border-[#E4E8E7] dark:border-[#1E3048]"
+            aria-label="Toggle mobile menu"
           >
-            <Icons.Menu className="w-4 h-4" />
+            {mobileMenuOpen ? <Icons.Close className="w-4 h-4" /> : <Icons.Menu className="w-4 h-4" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Backdrop & Floating Overlay Drawer (Floats ABOVE hero section without shifting page layout) */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <>
-          <div
-            className="lg:hidden fixed inset-0 top-[60px] bg-black/50 backdrop-blur-sm z-40 animate-fade-in"
-            onClick={() => setMobileMenuOpen(false)}
-            aria-hidden="true"
-          />
-          <div className="lg:hidden absolute top-full left-0 right-0 z-50 bg-white/95 dark:bg-[#081426]/95 backdrop-blur-2xl border-b border-[#E4E8E7] dark:border-[#1E324F] shadow-2xl px-6 py-5 space-y-3 animate-in slide-in-from-top-2 fade-in duration-200">
-            <div className="space-y-1">
-              {navLinks.map((link) => {
-                const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs font-semibold transition-all ${
-                      isActive
-                        ? "bg-[#1B9A9C]/15 text-[#1B9A9C] font-bold border border-[#1B9A9C]/20 shadow-sm"
-                        : "text-[#667085] dark:text-[#9BA8B8] hover:bg-[#FAFAF8] dark:hover:bg-[#10223A] hover:text-[#0B1930] dark:hover:text-[#F8FAFC]"
-                    }`}
-                  >
-                    <span>{link.label}</span>
-                    <span className="text-[11px] text-[#9BA8B8] font-mono">&rarr;</span>
-                  </Link>
-                );
-              })}
-            </div>
-            <div className="pt-3 border-t border-[#E4E8E7] dark:border-[#1E324F]">
-              {isUserAuthenticated ? (
-                <Link
-                  href="/dashboard"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] text-white font-bold text-xs shadow-card active:scale-95"
-                >
-                  <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse" />
-                  <span>Go to Console &rarr;</span>
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#0B1930] dark:bg-[#1B9A9C] text-white font-bold text-xs shadow-card active:scale-95"
-                >
-                  <span>Get Started &rarr;</span>
-                </Link>
-              )}
-            </div>
-          </div>
-        </>
+        <div className="md:hidden pt-3 pb-2 border-t border-[#E4E8E7] dark:border-[#1E3048] mt-3 space-y-1">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-lg text-xs font-medium text-[#5B6B82] dark:text-[#94A3B8] hover:bg-[#F3F5F4] dark:hover:bg-[#0E1B2E] hover:text-[#0B1930] dark:hover:text-[#F8FAFC]"
+            >
+              {link.label}
+            </Link>
+          ))}
+          {onOpenTriggerModal && (
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                onOpenTriggerModal();
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold text-[#1B9A9C] dark:text-[#2EC4C0] hover:bg-[#F3F5F4] dark:hover:bg-[#0E1B2E] flex items-center gap-2"
+            >
+              <Icons.PhoneCall className="w-3.5 h-3.5" />
+              <span>Test Real Voice Call</span>
+            </button>
+          )}
+        </div>
       )}
     </header>
   );
