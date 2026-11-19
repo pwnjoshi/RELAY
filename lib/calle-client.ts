@@ -354,7 +354,7 @@ export async function createDirectCall(params: CreateCallParams) {
   try {
     logger.info(`[CALL-E REST] Dispatching call (${language}, region: ${region || "auto"}) to: ${maskPhone(phoneNumber)}`);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 24000);
+    const timeoutId = setTimeout(() => controller.abort(), 28000);
 
     const res = await fetch(`${CALLE_API_BASE}/calls`, {
       method: "POST",
@@ -419,7 +419,7 @@ export async function createDirectCall(params: CreateCallParams) {
     return {
       ok: false,
       error: isTimeout
-        ? "Carrier trunk negotiation timed out after 24s. The telephone carrier may be experiencing congestion or an active call is still concluding."
+        ? "Carrier trunk negotiation timed out after 28s. The telephone carrier may be experiencing congestion or an active call is still concluding."
         : errorMsg,
       status: isTimeout ? 504 : 500
     };
