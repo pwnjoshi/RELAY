@@ -353,8 +353,12 @@ export async function createDirectCall(params: CreateCallParams) {
 
   try {
     logger.info(`[CALL-E REST] Dispatching call (${language}, region: ${region || "auto"}) to: ${maskPhone(phoneNumber)}`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 24000);
+
     const res = await fetch(`${CALLE_API_BASE}/calls`, {
       method: "POST",
+      signal: controller.signal,
       headers: {
         Authorization: `Bearer ${getCalleApiKey()}`,
         "Content-Type": "application/json",
@@ -383,6 +387,7 @@ export async function createDirectCall(params: CreateCallParams) {
         }
       })
     });
+    clearTimeout(timeoutId);
 
     let data: any = {};
     try {
@@ -409,8 +414,15 @@ export async function createDirectCall(params: CreateCallParams) {
     };
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : String(err);
+    const isTimeout = errorMsg.includes("abort") || errorMsg.includes("timeout");
     logger.error("[CALL-E REST] Fetch failed:", errorMsg);
-    return { ok: false, error: errorMsg };
+    return {
+      ok: false,
+      error: isTimeout
+        ? "Carrier trunk negotiation timed out after 24s. The telephone carrier may be experiencing congestion or an active call is still concluding."
+        : errorMsg,
+      status: isTimeout ? 504 : 500
+    };
   }
 }
 

@@ -310,7 +310,14 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
         data = await res.json();
       } catch {
         const textResp = await res.text().catch(() => "");
-        data = { ok: false, error: textResp || `Telephony gateway returned HTTP ${res.status}` };
+        if (res.status === 504) {
+          data = {
+            ok: false,
+            error: "Carrier Trunk Handshake Timeout (HTTP 504): The telephone carrier took longer than 25 seconds to establish the connection. Please wait 1 minute for the shared line to reset and try again."
+          };
+        } else {
+          data = { ok: false, error: textResp || `Telephony gateway returned HTTP ${res.status}` };
+        }
       }
 
       clearInterval(stepInterval);
