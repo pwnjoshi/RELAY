@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       clientIp === "localhost" ||
       process.env.NODE_ENV !== "production";
     const isAdmin = Boolean(
-      user && (user.role === "owner" || user.role === "dept_admin" || user.role === "operator" || user.role === "admin")
+      user && (user.role === "owner" || user.role === "dept_admin" || user.role === "operator")
     );
     const isUnlimitedAdmin = isLocalhost || isAdmin;
     const rateLimitKey = `quota_${clientIp}`;
