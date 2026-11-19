@@ -160,7 +160,8 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
   const adjustTextareaHeight = () => {
     if (extraContextRef.current) {
       extraContextRef.current.style.height = "auto";
-      extraContextRef.current.style.height = `${Math.max(90, extraContextRef.current.scrollHeight)}px`;
+      const newHeight = Math.max(120, extraContextRef.current.scrollHeight);
+      extraContextRef.current.style.height = `${newHeight}px`;
     }
   };
 
@@ -348,8 +349,8 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
               </h3>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#1B9A9C]/10 border border-[#1B9A9C]/20 text-[#1B9A9C]">
                 {typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") && isUserLoggedIn
-                  ? "⚡ Localhost Admin: Unlimited calls"
-                  : "🛡️ 2 calls/day"}
+                  ? "Localhost Admin: Unlimited"
+                  : "Rate Limited: 2 calls/day"}
               </span>
             </div>
             <p className="text-[11px] text-[#667085] dark:text-[#9BA8B8]">
@@ -471,37 +472,49 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
 
             {/* Premium Enhanced Autonomous Milestone Preview UI */}
             {currentGoal && (
-              <div className="p-3.5 rounded-xl bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] space-y-2.5 shadow-sm">
-                <div className="flex items-center justify-between flex-wrap gap-1">
-                  <div className="flex items-center gap-1.5">
-                    <Icons.Activity className="w-3.5 h-3.5 text-[#1B9A9C] animate-pulse" />
-                    <span className="text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC]">
-                      Autonomous Milestones Sequence
-                    </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#1B9A9C]/10 text-[#1B9A9C] font-bold">
-                      {currentGoal.milestones.length} Steps
-                    </span>
+              <div className="p-4 rounded-xl bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] space-y-3 shadow-xs">
+                <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-[#E4E8E7]/60 dark:border-[#20324A]/60">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-[#1B9A9C]/10 flex items-center justify-center text-[#1B9A9C]">
+                      <Icons.CheckCircle className="w-3.5 h-3.5" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-[#0B1930] dark:text-[#F8FAFC] block">
+                        Autonomous Milestone Execution Sequence
+                      </span>
+                      <span className="text-[10px] text-[#667085] dark:text-[#9BA8B8]">
+                        Deterministic verification & multi-stage completion safety
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-[10px] font-medium text-[#667085] dark:text-[#9BA8B8] font-mono flex items-center gap-1">
-                    <span className="text-[#1B9A9C] font-bold">Target:</span> {currentGoal.targetOutcome}
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-[#1B9A9C]/10 text-[#1B9A9C] font-bold border border-[#1B9A9C]/20">
+                      {currentGoal.milestones.length} Milestones
+                    </span>
+                    <span className="text-[10px] font-medium text-[#667085] dark:text-[#9BA8B8]">
+                      Target: <strong className="text-[#0B1930] dark:text-[#F8FAFC]">{currentGoal.targetOutcome}</strong>
+                    </span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2 relative">
                   {currentGoal.milestones.map((m, idx) => (
                     <div
                       key={m.id}
-                      className="p-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] text-[10px] space-y-1 hover:border-[#1B9A9C]/40 transition-colors shadow-2xs"
+                      className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] text-[11px] space-y-1.5 hover:border-[#1B9A9C]/40 transition-all relative overflow-hidden"
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-[#1B9A9C] font-mono text-[9px] px-1.5 py-0.5 rounded bg-[#1B9A9C]/10 border border-[#1B9A9C]/20">
-                          Step 0{idx + 1}
+                          Milestone 0{idx + 1}
                         </span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#1B9A9C]" />
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20" />
                       </div>
-                      <div className="text-[#0B1930] dark:text-[#F8FAFC] font-semibold leading-tight line-clamp-2 pt-0.5">
+                      <div className="text-[#0B1930] dark:text-[#F8FAFC] font-bold leading-tight">
                         {m.title}
                       </div>
+                      <p className="text-[10px] text-[#667085] dark:text-[#9BA8B8] leading-relaxed">
+                        {m.description}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -770,7 +783,7 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
               }}
               onInput={adjustTextareaHeight}
               placeholder="Enter detailed task instructions, specific patient context, constraints, or on-call instructions..."
-              className="w-full bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl p-3 text-xs text-[#0B1930] dark:text-white focus:border-[#1B9A9C] focus:ring-1 focus:ring-[#1B9A9C] outline-none min-h-[90px] overflow-hidden leading-relaxed font-mono transition-all"
+              className="w-full bg-[#FAFAF8] dark:bg-[#081426] border border-[#E4E8E7] dark:border-[#20324A] rounded-xl p-3.5 text-xs text-[#0B1930] dark:text-white focus:border-[#1B9A9C] focus:ring-1 focus:ring-[#1B9A9C] outline-none min-h-[120px] max-h-[480px] overflow-y-auto resize-y leading-relaxed font-sans transition-all"
             />
           </div>
 

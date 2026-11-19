@@ -2,9 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { RelayLogo } from "@/components/RelayLogo";
-import { Icons } from "@/components/Icons";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { PublicFooter } from "@/components/PublicFooter";
 import { PublicHeader } from "@/components/PublicHeader";
 

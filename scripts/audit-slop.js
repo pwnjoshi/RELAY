@@ -33,7 +33,11 @@ const badPatterns = [
   { name: 'quantum', regex: /quantum/i },
   { name: 'mojibake-dY', regex: /dY/ },
   { name: 'mojibake-a', regex: /\u00E2\u20AC/ },
-  { name: 'lightning-emoji', regex: /\u26A1/ }
+  { name: 'lightning-emoji', regex: /⚡/ },
+  { name: 'rocket-emoji', regex: /🚀/ },
+  { name: 'fire-emoji', regex: /🔥/ },
+  { name: 'robot-emoji', regex: /🤖/ },
+  { name: 'explosion-emoji', regex: /💥/ }
 ];
 
 const results = {};

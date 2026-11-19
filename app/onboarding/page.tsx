@@ -286,11 +286,11 @@ export default function OnboardingPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-[#E4E8E7]/50 dark:border-[#20324A]/50">
                   <div className="p-2.5 rounded-lg bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[11px]">
-                    <div className="font-bold text-[#0B1930] dark:text-[#F8FAFC]">🛡️ Workspace Admin (You)</div>
+                    <div className="font-bold text-[#0B1930] dark:text-[#F8FAFC]">Workspace Administrator</div>
                     <div className="text-[#667085] dark:text-[#9BA8B8] text-[10px] mt-0.5">Full access to telephony, billing, and IAM staff invitations.</div>
                   </div>
                   <div className="p-2.5 rounded-lg bg-white dark:bg-[#10223A] border border-[#E4E8E7] dark:border-[#20324A] text-[11px]">
-                    <div className="font-bold text-[#0B1930] dark:text-[#F8FAFC]">👥 Operators & Staff</div>
+                    <div className="font-bold text-[#0B1930] dark:text-[#F8FAFC]">Operators & Staff</div>
                     <div className="text-[#667085] dark:text-[#9BA8B8] text-[10px] mt-0.5">Assigned to specific department queues and call logs.</div>
                   </div>
                 </div>
