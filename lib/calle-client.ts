@@ -11,7 +11,28 @@ import { logger, maskPhone } from "./logger";
 const CALLE_API_BASE = "https://api.heycall-e.com/v1";
 
 function getCalleApiKey(): string {
-  const key = process.env.CALLE_API_KEY;
+  let key = process.env.CALLE_API_KEY;
+  if (!key && typeof window === "undefined") {
+    try {
+      const fs = eval("require('fs')");
+      const path = eval("require('path')");
+      const candidates = [".env.local", ".env"];
+      for (const file of candidates) {
+        const fullPath = path.resolve(process.cwd(), file);
+        if (fs.existsSync(fullPath)) {
+          const content = fs.readFileSync(fullPath, "utf-8");
+          const match = content.match(/^CALLE_API_KEY\s*=\s*(.+)$/m);
+          if (match && match[1]) {
+            key = match[1].trim().replace(/^["']|["']$/g, "");
+            process.env.CALLE_API_KEY = key;
+            break;
+          }
+        }
+      }
+    } catch {
+      // Fallback if fs is restricted
+    }
+  }
   if (!key) {
     throw new Error(
       "[CALL-E Client] Missing required environment variable: CALLE_API_KEY. Please configure CALLE_API_KEY in your environment or .env.local file."

@@ -7,7 +7,8 @@ const { spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 
-const BASE_URL = "http://localhost:3000";
+const PORT = process.env.TEST_PORT || "3456";
+const BASE_URL = `http://localhost:${PORT}`;
 
 let testPassed = 0;
 let testFailed = 0;
@@ -25,30 +26,30 @@ function assert(condition, message) {
 async function isServerReady(url) {
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(1000) });
-    return res.status === 200 || res.status === 401 || res.status === 404;
+    return res.status === 200 || res.status === 401;
   } catch {
     return false;
   }
 }
 
 async function startServerIfNeeded() {
-  const ready = await isServerReady("http://localhost:3000/api/auth/session");
+  const ready = await isServerReady(`${BASE_URL}/api/auth/session`);
   if (ready) {
-    console.log("✓ Connected to active Next.js server on http://localhost:3000");
+    console.log(`✓ Connected to active Next.js server on ${BASE_URL}`);
     return null;
   }
 
-  console.log("ℹ Starting local Next.js server for automated integration tests...");
+  console.log(`ℹ Starting local Next.js server on port ${PORT} for automated integration tests...`);
   const hasBuild = fs.existsSync(path.resolve(process.cwd(), ".next"));
   const command = process.platform === "win32" ? "npx.cmd" : "npx";
-  const args = hasBuild ? ["next", "start", "-p", "3000"] : ["next", "dev", "-p", "3000"];
+  const args = hasBuild ? ["next", "start", "-p", PORT] : ["next", "dev", "-p", PORT];
 
   const serverProc = spawn(command, args, {
     cwd: process.cwd(),
     shell: true,
     env: {
       ...process.env,
-      PORT: "3000",
+      PORT: PORT,
       JWT_SECRET: process.env.JWT_SECRET || "relay-secret-key-test-environment-32-chars-minimum",
       DEMO_MODE: "true"
     },
@@ -59,8 +60,8 @@ async function startServerIfNeeded() {
   const maxRetries = 60;
   for (let i = 0; i < maxRetries; i++) {
     await new Promise((r) => setTimeout(r, 600));
-    if (await isServerReady("http://localhost:3000/api/auth/session")) {
-      console.log("✓ Next.js server started and ready on http://localhost:3000\n");
+    if (await isServerReady(`${BASE_URL}/api/auth/session`)) {
+      console.log(`✓ Next.js server started and ready on ${BASE_URL}\n`);
       return serverProc;
     }
   }
