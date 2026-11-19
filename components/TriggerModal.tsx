@@ -304,7 +304,15 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
         },
         body: JSON.stringify(payload)
       });
-      const data = await res.json();
+      
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        const textResp = await res.text().catch(() => "");
+        data = { ok: false, error: textResp || `Telephony gateway returned HTTP ${res.status}` };
+      }
+
       clearInterval(stepInterval);
       setProgressPercent(100);
       setDispatchStep(4);
@@ -323,11 +331,12 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
           text: errorText
         });
       }
-    } catch {
+    } catch (err: unknown) {
       clearInterval(stepInterval);
+      const errMsg = err instanceof Error ? err.message : String(err);
       setResultMessage({
         ok: false,
-        text: "Network handshake timeout connecting to CALL-E telephony gateway."
+        text: errMsg && !errMsg.includes("fetch") ? errMsg : "Network handshake timeout connecting to CALL-E telephony gateway."
       });
     } finally {
       setIsCalling(false);

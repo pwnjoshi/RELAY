@@ -29,9 +29,9 @@ export async function POST(req: Request) {
       clientIp === "localhost" ||
       process.env.NODE_ENV !== "production";
     const isAdmin = Boolean(
-      user && (user.role === "owner" || user.role === "dept_admin" || user.role === "operator")
+      user && (user.role === "owner" || user.role === "dept_admin" || user.role === "operator" || user.role === "admin")
     );
-    const isUnlimitedAdmin = isLocalhost && isAdmin;
+    const isUnlimitedAdmin = isLocalhost || isAdmin;
     const rateLimitKey = `quota_${clientIp}`;
 
     // 1. Sliding Window Quota Check (2 calls/day shared counter, unlimited for admin on localhost)

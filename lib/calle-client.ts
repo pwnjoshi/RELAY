@@ -384,7 +384,13 @@ export async function createDirectCall(params: CreateCallParams) {
       })
     });
 
-    const data = await res.json();
+    let data: any = {};
+    try {
+      data = await res.json();
+    } catch {
+      const raw = await res.text().catch(() => "");
+      data = { error: raw || `CALL-E API HTTP ${res.status}` };
+    }
     if (!res.ok) {
       logger.error(`[CALL-E REST] Error response (${res.status}):`, data);
       const errMsg = data.error?.message || data.message || (typeof data.error === "string" ? data.error : JSON.stringify(data));
@@ -419,7 +425,13 @@ export async function getDirectCall(callId: string) {
       }
     });
 
-    const data = await res.json();
+    let data: any = {};
+    try {
+      data = await res.json();
+    } catch {
+      const raw = await res.text().catch(() => "");
+      data = { error: raw || `CALL-E API HTTP ${res.status}` };
+    }
     if (!res.ok) {
       return { ok: false, error: data.message || "Failed to query call", status: res.status };
     }
