@@ -16,7 +16,7 @@ function getCalleApiKey(): string {
     try {
       const fs = eval("require('fs')");
       const path = eval("require('path')");
-      const candidates = [".env.local", ".env"];
+      const candidates = [".env.production", ".env.local", ".env"];
       for (const file of candidates) {
         const fullPath = path.resolve(process.cwd(), file);
         if (fs.existsSync(fullPath)) {

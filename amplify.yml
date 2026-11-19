@@ -3,6 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
+        - env | grep -E '^(CALLE_|JWT_|NEXT_PUBLIC_|NEBIUS_|DEMO_MODE|NODE_ENV)' > .env.production
         - npm ci --include=dev
     build:
       commands:
