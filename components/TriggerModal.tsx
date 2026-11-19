@@ -325,7 +325,10 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
         });
         if (onCallLaunched) onCallLaunched();
       } else {
-        const errorText = data.error || (typeof data.details === "string" ? data.details : data.details?.error?.message) || "Telephony gateway returned an error.";
+        let errorText = data.error || (typeof data.details === "string" ? data.details : data.details?.error?.message) || "Telephony gateway returned an error.";
+        if (errorText.includes("account_concurrency_exceeded") || errorText.includes("concurrency limit of 1")) {
+          errorText = "Carrier Line Busy: Another call is currently in progress on the shared trunk line. Please wait 1–2 minutes for the active call to complete, then try again.";
+        }
         setResultMessage({
           ok: false,
           text: errorText
@@ -336,7 +339,9 @@ export function TriggerModal({ isOpen, locations, onClose, onCallLaunched }: Tri
       const errMsg = err instanceof Error ? err.message : String(err);
       setResultMessage({
         ok: false,
-        text: errMsg && !errMsg.includes("fetch") ? errMsg : "Network handshake timeout connecting to CALL-E telephony gateway."
+        text: errMsg && !errMsg.includes("fetch")
+          ? errMsg
+          : "Carrier trunk handshake taking longer than expected (~25s). If an active call is currently running, please wait a moment for it to complete."
       });
     } finally {
       setIsCalling(false);
